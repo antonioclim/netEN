@@ -1,0 +1,1 @@
+TODO: This folder is reserved for a future DOCX generation pipeline.

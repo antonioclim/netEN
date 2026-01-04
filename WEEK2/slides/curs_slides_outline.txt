@@ -1,0 +1,48 @@
+# ============================================================
+# COURSE SLIDES OUTLINE - WEEK 2
+# OSI and TCP/IP models, introduction to sockets
+# ============================================================
+# Computer Networks - ASE Bucharest, CSIE
+# Target: ~90 minutes (outline)
+# ============================================================
+
+## Slide 1 - Title
+- Week 2: OSI and TCP/IP models, socket programming foundations
+
+## Slide 2 - Learning outcomes
+- Explain layered models and encapsulation
+- Distinguish TCP from UDP at the service level
+- Describe the socket API at a conceptual level
+
+## Slide 3 - OSI model recap
+- Seven layers, responsibilities and examples
+
+## Slide 4 - TCP/IP model recap
+- Four or five layers depending on convention
+- Mapping to OSI
+
+## Slide 5 - Encapsulation
+- Data -> segment or datagram -> packet -> frame
+- Headers, payload and MTU
+
+## Slide 6 - Addressing and ports
+- IP addresses, subnets and routing
+- Ports as transport endpoints
+
+## Slide 7 - TCP service properties
+- Reliability, ordering, congestion control (conceptual)
+
+## Slide 8 - UDP service properties
+- Best effort delivery and low overhead
+
+## Slide 9 - What is a socket
+- OS-provided endpoint abstraction
+- Blocking vs non-blocking calls
+
+## Slide 10 - Typical workflows
+- TCP server and client
+- UDP server and client
+
+## Slide 11 - Practical bridge to the seminar
+- Where to find the scripts and how to run them
+- How to verify results and capture traffic

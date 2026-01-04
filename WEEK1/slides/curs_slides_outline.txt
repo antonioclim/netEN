@@ -1,0 +1,8 @@
+Week 1 course slides outline
+
+1. What is a network, what is a host, what is a router
+2. Packets, frames and the idea of encapsulation
+3. Addresses and subnets: IPv4 recap
+4. Ports and services: mapping to processes
+5. Essential Linux tools: ip, ss, ping
+6. What a capture shows: tcpdump and tshark overview

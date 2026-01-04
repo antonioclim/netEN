@@ -1,0 +1,4 @@
+python-docx
+scapy
+dpkt
+# Mininet is installed via system packages (apt)

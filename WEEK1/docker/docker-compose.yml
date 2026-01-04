@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  lab:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    working_dir: /work
+    volumes:
+      - ..:/work:rw
+      - ../artifacts:/work/artifacts:rw
+    network_mode: bridge
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1

@@ -1,0 +1,226 @@
+# Lecture 10: HTTP(S), REST, SOAP – Slide Outline
+# For import into PowerPoint or reveal.js
+# Format: --- = slide break, ## = title, ### = subtitle, - = bullet
+
+---
+## Lecture 10
+### HTTP(S), REST and SOAP – Application Layer
+- Computer Networks
+- Business Informatics, Year 3, Semester 2
+- ASE Bucharest, 2025-2026
+
+---
+## What We Will Learn Today
+- HTTP protocol mechanisms (semantics, headers, codes)
+- Differences HTTP/1.1 vs HTTP/2 vs WebSocket
+- REST principles and Richardson model
+- REST vs SOAP comparison in enterprise context
+- Protocol problem diagnosis
+
+---
+## Why Does It Matter?
+### Practical Skills
+- Rapidly diagnose integration problems
+- Optimise performance through caching/multiplexing
+- Design correct and consistent APIs
+- Debug efficiently curl, tcpdump, DevTools
+- Communicate precisely DevOps teams
+
+---
+## HTTP in Internet Architecture
+### Positioning
+- Application Layer (L7)
+- Based on TCP for reliable transport
+- TLS for security (HTTPS)
+- DNS for name resolution
+
+---
+## Real HTTPS Cost
+### First Request
+| Component | Latency |
+|-----------|---------|
+| TCP Handshake | 1 RTT |
+| TLS Handshake | 1-2 RTT |
+| HTTP Request | 1 RTT |
+| **TOTAL** | **3-4 RTT** |
+
+→ For RTT=50ms: ~150-200ms minimum
+
+---
+## Diagram: HTTPS Handshake
+[PlantUML sequence diagram]
+- Client → Server: TCP SYN
+- Server → Client: TCP SYN-ACK
+- Client → Server: ClientHello
+- Server → Client: ServerHello + Certificate
+- Key exchange and verification
+- Encrypted HTTP data
+
+---
+## HTTP Methods – Semantics
+### Safe Methods (no side effects)
+- **GET** – Retrieve resource
+- **HEAD** – Retrieve headers only
+- **OPTIONS** – Query capabilities
+
+### Unsafe Methods
+- **POST** – Create resource (not idempotent)
+- **PUT** – Replace resource (idempotent)
+- **PATCH** – Partial update
+- **DELETE** – Remove resource
+
+---
+## Idempotency – Definition
+### Idempotent Operation
+"Executing it multiple times has the same effect as executing it once"
+
+| Method | Idempotent? | Example |
+|--------|-------------|---------|
+| GET | ✓ | Read data |
+| PUT | ✓ | x = 5 |
+| DELETE | ✓ | Remove item |
+| POST | ✗ | Add to list |
+| PATCH | ✗* | Depends on operation |
+
+---
+## HTTP Status Codes
+### Categories
+- **1xx** – Informational (100 Continue, 101 Switching)
+- **2xx** – Success (200 OK, 201 Created, 204 No Content)
+- **3xx** – Redirection (301 Permanent, 302 Found, 304 Not Modified)
+- **4xx** – Client Error (400 Bad Request, 401 Unauthorized, 404 Not Found)
+- **5xx** – Server Error (500 Internal, 502 Bad Gateway, 503 Unavailable)
+
+---
+## Key Headers
+### Request
+- **Host** – Mandatory in HTTP/1.1
+- **User-Agent** – Client identification
+- **Accept** – Accepted content types
+- **Authorization** – Authentication
+
+### Response
+- **Content-Type** – Response type
+- **Cache-Control** – Caching directives
+- **Set-Cookie** – Session cookies
+- **Access-Control-Allow-Origin** – CORS
+
+---
+## CORS – Cross-Origin Resource Sharing
+### The Problem
+Browser blocks requests between different domains (Same-Origin Policy)
+
+### The Solution
+Server declares what origins are allowed:
+```
+Access-Control-Allow-Origin: https://example.com
+Access-Control-Allow-Methods: GET, POST
+Access-Control-Allow-Headers: Content-Type
+```
+
+### Preflight
+For "non-simple" requests, browser sends OPTIONS first
+
+---
+## HTTP/2 vs HTTP/1.1
+### HTTP/1.1 Limitations
+- One request per connection (or pipeline)
+- Text headers (uncompressed)
+- Head-of-line blocking
+
+### HTTP/2 Improvements
+- Multiplexing (multiple requests, one connection)
+- Header compression (HPACK)
+- Server Push
+- Binary protocol
+
+---
+## WebSocket
+### Use Cases
+- Real-time notifications
+- Live chat
+- Streaming data
+- Online games
+
+### Characteristics
+- Full-duplex (bidirectional)
+- Upgrade from HTTP
+- Low latency
+- ws:// or wss:// (secure)
+
+---
+## REST – Representational State Transfer
+### Principles
+1. **Client-Server** – Separation of concerns
+2. **Stateless** – No session on server
+3. **Cacheable** – Explicit caching
+4. **Uniform Interface** – Standard operations
+5. **Layered System** – Intermediate proxies
+6. **Code on Demand** – Optional (JavaScript)
+
+---
+## Richardson Maturity Model
+### Level 0: Swamp of POX
+- One endpoint, RPC style
+- POST /api { action: "getUser", id: 1 }
+
+### Level 1: Resources
+- Multiple endpoints
+- POST /users/1 { action: "get" }
+
+### Level 2: HTTP Verbs
+- GET, POST, PUT, DELETE
+- Correct status codes
+
+### Level 3: HATEOAS
+- Hypermedia links in responses
+
+---
+## REST vs SOAP
+### REST
+- Lightweight, JSON
+- HTTP native
+- Flexible, informal contract
+- Ideal for web/mobile
+
+### SOAP
+- Heavyweight, XML
+- WS-* standards
+- Formal contract (WSDL)
+- Ideal for enterprise
+
+---
+## Debugging Tools
+### Command Line
+- **curl** – HTTP requests
+- **httpie** – curl alternative
+- **wget** – Download files
+
+### Network
+- **tcpdump** – Packet capture
+- **tshark** – Wireshark CLI
+- **mitmproxy** – HTTPS proxy
+
+### Browser
+- DevTools → Network tab
+- Postman/Insomnia
+
+---
+## Summary
+- HTTP is the foundation of modern web
+- Understanding semantics helps debugging
+- REST is a philosophy, not a standard
+- HATEOAS is rarely fully implemented
+- HTTP/2 and WebSocket solve specific problems
+- SOAP survives in enterprise environments
+
+---
+## Questions?
+
+---
+## Next: Seminar
+- Docker services (DNS, SSH, FTP)
+- SSH automation Paramiko
+- Traffic capture and analysis
+
+*Computer Networks | ASE Bucharest | 2025-2026*

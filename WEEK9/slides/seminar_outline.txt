@@ -1,0 +1,91 @@
+WEEK 9 – Seminar Outline (Session, Presentation and File Protocols)
+
+Footer: ASE Bucharest | Computer Networks | Revolvix
+
+SLIDE 1: Context and goals
+- Session layer basics: sessions, checkpoints, recovery
+- Presentation layer basics: encoding, serialisation, compression
+- File protocol patterns: request, response, metadata, integrity
+
+SLIDE 2: Week 9 toolkit map
+- scripts/ for setup, demo and cleanup
+- python/ for client, server and utilities
+- mininet/ for topologies and scenarios
+- tests/ for smoke checks and expected outputs
+- docker/ for reproducible demo run
+
+SLIDE 3: Quickstart (host)
+1. make setup
+2. make demo
+3. make test
+
+SLIDE 4: Ports and addressing
+- Subnet: 10.0.9.0/24
+- Server: 10.0.9.100
+- TCP demo port: 9090
+- Optional HTTP port: 8080
+
+SLIDE 5: Demo protocol overview
+- Header: magic, version, flags, length, checksum
+- Commands: LIST, GET, PUT, INFO
+- Status markers: OK, ERROR
+
+SLIDE 6: Encoding pitfalls
+- Bytes vs text
+- UTF-8 roundtrips
+- Network byte order (big endian) for binary headers
+
+SLIDE 7: Python utilities
+- struct.pack uses '>' for network byte order
+- hashlib for deterministic digests
+- argparse for stable CLI
+
+SLIDE 8: Mininet scenarios
+- topo_base for baseline
+- topo_extended for delay and multi-client
+- scenarios/lab_tasks.md for step-by-step instructions
+
+SLIDE 9: Traffic capture
+1. Start the capture:
+   scripts/capture_traffic.sh 9090 artifacts/demo.pcap
+2. Generate traffic (demo client-server)
+3. Stop the capture with Ctrl+C
+4. Analyse:
+   tshark -r artifacts/demo.pcap -q -z conv,tcp
+
+SLIDE 10: Validation
+- artifacts/demo.log created
+- artifacts/validation.txt created
+- tests/smoke_test.sh exits with code 0
+
+SLIDE 11: Docker demo
+- make docker-demo
+- artefacts written to ./artifacts on the host
+- make docker-clean for teardown
+
+SLIDE 12: Common problems and solutions
+| Problem | Cause | Solution |
+| --- | --- | --- |
+| Connection refused | Server not running | Check ss -tlnp and the configured port |
+| Invalid magic | Protocol mismatch | Check client and server versions |
+| CRC mismatch | Corrupted data | Check compression on/off and re-run |
+
+SLIDE 13: Practice tasks (choose at least 2)
+- Add an INFO command to return server stats
+- Add a rate limit flag on the server
+- Add a retry policy on the client with a timeout
+
+SLIDE 14: Final checklist
+- Demo completed
+- Smoke test passed
+- Optional: pcap capture produced
+- Reflection notes completed
+
+SLIDE 15: Next week preview
+- Network services in containers: DNS, SSH and file services
+- Docker command review
+- Name resolution and troubleshooting
+
+SLIDE 16: Support
+- During the lab: ask in class
+- After the seminar: email or the course forum

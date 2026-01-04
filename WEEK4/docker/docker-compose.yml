@@ -1,0 +1,14 @@
+services:
+  week4-demo:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: week4_demo
+    working_dir: /app
+    volumes:
+      - ../artifacts:/app/artifacts
+    ports:
+      - "5400:5400"
+      - "5401:5401"
+      - "5402:5402/udp"
+    command: ["bash","-lc","./scripts/run_all.sh --quick && ./tests/smoke_test.sh --quick"]

@@ -1,0 +1,8 @@
+# WEEK 4 - Custom TCP/UDP Protocols
+# All dependencies are from Python standard library
+# No external packages required
+
+# Optional development tools (not required for runtime):
+# pytest>=7.0.0           # For unit testing
+# black>=22.0.0           # Code formatting
+# pylint>=2.15.0          # Linting

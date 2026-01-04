@@ -1,0 +1,93 @@
+WEEK 4 lecture slide outline
+Physical layer and data link, framing and checksums, custom protocols over TCP and UDP
+
+This outline is designed for import into PowerPoint, Google Slides or reveal.js.
+Each [SLIDE X] section is one slide.
+
+[SLIDE 1]
+Title: Computer Networks – Week 4
+Subtitle: From bits to frames, then to reliable messages
+Footer: Business Informatics, Year III, Semester 2
+
+[SLIDE 2]
+Agenda
+- Physical layer recap: signals, encoding, bandwidth and noise
+- Data link recap: framing, error detection and MAC addressing
+- Why applications still need framing over TCP
+- Week 4 demo: TEXT, BINARY and UDP sensor messages
+
+[SLIDE 3]
+Physical layer essentials
+- Bits are encoded into signals
+- Constraints: attenuation, interference and latency
+- Common terms: bitrate, baud, SNR and throughput
+
+[SLIDE 4]
+From signals to frames
+- The receiver needs boundaries
+- Framing provides boundaries at the data link layer
+- Typical mechanisms: length fields, delimiters and bit stuffing
+
+[SLIDE 5]
+Error detection in practice
+- Parity, checksums and CRC
+- CRC detects accidental corruption effectively
+- CRC is not cryptographic integrity
+
+[SLIDE 6]
+CRC32 in the kit
+- Deterministic test value: CRC32("Hello World") = 0x4A17B156
+- Why deterministic markers matter for automated validation
+
+[SLIDE 7]
+Transport layer reminder
+- TCP: reliable byte stream, no message boundaries
+- UDP: message boundaries preserved, delivery not guaranteed
+
+[SLIDE 8]
+Why framing over TCP is required
+- recv() may return partial data
+- multiple sends may coalesce
+- a protocol must define message boundaries explicitly
+
+[SLIDE 9]
+A minimal framing format (used in the kit)
+- 4-byte length prefix (network byte order)
+- payload bytes
+- optional checksum for integrity
+
+[SLIDE 10]
+Text protocol over TCP (port 5400)
+- Human-readable commands
+- Server maintains a small key–value store
+- Demonstrates request–response, framing and validation
+
+[SLIDE 11]
+Binary protocol over TCP (port 5401)
+- Compact messages, explicit layout
+- Uses struct packing, fixed fields
+- Demonstrates encoding, decoding and error handling
+
+[SLIDE 12]
+UDP sensor messages (port 5402/udp)
+- Small datagrams, simple fields
+- Demonstrates parsing, timeouts and best-effort communication
+
+[SLIDE 13]
+Tooling and verification
+- scripts/run_all.sh produces artefacts
+- tests/smoke_test.sh validates syntax and key markers
+- Optional capture: tcpdump or tshark when permitted
+
+[SLIDE 14]
+Student deliverable and success criteria
+- Submit artefacts/demo.log and artefacts/validation.txt
+- Smoke test exits with code 0
+- Explain changes and verification in 5–10 lines
+
+[SLIDE 15]
+Troubleshooting patterns
+- Port already in use -> cleanup
+- Capture permissions -> run with --quick
+- Binary decode errors -> align struct formats
+- Flaky tests -> keep deterministic markers

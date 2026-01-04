@@ -1,0 +1,82 @@
+WEEK 4 seminar slide outline
+Workshop: building reliable messages over TCP and UDP
+
+This outline is designed for import into PowerPoint, Google Slides or reveal.js.
+Each [SLIDE X] section is one slide.
+
+[SLIDE 1]
+Title: Week 4 seminar
+Subtitle: Custom TEXT and BINARY protocols over TCP and UDP
+
+[SLIDE 2]
+Workshop structure (100 minutes)
+- 10 min: framing and integrity recap
+- 20 min: run the demo and read artefacts
+- 25 min: modify the TEXT protocol (new command)
+- 25 min: extend the binary format (new field)
+- 15 min: UDP edge cases and parsing safety
+- 5 min: verification and clean reset
+
+[SLIDE 3]
+Rules of the exercise
+- Work from the CLI
+- Keep outputs deterministic
+- Use the smoke test to validate changes
+- Do not hardcode external dependencies
+
+[SLIDE 4]
+Quickstart (commands)
+- ./scripts/setup.sh
+- ./scripts/run_all.sh
+- ./tests/smoke_test.sh
+- ./scripts/cleanup.sh
+
+[SLIDE 5]
+Reading the demo artefacts
+- demo.log: chronological execution trace
+- validation.txt: summary markers for automated checks
+- demo.pcap: optional capture when permitted
+
+[SLIDE 6]
+Hands-on: TEXT protocol
+- Open python/apps/text_proto_server.py
+- Identify command parsing and dispatch
+- Add one new command (example: TIME, ECHO or INFO)
+- Update the client sequence in scripts/run_all.sh if needed
+
+[SLIDE 7]
+Validation for TEXT protocol
+- Confirm server starts and accepts connections
+- Confirm client receives OK responses
+- Keep error messages stable where tests depend on them
+
+[SLIDE 8]
+Hands-on: BINARY protocol
+- Open python/apps/binary_proto_server.py and client
+- Locate struct formats and message types
+- Add one new field or message type
+- Ensure both ends remain compatible
+
+[SLIDE 9]
+Validation for BINARY protocol
+- Re-run run_all.sh
+- Confirm validation.txt includes BINARY protocol: OK
+- If decoding fails, align endianness and field widths
+
+[SLIDE 10]
+Hands-on: UDP sensor
+- Review udp_sensor_server.py parsing
+- Add input validation and timeouts
+- Discuss reliability patterns: retry, sequence numbers, acknowledgements
+
+[SLIDE 11]
+Traffic inspection (optional)
+- tcpdump on loopback with a port filter
+- tshark to read pcap and filter by port
+- If capture fails, proceed without it
+
+[SLIDE 12]
+Wrap-up
+- Run ./tests/smoke_test.sh
+- Ensure artefacts exist and markers are present
+- Clean up the environment to a known baseline

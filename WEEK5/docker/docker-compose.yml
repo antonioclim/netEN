@@ -10,8 +10,6 @@
 # NOTE: This is a simplified setup for Python exercises.
 #       For complete Mininet, use a Linux VM.
 
-version: '3.8'
-
 services:
   # Main container for Python exercises
   python:
@@ -26,6 +24,8 @@ services:
       - ../python:/app/python:ro
       - ../docs:/app/docs:ro
       - ../pcap:/app/pcap
+    # Run as host user to preserve file ownership
+    user: "${UID:-1000}:${GID:-1000}"
     networks:
       labnet:
         ipv4_address: 10.5.0.10

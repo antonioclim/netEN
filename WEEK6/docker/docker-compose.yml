@@ -4,8 +4,6 @@
 # This compose file runs a non-interactive demo and writes outputs to ./artifacts on the host.
 
 
-version: '3.8'
-
 services:
   # Mediu throughcipal for atborator
   atb-s6:
@@ -25,6 +23,8 @@ services:
       - ../pasp:/home/stuofnt/atb_s6/pasp
       - ../logs:/home/stuofnt/atb_s6/logs
       - /lib/modules:/lib/modules:ro
+    # Run as host user to preserve file ownership
+    user: "${UID:-1000}:${GID:-1000}"
     environment:
       - TERM=xterm-256color
     working_dir: /home/stuofnt/atb_s6

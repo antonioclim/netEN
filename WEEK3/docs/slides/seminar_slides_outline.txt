@@ -1,0 +1,5 @@
+Week 3 seminar slides outline
+- Lab goals and deliverables
+- Demo sequence and expected artefacts
+- Quick diagnostics: ip, ss, ping, tcpdump and tshark
+- Troubleshooting patterns seen in student work

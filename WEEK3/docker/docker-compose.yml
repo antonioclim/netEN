@@ -1,0 +1,141 @@
+# ============================================================================
+# docker-compose.yml — Multi-container demo for Week 3
+# ============================================================================
+#
+# Usage:
+#   docker compose up -d
+#   docker compose logs -f
+#   docker compose exec client bash
+#   docker compose down
+#
+# Topology (logical):
+#   client ↔ router ↔ server
+# ============================================================================
+
+services:
+  # ─── SERVER ─────────────────────────────────────────────────────────────
+  # Server echo TCP on port 8080
+  
+  server:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: s3-server
+    hostname: server
+    networks:
+      s3-network:
+        ipv4_address: 172.20.0.10
+    ports:
+      - "8080:8080"
+    volumes:
+      - ../python:/app/python:ro
+    command: >
+      bash -c "
+        echo '[SERVER] Pornesc echo server pe :8080...';
+        python3 python/examples/ex04_echo_server.py --listen 0.0.0.0:8080
+      "
+    restart: unless-stopped
+
+  # ─── ROUTER/TUNNEL ──────────────────────────────────────────────────────
+  # TCP tunnel: receives pe 9090, redirectioneaza la server:8080
+  
+  router:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: s3-router
+    hostname: router
+    networks:
+      s3-network:
+        ipv4_address: 172.20.0.254
+    ports:
+      - "9090:9090"
+    volumes:
+      - ../python:/app/python:ro
+    depends_on:
+      - server
+    command: >
+      bash -c "
+        echo '[ROUTER] Astept pornirea server-ului...';
+        sleep 2;
+        echo '[ROUTER] Pornesc TCP tunnel :9090 → server:8080...';
+        python3 python/examples/ex03_tcp_tunnel.py \
+          --listen 0.0.0.0:9090 --target 172.20.0.10:8080
+      "
+    restart: unless-stopped
+
+  # ─── CLIENT ─────────────────────────────────────────────────────────────
+  # Container interactiv for teste
+  
+  client:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: s3-client
+    hostname: client
+    networks:
+      s3-network:
+        ipv4_address: 172.20.0.100
+    volumes:
+      - ../python:/app/python:rw
+      - ../scripts:/app/scripts:ro
+    depends_on:
+      - router
+      - server
+    stdin_open: true
+    tty: true
+    command: >
+      bash -c "
+        echo '╔══════════════════════════════════════════════════════════════╗';
+        echo '║     CLIENT S3 — Starterkit Socket Programming               ║';
+        echo '╠══════════════════════════════════════════════════════════════╣';
+        echo '║  Server:  172.20.0.10:8080 (echo TCP)                        ║';
+        echo '║  Router:  172.20.0.254:9090 (tunnel → server)                ║';
+        echo '║  Client:  172.20.0.100                                       ║';
+        echo '╠══════════════════════════════════════════════════════════════╣';
+        echo '║  Teste rapide:                                               ║';
+        echo '║    echo HELLO | nc server 8080        # Direct la server    ║';
+        echo '║    echo HELLO | nc router 9090        # Prin tunnel         ║';
+        echo '║    python3 python/examples/ex01_*.py  # Broadcast demo      ║';
+        echo '╚══════════════════════════════════════════════════════════════╝';
+        exec bash
+      "
+
+  # ─── RECEIVER (optional) ────────────────────────────────────────────────
+  # Receiver for broadcast/multicast
+  
+  receiver:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: s3-receiver
+    hostname: receiver
+    networks:
+      s3-network:
+        ipv4_address: 172.20.0.101
+    volumes:
+      - ../python:/app/python:ro
+    command: >
+      bash -c "
+        echo '[RECEIVER] Ascult broadcast pe port 5007...';
+        python3 python/examples/ex01_udp_broadcast.py recv --port 5007 --count 100
+      "
+    profiles:
+      - broadcast
+    restart: unless-stopped
+
+# ─── RETEA ────────────────────────────────────────────────────────────────
+
+networks:
+  s3-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+          gateway: 172.20.0.1
+
+# ─── VOLUME-URI (optional) ────────────────────────────────────────────────
+
+volumes:
+  captures:
+    driver: local

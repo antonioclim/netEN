@@ -1,0 +1,26 @@
+@startuml fig-tshark-workflow
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title Traffic Capture Workflow
+
+start
+:Start capture\ntshark -i lo -f "port 9999" -w capture.pcap;
+:Generate traffic\nnc commands in other terminals;
+:Stop capture\nCtrl+C;
+:Read capture\ntshark -r capture.pcap;
+:Apply filter\ntshark -r capture.pcap -Y "tcp.flags.syn==1";
+:Extract fields\ntshark -T fields -e ip.src -e tcp.srcport;
+:Export CSV\ntshark -E header=y -E separator=,;
+stop
+
+legend right
+-i : interface
+-f : capture filter (BPF)
+-w : write file
+-r : read file
+-Y : display filter
+-T : output format
+endlegend
+@enduml

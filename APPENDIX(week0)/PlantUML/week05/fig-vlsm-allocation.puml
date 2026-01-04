@@ -1,0 +1,22 @@
+@startuml fig-vlsm-allocation
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title VLSM Allocation Example
+
+package "192.168.1.0/24 (256 addr)" as main #F5F5F5 {
+    component "Dept A: 100 hosts\n192.168.1.0/25\n128 addresses" as a #BBDEFB
+    component "Dept B: 50 hosts\n192.168.1.128/26\n64 addresses" as b #C8E6C9
+    component "Dept C: 25 hosts\n192.168.1.192/27\n32 addresses" as c #FFE0B2
+    component "Links /30\n192.168.1.224+\n4 addr each" as links #E1BEE7
+}
+
+legend bottom
+VLSM Steps:
+1. Sort largest first
+2. Allocate on proper boundary
+3. Continue with remaining space
+Boundary: Network addr divisible by size
+endlegend
+@enduml

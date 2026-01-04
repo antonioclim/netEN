@@ -1,0 +1,24 @@
+@startuml fig-openflow-flowtable
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+title OpenFlow Flow Table
+
+package "OpenFlow Switch" as sw #F5F5F5 {
+    card "Entry 1 (P=100)\nMatch: src=10.0.0.1, dst_port=80\nAction: output:port2" as e1 #BBDEFB
+    card "Entry 2 (P=50)\nMatch: dst=10.0.0.0/24\nAction: output:port1" as e2 #BBDEFB
+    card "Entry 3 (P=0)\nMatch: * (wildcard)\nAction: drop" as e3 #FFCDD2
+}
+
+component "Controller" as ctrl #E8F5E9
+
+ctrl -d-> sw : OpenFlow
+
+legend bottom
+Flow Entry: Match + Priority + Actions + Counters
+Higher priority matched first
+Actions: forward, drop, modify headers
+Controller installs/modifies flows
+endlegend
+@enduml

@@ -1,0 +1,22 @@
+@startuml fig-iot-defence-layers
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+title IoT Security Defence Layers
+
+card "L1: Device Hardening\nChange defaults, disable unused\nSecure boot, encrypted storage" as l1 #E8F5E9
+
+card "L2: Network Segmentation\nSeparate IoT VLAN\nFirewall, no direct Internet" as l2 #E3F2FD
+
+card "L3: Encrypted Comms\nTLS for all traffic\nMQTT over TLS :8883" as l3 #FFF3E0
+
+card "L4: Access Control\nStrong auth, RBAC\nAPI rate limiting, audit" as l4 #FCE4EC
+
+card "L5: Monitoring\nAnomaly detection\nCentralized logging" as l5 #E8EAF6
+
+l1 -d-> l2
+l2 -d-> l3
+l3 -d-> l4
+l4 -d-> l5
+@enduml

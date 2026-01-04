@@ -1,0 +1,24 @@
+@startuml fig-tls-handshake
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title TLS 1.3 Handshake (1-RTT)
+
+participant "Client" as C
+participant "Server" as S
+
+C -> S : ClientHello\n+ cipher suites + key share
+S --> C : ServerHello + key share\n+ Certificate + Finished
+C -> S : Finished
+
+== Encrypted Application Data ==
+C <-> S : HTTPS traffic
+
+legend right
+TLS 1.3: 1-RTT (vs 2-RTT in 1.2)
+0-RTT resumption with PSK
+Forward secrecy required
+AES_256_GCM_SHA384
+endlegend
+@enduml

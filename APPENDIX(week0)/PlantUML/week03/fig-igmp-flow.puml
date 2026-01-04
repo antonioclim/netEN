@@ -1,0 +1,26 @@
+@startuml fig-igmp-flow
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title IGMP Protocol Flow
+
+participant "Host A\nwants to join" as A
+participant "Router\nIGMP Querier" as R
+participant "Host B\nalready member" as B
+
+A -[#43A047]> R : IGMP Report (Type 0x16)\nJoin 239.0.0.1
+R -[#1565C0]> A : IGMP Query (Type 0x11)
+R -[#1565C0]> B : IGMP Query
+B -[#43A047]-> R : Report 239.0.0.1
+A -[#E53935]> R : IGMP Leave (Type 0x17)
+R -[#1565C0]> B : Group-Specific Query
+B -[#43A047]-> R : Report (still member)
+
+legend right
+tcpdump -i eth0 igmp
+Report: join group
+Leave: exit group  
+Query: router polls
+endlegend
+@enduml

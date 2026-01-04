@@ -1,0 +1,27 @@
+@startuml fig-mqtt-protocol
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title MQTT Protocol Flow
+
+participant "Sensor\nPublisher" as PUB
+participant "Broker\n:1883/:8883" as BROKER
+participant "Dashboard\nSubscriber" as SUB
+
+PUB -> BROKER : CONNECT
+BROKER --> PUB : CONNACK
+SUB -> BROKER : SUBSCRIBE\nhome/+/temperature
+BROKER --> SUB : SUBACK
+PUB -> BROKER : PUBLISH\nhome/living/temp: 22.5
+BROKER --> PUB : PUBACK (QoS 1)
+BROKER -> SUB : PUBLISH (forwarded)
+SUB --> BROKER : PUBACK
+
+legend right
+QoS 0: at most once
+QoS 1: at least once
+QoS 2: exactly once
+Wildcards: + single, # multi
+endlegend
+@enduml

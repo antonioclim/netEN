@@ -1,0 +1,25 @@
+@startuml fig-health-checks
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title Health Checks and Failover
+
+component "Load Balancer" as lb #E3F2FD
+
+component "Server 1\nHEALTHY" as s1 #C8E6C9
+component "Server 2\nHEALTHY" as s2 #C8E6C9
+component "Server 3\nUNHEALTHY" as s3 #FFCDD2
+
+lb -d-> s1 : Active
+lb -d-> s2 : Active
+lb .[#E53935,dashed].> s3 : Removed
+
+legend bottom
+Health Check Types:
+TCP: can connect?
+HTTP: GET /health returns 200?
+Nginx: max_fails=3 fail_timeout=30s
+After 3 failures in 30s -> mark down
+endlegend
+@enduml

@@ -1,0 +1,22 @@
+@startuml fig-dhcp-dora
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title DHCP DORA Process
+
+participant "Client\n(no IP)" as C
+participant "DHCP Server\n192.168.1.1" as S
+
+C -> S : D: Discover (broadcast)\nSrc: 0.0.0.0 Dst: 255.255.255.255
+S --> C : O: Offer\nIP: 192.168.1.100 Lease: 86400s
+C -> S : R: Request (broadcast)\nRequesting 192.168.1.100
+S --> C : A: Acknowledge\nAssigned, lease confirmed
+
+legend right
+Port 67 (server), 68 (client)
+DHCP provides: IP, mask
+gateway, DNS, lease time
+tcpdump port 67 or 68
+endlegend
+@enduml

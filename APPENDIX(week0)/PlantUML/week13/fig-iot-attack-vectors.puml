@@ -1,0 +1,34 @@
+@startuml fig-iot-attack-vectors
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+title IoT Attack Vectors
+
+package "Device Level" as dev #FFCDD2 {
+    card "Default credentials" as v1
+    card "Debug interfaces UART/JTAG" as v2
+    card "Outdated firmware" as v3
+}
+
+package "Network Level" as net #FFF3E0 {
+    card "Unencrypted traffic" as n1
+    card "Man-in-the-Middle" as n2
+    card "DDoS (Mirai)" as n3
+}
+
+package "Application Level" as app #E3F2FD {
+    card "Insecure APIs" as a1
+    card "Weak authentication" as a2
+    card "Data leakage" as a3
+}
+
+legend bottom
+OWASP IoT Top 10:
+1. Weak passwords
+2. Insecure network services
+3. Insecure ecosystem
+4. Lack of secure update
+5. Insecure components
+endlegend
+@enduml

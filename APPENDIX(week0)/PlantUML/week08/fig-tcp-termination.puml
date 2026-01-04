@@ -1,0 +1,25 @@
+@startuml fig-tcp-termination
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title TCP Connection Termination
+
+participant "Client\n(Active Close)" as C
+participant "Server\n(Passive Close)" as S
+
+C -> S : FIN (Seq=100)
+S --> C : ACK (Ack=101)
+S --> C : FIN (Seq=300)
+C -> S : ACK (Ack=301)
+
+C -> C : TIME_WAIT\n60-120 sec
+
+legend right
+4-way handshake
+TIME_WAIT ensures:
+1. Final ACK delivered
+2. Old packets expire
+ss -tnp | grep TIME_WAIT
+endlegend
+@enduml

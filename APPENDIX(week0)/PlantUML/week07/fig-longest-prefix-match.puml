@@ -1,0 +1,27 @@
+@startuml fig-longest-prefix-match
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title Longest Prefix Match
+
+package "Routing Table" as table #F5F5F5 {
+    card "10.0.0.0/8 via R1" as r1 #BBDEFB
+    card "10.1.0.0/16 via R2" as r2 #C8E6C9
+    card "10.1.1.0/24 via R3" as r3 #FFE0B2
+    card "0.0.0.0/0 via R4" as r4 #ECEFF1
+}
+
+card "Dest: 10.1.1.50" as dest #FFF9C4
+
+dest .[#43A047,thickness=2].> r3 : WINNER /24
+
+legend bottom
+10.1.1.50 matches:
+/24 (24 bits) - SELECTED
+/16 (16 bits) - less specific
+/8 (8 bits) - less specific
+/0 (default) - least specific
+Longest prefix = most specific wins
+endlegend
+@enduml

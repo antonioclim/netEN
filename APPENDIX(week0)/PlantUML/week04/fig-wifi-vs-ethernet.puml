@@ -1,0 +1,29 @@
+@startuml fig-wifi-vs-ethernet
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+title Wi-Fi 802.11 vs Ethernet 802.3
+
+package "Ethernet 802.3" as eth #E3F2FD {
+    card "Dst MAC 6B" as ed
+    card "Src MAC 6B" as es
+    card "Type 2B" as et
+    card "Payload" as ep
+    card "FCS 4B" as ef
+}
+
+package "Wi-Fi 802.11" as wifi #E8F5E9 {
+    card "Frame Ctrl 2B" as wf
+    card "Duration 2B" as wd
+    card "Addr 1-4 (6B each)" as wa
+    card "Seq Ctrl 2B" as ws
+    card "Payload + FCS" as wp
+}
+
+legend bottom
+Ethernet: CSMA/CD, 2 addresses, no ACK
+Wi-Fi: CSMA/CA, 4 addresses, ACK required
+Wi-Fi needs RTS/CTS, cannot detect collision
+endlegend
+@enduml

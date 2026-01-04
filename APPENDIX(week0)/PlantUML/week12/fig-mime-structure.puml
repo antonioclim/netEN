@@ -1,0 +1,21 @@
+@startuml fig-mime-structure
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+title MIME Message Structure
+
+package "Email Message" as email #F5F5F5 {
+    card "Headers\nFrom, To, Subject\nMIME-Version: 1.0\nContent-Type: multipart/mixed" as hdrs #E3F2FD
+    card "Part 1: text/plain" as p1 #E8F5E9
+    card "Part 2: text/html" as p2 #E8F5E9
+    card "Part 3: application/pdf\nattachment" as p3 #FFE0B2
+}
+
+legend bottom
+Content-Types: text/plain, text/html
+image/jpeg, application/pdf, multipart/mixed
+Transfer-Encoding: base64, quoted-printable
+Boundary separates MIME parts
+endlegend
+@enduml

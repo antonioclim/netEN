@@ -1,0 +1,26 @@
+@startuml fig-docker-testing
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title Docker Multi-Client Testing
+
+package "Docker Network: test_net" as net #F5F5F5 {
+    component "Server\n:8080" as srv #E3F2FD
+    component "Client 1" as c1 #C8E6C9
+    component "Client 2" as c2 #C8E6C9
+    component "Client N" as cn #C8E6C9
+    
+    c1 --> srv
+    c2 --> srv
+    cn --> srv
+}
+
+legend bottom
+docker-compose up -d --scale client=5
+docker-compose logs -f server
+docker exec -it client_1 sh
+Services: server + client replicas
+Networks: isolated test environment
+endlegend
+@enduml

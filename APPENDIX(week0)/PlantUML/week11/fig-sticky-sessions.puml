@@ -1,0 +1,26 @@
+@startuml fig-sticky-sessions
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title Session Persistence (Sticky Sessions)
+
+component "Client A" as ca #FFE0B2
+component "Client B" as cb #FFE0B2
+component "Load Balancer" as lb #E3F2FD
+component "Server 1\n(A's session)" as s1 #C8E6C9
+component "Server 2\n(B's session)" as s2 #C8E6C9
+
+ca -d-> lb
+cb -d-> lb
+lb -d-> s1 : Client A always
+lb -d-> s2 : Client B always
+
+legend bottom
+Methods:
+1. Cookie: Set-Cookie: SERVERID=s1
+2. IP Hash: hash(client_ip) % servers
+3. URL param: /app?server=s1
+Nginx: ip_hash; or sticky cookie
+endlegend
+@enduml

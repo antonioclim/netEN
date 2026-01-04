@@ -1,0 +1,24 @@
+@startuml fig-tcp-header
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+left to right direction
+title TCP Header (20-60 bytes)
+
+card "Src Port\n16 bits" as sp #BBDEFB
+card "Dst Port\n16 bits" as dp #BBDEFB
+card "Sequence\n32 bits" as seq #C8E6C9
+card "Ack Number\n32 bits" as ack #C8E6C9
+card "Flags\nSYN ACK FIN RST" as fl #FFF9C4
+card "Window\n16 bits" as win #FFE0B2
+card "Checksum\n16 bits" as cs #FFCDD2
+
+legend bottom
+Sequence: byte position in stream
+Ack: next expected byte
+Window: receiver buffer space
+Flags: SYN=connect, FIN=close, RST=abort
+Common: SYN, SYN-ACK, ACK, FIN-ACK
+endlegend
+@enduml

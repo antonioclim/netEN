@@ -1,0 +1,25 @@
+@startuml fig-arp-protocol
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title ARP Protocol Flow
+
+participant "Host A\n192.168.1.10\nAA:AA" as A
+participant "Switch" as S
+participant "Host B\n192.168.1.20\nBB:BB" as B
+
+A -> S : ARP Request (broadcast)\nWho has 192.168.1.20?
+S -> B : Broadcast
+B -> S : ARP Reply (unicast)\n192.168.1.20 is at BB:BB
+S -> A : Forward
+
+A -> B : IP packet with correct MAC
+
+legend right
+ARP Request: dst ff:ff:ff:ff:ff:ff
+ARP Reply: unicast to requester
+Cache: arp -a, ip neigh show
+Capture: tcpdump arp
+endlegend
+@enduml

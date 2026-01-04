@@ -1,0 +1,26 @@
+@startuml fig-quic-vs-tcp
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+title QUIC vs TCP+TLS
+
+package "TCP + TLS" as tcptls #E3F2FD {
+    card "TCP Handshake\n1 RTT" as tcp_hs #BBDEFB
+    card "TLS Handshake\n1-2 RTT" as tls_hs #BBDEFB
+    card "Total: 2-3 RTT" as tcp_tot #FFCDD2
+}
+
+package "QUIC (HTTP/3)" as quic #E8F5E9 {
+    card "QUIC Handshake\n1 RTT or 0-RTT" as q_hs #C8E6C9
+    card "Total: 1 or 0 RTT" as q_tot #C8E6C9
+}
+
+legend bottom
+TCP: separate layers, HOL blocking
+QUIC: built-in crypto, no HOL block
+QUIC: connection migration (IP change OK)
+QUIC: UDP-based, userspace
+Used by HTTP/3, Google services
+endlegend
+@enduml

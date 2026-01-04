@@ -1,0 +1,24 @@
+@startuml fig-project-presentation
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title Project Presentation Structure (7-10 min)
+
+card "1. Introduction (1 min)\nProject name, technologies, team" as intro #E3F2FD
+card "2. Live Demo (4 min)\nClean start, setup, features, capture" as demo #C8E6C9
+card "3. Architecture (2 min)\nComponents, data flow, design decisions" as arch #FFF3E0
+card "4. Q&A Defence (3 min)\nTechnical questions, lessons learned" as qa #FCE4EC
+
+intro -d-> demo
+demo -d-> arch
+arch -d-> qa
+
+legend bottom
+Checklist:
+README complete
+Demo tested on clean VM
+Backup video recorded
+PCAP files prepared
+endlegend
+@enduml

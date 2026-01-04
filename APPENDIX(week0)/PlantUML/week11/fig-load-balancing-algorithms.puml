@@ -1,0 +1,29 @@
+@startuml fig-load-balancing-algorithms
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+title Load Balancing Algorithms
+
+package "Round Robin" as rr #E3F2FD {
+    card "Req1->A, Req2->B\nReq3->C, Req4->A..." as rr_d
+}
+
+package "Weighted RR" as wrr #E3F2FD {
+    card "A(w=3): 3 reqs\nB(w=1): 1 req" as wrr_d
+}
+
+package "Least Connections" as lc #C8E6C9 {
+    card "Send to server\nwith fewest conns" as lc_d
+}
+
+package "IP Hash" as iph #FFE0B2 {
+    card "hash(client_ip)%N\nSame client->same server" as iph_d
+}
+
+legend bottom
+Nginx: upstream { server s1; server s2; }
+least_conn; ip_hash;
+server s1 weight=3;
+endlegend
+@enduml

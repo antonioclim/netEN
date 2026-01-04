@@ -1,0 +1,28 @@
+@startuml fig-routing-types
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+title Static vs Dynamic Routing
+
+package "Static Routing" as stat #E3F2FD {
+    card "ip route add\n10.0.0.0/24\nvia 192.168.1.1" as scfg #BBDEFB
+}
+
+package "Dynamic Routing" as dyn #E8F5E9 {
+    package "IGP (Interior)" as igp {
+        card "Distance Vector\nRIP, EIGRP" as dv #C8E6C9
+        card "Link State\nOSPF, IS-IS" as ls #C8E6C9
+    }
+    package "EGP (Exterior)" as egp {
+        card "Path Vector\nBGP" as pv #C8E6C9
+    }
+}
+
+legend bottom
+Static: admin defined, no overhead, no failover
+Dynamic: auto-learns, overhead, auto-failover
+Use static for small/stub networks
+Use dynamic for large/redundant networks
+endlegend
+@enduml

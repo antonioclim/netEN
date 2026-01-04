@@ -1,0 +1,32 @@
+@startuml fig-https-encryption
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title HTTPS Encryption Layers
+
+package "Application" as app #FFF9C4 {
+    component "HTTP Request/Response" as http
+}
+
+package "TLS Layer" as tls #E3F2FD {
+    component "Encryption AES-256" as enc
+    component "Authentication Certs" as auth
+    component "Integrity HMAC" as integ
+}
+
+package "TCP Layer" as tcp #E8F5E9 {
+    component "Reliable Transport" as rel
+}
+
+app -d-> tls
+tls -d-> tcp
+
+legend bottom
+TLS provides: confidentiality, authentication, integrity
+Port 443 (HTTPS) vs 80 (HTTP)
+Attacker sees: IP, ports, sizes, timing
+Cannot see: URL path, headers, body
+Note: SNI reveals hostname
+endlegend
+@enduml

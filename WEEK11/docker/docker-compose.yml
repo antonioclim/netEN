@@ -27,6 +27,8 @@ services:
       - "8080:80"
     volumes:
       - ./nginx_compose/nginx.conf:/etc/nginx/nginx.conf:ro
+    # Run as host user to preserve file ownership
+    user: "${UID:-1000}:${GID:-1000}"
     depends_on:
       - web1
       - web2

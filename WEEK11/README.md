@@ -11,6 +11,68 @@
 
 ---
 
+
+## 🚀 Quick Clone & Setup
+
+To clone **only this week's content** directly into `~/WEEK11` and make all scripts executable, run the following commands:
+
+### Option A: One-liner (recommended)
+
+```bash
+cd ~ && git clone --filter=blob:none --sparse https://github.com/antonioclim/netEN.git WEEK11 && cd WEEK11 && git sparse-checkout set WEEK11 && shopt -s dotglob && mv WEEK11/* . && rmdir WEEK11 && find . -type f \( -name "*.sh" -o -name "*.py" \) -exec chmod +x {} \;
+```
+
+### Option B: Step-by-step (for understanding)
+
+```bash
+# 1. Navigate to home directory
+cd ~
+
+# 2. Clone repository with sparse checkout (downloads only metadata initially)
+git clone --filter=blob:none --sparse https://github.com/antonioclim/netEN.git WEEK11
+
+# 3. Enter the cloned directory
+cd WEEK11
+
+# 4. Configure sparse checkout to fetch only WEEK11
+git sparse-checkout set WEEK11
+
+# 5. Move contents up one level (flatten structure)
+shopt -s dotglob
+mv WEEK11/* .
+rmdir WEEK11
+
+# 6. Make all shell scripts and Python files executable
+find . -type f -name "*.sh" -exec chmod +x {} \;
+find . -type f -name "*.py" -exec chmod +x {} \;
+
+# 7. Verify the setup
+ls -la
+ls -la scripts/
+```
+
+### Option C: Without Git history (lightweight)
+
+If you don't need Git history and want the smallest possible download:
+
+```bash
+cd ~ && mkdir -p WEEK11 && cd WEEK11 && curl -L https://github.com/antonioclim/netEN/archive/refs/heads/main.tar.gz | tar -xz --strip-components=2 netEN-main/WEEK11 && find . -type f \( -name "*.sh" -o -name "*.py" \) -exec chmod +x {} \;
+```
+
+### Verify Installation
+
+After cloning, verify that scripts are executable:
+
+```bash
+cd ~/WEEK11
+ls -la scripts/*.sh      # Should show 'x' permission
+file scripts/*.sh        # Should show "shell script"
+./scripts/setup.sh --help 2>/dev/null || head -5 scripts/setup.sh
+```
+
+---
+
+
 ## Overview
 
 ### What We Will Learn
@@ -31,6 +93,7 @@
 The FTP, DNS and SSH protocols represent the operational foundations of the modern Internet. Load balancing and reverse proxies are essential for web application scalability. Understanding these concepts is critical for any programmer working with distributed systems.
 
 ---
+
 
 ## Kit Structure
 
@@ -93,6 +156,7 @@ starterkit/
 
 ---
 
+
 ## System Requirements
 
 ### Recommended Environment
@@ -114,6 +178,7 @@ starterkit/
 | curl | any | `curl --version` |
 
 ---
+
 
 ## Quick Installation
 
@@ -147,6 +212,7 @@ sudo usermod -aG docker $USER
 ```
 
 ---
+
 
 ## Usage Guide
 
@@ -210,6 +276,7 @@ make benchmark-heavy
 
 ---
 
+
 ## Troubleshooting
 
 ### Common Problems
@@ -263,6 +330,7 @@ make verify
 
 ---
 
+
 ## Connection to the Team Project
 
 ### Week 11 Incremental Artefact
@@ -281,6 +349,7 @@ This week's components integrate as follows:
 
 ---
 
+
 ## Additional Resources
 
 ### Official Documentation
@@ -296,5 +365,6 @@ This week's components integrate as follows:
 - Rhodes & Goetzen, "Foundations of Python Network Programming"
 
 ---
+
 
 *Revolvix&Hypotheticalandrei*

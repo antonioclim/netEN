@@ -1,7 +1,0 @@
-# Demo Log - Week 5: IP Addressing
-# Generated: 2026-01-03 21:24:18 UTC
-# Network base: 10.0.5.0/24
-
-[OK] Demo complete
-Log: /tmp/week5_audit_q264rd_9/target/WEEK5/artifacts/demo.log
-Validation: /tmp/week5_audit_q264rd_9/target/WEEK5/artifacts/validation.txt

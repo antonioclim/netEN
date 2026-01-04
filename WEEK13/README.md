@@ -9,6 +9,68 @@
 
 ---
 
+
+## 🚀 Quick Clone & Setup
+
+To clone **only this week's content** directly into `~/WEEK13` and make all scripts executable, run the following commands:
+
+### Option A: One-liner (recommended)
+
+```bash
+cd ~ && git clone --filter=blob:none --sparse https://github.com/antonioclim/netEN.git WEEK13 && cd WEEK13 && git sparse-checkout set WEEK13 && shopt -s dotglob && mv WEEK13/* . && rmdir WEEK13 && find . -type f \( -name "*.sh" -o -name "*.py" \) -exec chmod +x {} \;
+```
+
+### Option B: Step-by-step (for understanding)
+
+```bash
+# 1. Navigate to home directory
+cd ~
+
+# 2. Clone repository with sparse checkout (downloads only metadata initially)
+git clone --filter=blob:none --sparse https://github.com/antonioclim/netEN.git WEEK13
+
+# 3. Enter the cloned directory
+cd WEEK13
+
+# 4. Configure sparse checkout to fetch only WEEK13
+git sparse-checkout set WEEK13
+
+# 5. Move contents up one level (flatten structure)
+shopt -s dotglob
+mv WEEK13/* .
+rmdir WEEK13
+
+# 6. Make all shell scripts and Python files executable
+find . -type f -name "*.sh" -exec chmod +x {} \;
+find . -type f -name "*.py" -exec chmod +x {} \;
+
+# 7. Verify the setup
+ls -la
+ls -la scripts/
+```
+
+### Option C: Without Git history (lightweight)
+
+If you don't need Git history and want the smallest possible download:
+
+```bash
+cd ~ && mkdir -p WEEK13 && cd WEEK13 && curl -L https://github.com/antonioclim/netEN/archive/refs/heads/main.tar.gz | tar -xz --strip-components=2 netEN-main/WEEK13 && find . -type f \( -name "*.sh" -o -name "*.py" \) -exec chmod +x {} \;
+```
+
+### Verify Installation
+
+After cloning, verify that scripts are executable:
+
+```bash
+cd ~/WEEK13
+ls -la scripts/*.sh      # Should show 'x' permission
+file scripts/*.sh        # Should show "shell script"
+./scripts/setup.sh --help 2>/dev/null || head -5 scripts/setup.sh
+```
+
+---
+
+
 ## Pedagogical Vision
 
 This kit integrates **two complementary perspectives on security**:
@@ -19,6 +81,7 @@ This kit integrates **two complementary perspectives on security**:
 This dual approach aims to form a holistic understanding: *you cannot defend what you do not understand how it can be attacked*.
 
 ---
+
 
 ## Kit Structure
 
@@ -89,6 +152,7 @@ starterkit_s13/
 
 ---
 
+
 ## Quickstart (3 minute)
 
 ### Option A: Automatic demo (recommended for quick verification)
@@ -139,6 +203,7 @@ sudo make mininet-base
 
 ---
 
+
 ## Detailed Content
 
 ### Part I: IoT and Protocols (60 min)
@@ -166,6 +231,7 @@ sudo make mininet-base
 | Hardening Measures | 15 min | `docs/teoria/03_defensive_measures.md` |
 
 ---
+
 
 ## Available Makefile Commands
 
@@ -207,6 +273,7 @@ make clean-all          # Reset complet
 
 ---
 
+
 ## Recommended Workflow for Students
 
 ### Pas 1: Environment Preparation (10 min)
@@ -247,6 +314,7 @@ Complete the file `REZULTATE_S13.txt` with:
 
 ---
 
+
 ## System Requirements
 
 ### Minimum
@@ -265,6 +333,7 @@ Complete the file `REZULTATE_S13.txt` with:
 
 ---
 
+
 ## Troubleshooting
 
 | Symptom | Probable Cause | Solution |
@@ -280,6 +349,7 @@ Complete the file `REZULTATE_S13.txt` with:
 
 ---
 
+
 ## Bibliographic References
 
 1. Kurose, J., Ross, K. (2016). *Computer Networking: A Top-Down Approach*, 7th Edition. Pearson.
@@ -289,6 +359,7 @@ Complete the file `REZULTATE_S13.txt` with:
 5. Eclipse Mosquitto Documentation. [https://mosquitto.org/documentation/](https://mosquitto.org/documentation/)
 
 ---
+
 
 ## Assessment and Submission
 
@@ -309,6 +380,7 @@ According to the course syllabus, by the end of the semester the following must 
 
 ---
 
+
 ## Support and Contact
 
 - **Course Platform**: online.ase.ro
@@ -316,5 +388,6 @@ According to the course syllabus, by the end of the semester the following must 
 - **Consultations**: according to the schedule posted on the platform
 
 ---
+
 
 *Last updated: Decembrie 2025*

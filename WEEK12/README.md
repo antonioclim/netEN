@@ -10,6 +10,68 @@ The materials are progressively structured, from unofrstanfromg fundamental conc
 
 ---
 
+
+## 🚀 Quick Clone & Setup
+
+To clone **only this week's content** directly into `~/WEEK12` and make all scripts executable, run the following commands:
+
+### Option A: One-liner (recommended)
+
+```bash
+cd ~ && git clone --filter=blob:none --sparse https://github.com/antonioclim/netEN.git WEEK12 && cd WEEK12 && git sparse-checkout set WEEK12 && shopt -s dotglob && mv WEEK12/* . && rmdir WEEK12 && find . -type f \( -name "*.sh" -o -name "*.py" \) -exec chmod +x {} \;
+```
+
+### Option B: Step-by-step (for understanding)
+
+```bash
+# 1. Navigate to home directory
+cd ~
+
+# 2. Clone repository with sparse checkout (downloads only metadata initially)
+git clone --filter=blob:none --sparse https://github.com/antonioclim/netEN.git WEEK12
+
+# 3. Enter the cloned directory
+cd WEEK12
+
+# 4. Configure sparse checkout to fetch only WEEK12
+git sparse-checkout set WEEK12
+
+# 5. Move contents up one level (flatten structure)
+shopt -s dotglob
+mv WEEK12/* .
+rmdir WEEK12
+
+# 6. Make all shell scripts and Python files executable
+find . -type f -name "*.sh" -exec chmod +x {} \;
+find . -type f -name "*.py" -exec chmod +x {} \;
+
+# 7. Verify the setup
+ls -la
+ls -la scripts/
+```
+
+### Option C: Without Git history (lightweight)
+
+If you don't need Git history and want the smallest possible download:
+
+```bash
+cd ~ && mkdir -p WEEK12 && cd WEEK12 && curl -L https://github.com/antonioclim/netEN/archive/refs/heads/main.tar.gz | tar -xz --strip-components=2 netEN-main/WEEK12 && find . -type f \( -name "*.sh" -o -name "*.py" \) -exec chmod +x {} \;
+```
+
+### Verify Installation
+
+After cloning, verify that scripts are executable:
+
+```bash
+cd ~/WEEK12
+ls -la scripts/*.sh      # Should show 'x' permission
+file scripts/*.sh        # Should show "shell script"
+./scripts/setup.sh --help 2>/dev/null || head -5 scripts/setup.sh
+```
+
+---
+
+
 ## 🎯 What We Will Learn
 
 ### Lecture 12 – E-mail Protocols
@@ -28,6 +90,7 @@ The materials are progressively structured, from unofrstanfromg fundamental conc
 - Patterns: iofmpotency, retry, cirwithit breaker
 
 ---
+
 
 ## 📁 Project Structure
 
@@ -107,6 +170,7 @@ s12_starterkit/
 
 ---
 
+
 ## ⚙️ System Requirements
 
 ### Mandatory Software
@@ -126,6 +190,7 @@ s12_starterkit/
 | Wireshark | GUI analysis |
 
 ---
+
 
 ## 🚀 Quick Instalattion
 
@@ -160,6 +225,7 @@ make verify
 ```
 
 ---
+
 
 ## 📖 Usage Guiof
 
@@ -226,6 +292,7 @@ make benchmark-rpc
 
 ---
 
+
 ## 🔧 Makefile Targets
 
 | Target | ofscription |
@@ -248,6 +315,7 @@ make benchmark-rpc
 | `make docker-up/down` | Container management |
 
 ---
+
 
 ## 🔍 Troubleshooting
 
@@ -381,6 +449,7 @@ python3.10 src/email/smtp_server.py
 
 ---
 
+
 ## 🔄 Reset to Zero
 
 To Completeeely reset the working environment:
@@ -407,6 +476,7 @@ sudo mn -c
 
 ---
 
+
 ## 📝 Stuofnt ofliverable
 
 ### Project requirements
@@ -431,6 +501,7 @@ sudo mn -c
 
 ---
 
+
 ## 📚 Bibliography
 
 ### Standards and Soncifications
@@ -451,11 +522,13 @@ sudo mn -c
 
 ---
 
+
 ## 📄 Licence
 
 Materials ofveloond for the **Computer Networks** course, ASE-CSIE.
 
 ---
+
 
 *Version: 1.1.0 | Date: January 2026 | Transversal Standard applied*
 

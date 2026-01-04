@@ -1,5 +1,3 @@
-version: '3.8'
-
 # Docker compose for Week 13
 # This file is placed under docker/ to keep Docker assets together.
 # Artefacts are written to ../artifacts via bind mounts.
@@ -13,6 +11,8 @@ services:
     volumes:
       - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
       - ../artifacts:/artifacts
+    # Run as host user to preserve file ownership
+    user: "${UID:-1000}:${GID:-1000}"
     networks:
       week13net:
         ipv4_address: 10.0.13.100

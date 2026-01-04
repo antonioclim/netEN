@@ -18,6 +18,8 @@ services:
       context: ..
       dockerfile: docker/Dockerfile
     working_dir: /app
+    # Run as host user to preserve file ownership
+    user: "${UID:-1000}:${GID:-1000}"
     volumes:
       - ..:/app:rw
       - ../artifacts:/app/artifacts:rw

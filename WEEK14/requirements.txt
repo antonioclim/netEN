@@ -1,0 +1,23 @@
+# requirements.txt — Python dependencies for the S14 starter kit
+# Install: pip3 install -r requirements.txt --break-system-packages
+
+# Mininet is installed system-wide (apt install mininet)
+# The packages below are optional and provide extra tooling
+
+# No mandatory external dependencies, we use the standard library only
+# Uncomment as needed
+
+# Optional: advanced JSON validation
+# jsonschema>=4.0.0
+
+# Optional: tests
+# pytest>=7.0.0
+# pytest-cov>=4.0.0
+
+# Optional: code formatting and linting
+# black>=23.0.0
+# isort>=5.0.0
+# flake8>=6.0.0
+
+# Note: all applications in this kit are designed to run with the Python standard library
+# for maximum compatibility with minimal CLI-only VMs

@@ -1,0 +1,88 @@
+{
+  "project_name": "S14 Demo — Recap",
+  "description": "Configuration for validating the S14 project (IP plan: 10.0.14.x)",
+  "targets": [
+    {
+      "name": "load_balancer",
+      "host": "10.0.14.1",
+      "checks": [
+        {
+          "type": "ping",
+          "timeout": 2
+        },
+        {
+          "type": "tcp",
+          "port": 8080,
+          "timeout": 2
+        },
+        {
+          "type": "http",
+          "url": "http://10.0.14.1:8080/",
+          "expected_status": 200
+        },
+        {
+          "type": "http",
+          "url": "http://10.0.14.1:8080/lb-status",
+          "expected_status": 200
+        }
+      ]
+    },
+    {
+      "name": "backend_app1",
+      "host": "10.0.14.100",
+      "checks": [
+        {
+          "type": "ping",
+          "timeout": 2
+        },
+        {
+          "type": "tcp",
+          "port": 8080,
+          "timeout": 2
+        },
+        {
+          "type": "http",
+          "url": "http://10.0.14.100:8080/health",
+          "expected_status": 200
+        }
+      ]
+    },
+    {
+      "name": "backend_app2",
+      "host": "10.0.14.101",
+      "checks": [
+        {
+          "type": "ping",
+          "timeout": 2
+        },
+        {
+          "type": "tcp",
+          "port": 8080,
+          "timeout": 2
+        },
+        {
+          "type": "http",
+          "url": "http://10.0.14.101:8080/health",
+          "expected_status": 200
+        }
+      ]
+    },
+    {
+      "name": "tcp_echo",
+      "host": "10.0.14.100",
+      "checks": [
+        {
+          "type": "tcp",
+          "port": 9090,
+          "timeout": 2
+        }
+      ]
+    }
+  ],
+  "timeouts": {
+    "ping": 2,
+    "tcp": 3,
+    "http": 5
+  },
+  "report_format": "json"
+}

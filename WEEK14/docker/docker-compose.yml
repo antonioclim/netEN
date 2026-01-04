@@ -1,0 +1,199 @@
+# =============================================================================
+# Docker Compose - Network infrastructure simulation
+# Week 14 - Review and Integration
+# =============================================================================
+#
+# This file creates a Docker network with:
+#   - 2 backend servers (app1, app2)
+#   - 1 load balancer (lb)
+#   - 1 client for testing
+#
+# NOTE: This is a simplified ALTERNATIVE to Mininet.
+# It does not reproduce all functionalities (routing, physical switches, etc.)
+# but is useful for rapid testing and development.
+# =============================================================================
+
+version: '3.8'
+
+services:
+  # =========================================================================
+  # Backend Server 1
+  # =========================================================================
+  app1:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: netlab-app1
+    hostname: app1
+    command: python3 /app/python/apps/backend_server.py --port 8001 --id app1
+    networks:
+      backend_net:
+        ipv4_address: 172.20.0.2
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  # =========================================================================
+  # Backend Server 2
+  # =========================================================================
+  app2:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: netlab-app2
+    hostname: app2
+    command: python3 /app/python/apps/backend_server.py --port 8001 --id app2
+    networks:
+      backend_net:
+        ipv4_address: 172.20.0.3
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  # =========================================================================
+  # Load Balancer
+  # =========================================================================
+  lb:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: netlab-lb
+    hostname: lb
+    command: >
+      python3 /app/python/apps/lb_proxy.py
+      --listen-port 8080
+      --backends 172.20.0.2:8001,172.20.0.3:8001
+    ports:
+      - "8080:8080"
+    networks:
+      backend_net:
+        ipv4_address: 172.20.0.10
+      frontend_net:
+        ipv4_address: 172.21.0.10
+    depends_on:
+      app1:
+        condition: service_healthy
+      app2:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/lb-status"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  # =========================================================================
+  # Client for testing
+  # =========================================================================
+  client:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: netlab-client
+    hostname: client
+    stdin_open: true
+    tty: true
+    networks:
+      frontend_net:
+        ipv4_address: 172.21.0.2
+    depends_on:
+      - lb
+    volumes:
+      - ../artifacts:/app/artifacts
+    command: bash
+
+  # =========================================================================
+  # TCP Echo Server (for additional tests)
+  # =========================================================================
+  echo:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: netlab-echo
+    hostname: echo
+    command: python3 /app/python/apps/tcp_echo_server.py --port 9000
+    ports:
+      - "9000:9000"
+    networks:
+      backend_net:
+        ipv4_address: 172.20.0.20
+    restart: unless-stopped
+
+# =============================================================================
+# NETWORKS
+# =============================================================================
+networks:
+  # Backend network (servers + LB)
+  backend_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+          gateway: 172.20.0.1
+  
+  # Frontend network (client + LB)
+  frontend_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.0.0/24
+          gateway: 172.21.0.1
+
+# =============================================================================
+# USAGE
+# =============================================================================
+#
+# Start entire infrastructure:
+#   docker-compose up -d
+#
+# View logs:
+#   docker-compose logs -f
+#   docker-compose logs -f lb
+#
+# Access client container:
+#   docker-compose exec client bash
+#
+# Test from client:
+#   curl http://172.21.0.10:8080/
+#   curl http://172.21.0.10:8080/lb-status
+#
+# Test from host:
+#   curl http://localhost:8080/
+#
+# Shutdown:
+#   docker-compose down
+#
+# Shutdown + delete volumes:
+#   docker-compose down -v
+#
+# Rebuild after code changes:
+#   docker-compose build
+#   docker-compose up -d
+#
+# =============================================================================
+# TOPOLOGY
+# =============================================================================
+#
+#   frontend_net (172.21.0.0/24)
+#   ┌─────────────────────────────────────┐
+#   │                                     │
+#   │  client                  lb         │
+#   │  172.21.0.2              172.21.0.10│
+#   │                          │          │
+#   └──────────────────────────┼──────────┘
+#                              │
+#   backend_net (172.20.0.0/24)│
+#   ┌──────────────────────────┼──────────┐
+#   │                          │          │
+#   │  app1         app2       lb    echo │
+#   │  172.20.0.2   172.20.0.3 172.20.0.10 172.20.0.20
+#   │                                     │
+#   └─────────────────────────────────────┘
+#
+# =============================================================================

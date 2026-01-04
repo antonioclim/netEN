@@ -1,0 +1,23 @@
+# Python Dependencies — Starterkit Week 5
+# ===========================================
+# Most functionality uses the Python standard library.
+# These packages are optional for extended functionalities.
+
+# No external dependencies required!
+# Modules used (ipaddress, argparse, json, dataclasses, socket, math)
+# are part of the Python 3.10+ standard library
+
+# Optional: for development and testing
+# pytest>=7.0.0          # For unit tests (optional)
+# pytest-cov>=4.0.0      # For coverage (optional)
+
+# Optional: for documentation generation
+# mkdocs>=1.4.0          # Markdown documentation (optional)
+# mkdocs-material>=9.0.0 # Material theme (optional)
+
+# Optional: for Jupyter notebooks
+# jupyter>=1.0.0         # Interactive notebooks (optional)
+# matplotlib>=3.6.0      # Visualisations (optional)
+
+# Note: Mininet cannot be installed via pip!
+# Mininet installation: sudo apt-get install mininet

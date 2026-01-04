@@ -1,0 +1,10 @@
+Week 5 Lecture Slides Outline
+
+1. Network layer recap (OSI and TCP/IP)
+2. IPv4 addressing structure and notation
+3. CIDR, masks and common prefixes
+4. Private and special-purpose ranges
+5. Subnetting workflow
+6. VLSM allocation strategy
+7. CLI demonstration using subnet_calc.py
+8. Summary and student deliverable

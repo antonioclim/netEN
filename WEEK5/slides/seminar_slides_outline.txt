@@ -1,0 +1,9 @@
+Week 5 Seminar Slides Outline
+
+1. Objectives and expected outcomes
+2. Mental maths for common CIDR prefixes
+3. Worked example: compute network and broadcast
+4. Group task: design a VLSM plan
+5. Verification with CLI tools
+6. Common mistakes and how to avoid them
+7. What to submit and how it will be marked

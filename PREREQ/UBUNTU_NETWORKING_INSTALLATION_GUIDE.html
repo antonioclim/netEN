@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ubuntu Server 24.04 LTS - Complete Installation Guide for Computer Networks</title>
+    <style>
+        :root {
+            --primary: #e95420;
+            --primary-dark: #c34113;
+            --secondary: #772953;
+            --dark: #2c2c2c;
+            --light: #f7f7f7;
+            --code-bg: #1e1e1e;
+            --code-text: #d4d4d4;
+            --success: #0e8a16;
+            --warning: #e3a500;
+            --info: #0366d6;
+            --border: #d1d5da;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Ubuntu, 'DejaVu Sans', Roboto, Arial, sans-serif;
+            line-height: 1.7;
+            color: var(--dark);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 50px 20px;
+            text-align: center;
+            border-radius: 0 0 30px 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        header h2 {
+            font-size: 1.5rem;
+            font-weight: 400;
+            opacity: 0.95;
+            margin-bottom: 20px;
+        }
+
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .meta-item {
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            font-size: 0.95rem;
+        }
+
+        main {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 40px;
+            margin-bottom: 40px;
+        }
+
+        nav#toc {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 40px;
+            border: 1px solid var(--border);
+        }
+
+        nav#toc h2 {
+            color: var(--secondary);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        nav#toc h2::before {
+            content: "📑";
+        }
+
+        nav#toc ol {
+            list-style: none;
+            counter-reset: toc-counter;
+        }
+
+        nav#toc > ol > li {
+            counter-increment: toc-counter;
+            margin-bottom: 8px;
+        }
+
+        nav#toc > ol > li::before {
+            content: counter(toc-counter) ".";
+            color: var(--primary);
+            font-weight: 700;
+            margin-right: 8px;
+        }
+
+        nav#toc a {
+            color: var(--dark);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        nav#toc a:hover {
+            color: var(--primary);
+            padding-left: 5px;
+        }
+
+        nav#toc ul {
+            list-style: none;
+            margin-left: 25px;
+            margin-top: 5px;
+        }
+
+        nav#toc ul li {
+            margin-bottom: 4px;
+            font-size: 0.95rem;
+        }
+
+        nav#toc ul li::before {
+            content: "▸";
+            color: var(--secondary);
+            margin-right: 8px;
+        }
+
+        section {
+            margin-bottom: 50px;
+            scroll-margin-top: 20px;
+        }
+
+        h2.section-title {
+            color: white;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            padding: 15px 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 15px rgba(233,84,32,0.3);
+        }
+
+        h3 {
+            color: var(--secondary);
+            font-size: 1.3rem;
+            margin: 30px 0 15px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--primary);
+            display: inline-block;
+        }
+
+        h4 {
+            color: var(--dark);
+            font-size: 1.1rem;
+            margin: 20px 0 10px 0;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #fff3cd;
+        }
+
+        pre {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        pre::before {
+            content: attr(data-lang);
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            background: var(--primary);
+            color: white;
+            padding: 2px 10px;
+            border-radius: 5px;
+            font-size: 0.75rem;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        code {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        }
+
+        p code, li code, td code {
+            background: #f1f3f5;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #c92a2a;
+            font-size: 0.9em;
+        }
+
+        .note {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border-left: 5px solid var(--warning);
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .note::before {
+            content: "💡 ";
+            font-size: 1.2em;
+        }
+
+        .warning {
+            background: linear-gradient(135deg, #ffe5e5 0%, #ffc9c9 100%);
+            border-left: 5px solid #c92a2a;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .warning::before {
+            content: "⚠️ ";
+            font-size: 1.2em;
+        }
+
+        .info {
+            background: linear-gradient(135deg, #e7f5ff 0%, #d0ebff 100%);
+            border-left: 5px solid var(--info);
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .config-block {
+            background: #f8f9fa;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            font-family: 'Consolas', monospace;
+            white-space: pre-wrap;
+        }
+
+        ul, ol {
+            margin: 15px 0 15px 25px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .script-block {
+            background: #1a1a2e;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+
+        .script-header {
+            background: linear-gradient(135deg, #16213e 0%, #0f3460 100%);
+            color: #94a3b8;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+        }
+
+        .script-header::before {
+            content: "📜";
+        }
+
+        .script-block pre {
+            margin: 0;
+            border-radius: 0 0 15px 15px;
+        }
+
+        hr {
+            border: none;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--primary), var(--secondary), transparent);
+            margin: 40px 0;
+            border-radius: 2px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: white;
+            font-size: 0.95rem;
+        }
+
+        footer strong {
+            color: #ffd43b;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 80px;
+            background: #495057;
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: background 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: var(--primary);
+        }
+
+        @media (max-width: 768px) {
+            header h1 { font-size: 1.8rem; }
+            header h2 { font-size: 1.2rem; }
+            main { padding: 20px; }
+            pre { font-size: 0.8rem; padding: 15px; }
+            table { font-size: 0.85rem; }
+            th, td { padding: 8px 10px; }
+        }
+
+        .syntax-comment { color: #6a9955; }
+        .syntax-string { color: #ce9178; }
+        .syntax-keyword { color: #569cd6; }
+        .syntax-command { color: #dcdcaa; }
+        .syntax-flag { color: #9cdcfe; }
+        .syntax-var { color: #4ec9b0; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🖧 Complete Installation and Configuration Guide</h1>
+        <h2>Ubuntu Server 24.04 LTS for Computer Networks Seminars</h2>
+        <div class="meta-info">
+            <span class="meta-item">📅 <strong>Document generated:</strong> January 2026</span>
+            <span class="meta-item">🖥️ <strong>Target platform:</strong> Ubuntu Server 24.04 LTS (VirtualBox VM)</span>
+            <span class="meta-item">🎯 <strong>Purpose:</strong> Complete setup for WEEK1–WEEK14</span>
+        </div>
+    </header>
+
+    <div class="container">
+        <main>
+            <!-- Table of Contents -->
+            <nav id="toc">
+                <h2>Table of Contents</h2>
+                <ol>
+                    <li><a href="#section1">Initial VirtualBox Configuration</a>
+                        <ul>
+                            <li><a href="#s1-1">Recommended VM Settings</a></li>
+                            <li><a href="#s1-2">Network Adapter Configuration in VirtualBox</a></li>
+                            <li><a href="#s1-3">Enable Nested Virtualization (Optional)</a></li>
+                            <li><a href="#s1-4">Install VirtualBox Guest Additions (CLI)</a></li>
+                            <li><a href="#s1-5">Configure Port Forwarding for SSH (with NAT)</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#section2">System Update and Essential Packages</a></li>
+                    <li><a href="#section3">Network Tools</a></li>
+                    <li><a href="#section4">Python and Libraries</a></li>
+                    <li><a href="#section5">Docker and Docker Compose</a></li>
+                    <li><a href="#section6">Mininet and Open vSwitch</a></li>
+                    <li><a href="#section7">Wireshark/TShark</a></li>
+                    <li><a href="#section8">Additional Configuration</a></li>
+                    <li><a href="#section9">Transfer and Organise Materials</a></li>
+                    <li><a href="#section10">Verification Script</a></li>
+                    <li><a href="#section11">Troubleshooting</a></li>
+                </ol>
+            </nav>
+
+            <hr>
+
+            <!-- Section 1: VirtualBox Configuration -->
+            <section id="section1">
+                <h2 class="section-title">⚙️ 1. Initial VirtualBox Configuration</h2>
+
+                <h3 id="s1-1">1.1 Recommended VM Settings</h3>
+                <p>Before installing Ubuntu, ensure the VM has the appropriate configuration:</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Minimum Value</th>
+                            <th>Recommended Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>RAM</td><td>2 GB</td><td>4–8 GB</td></tr>
+                        <tr><td>CPU</td><td>2 cores</td><td>4 cores</td></tr>
+                        <tr><td>Disk</td><td>25 GB</td><td>50 GB</td></tr>
+                        <tr><td>Network Adapter 1</td><td>NAT</td><td>NAT (for internet access)</td></tr>
+                        <tr><td>Network Adapter 2</td><td>—</td><td>Host-Only (for access from host)</td></tr>
+                    </tbody>
+                </table>
+
+                <h3 id="s1-2">1.2 Network Adapter Configuration in VirtualBox</h3>
+
+                <div class="config-block">Settings → Network:
+
+Adapter 1:
+  ☑ Enable Network Adapter
+  Attached to: NAT
+  (For internet access from VM)
+
+Adapter 2:
+  ☑ Enable Network Adapter  
+  Attached to: Host-only Adapter
+  Name: vboxnet0 (or create a new one)
+  (For SSH and access from the host machine)</div>
+
+                <p><strong>Creating a Host-Only Network (if it doesn't exist):</strong></p>
+                <div class="config-block">VirtualBox → File → Host Network Manager → Create
+  - IPv4 Address: 192.168.56.1
+  - IPv4 Network Mask: 255.255.255.0
+  - ☑ Enable DHCP Server</div>
+
+                <h3 id="s1-3">1.3 Enable Nested Virtualization (Optional, for advanced Mininet)</h3>
+
+                <div class="warning">
+                    <strong>IMPORTANT NOTE:</strong>
+                    <ul>
+                        <li>Nested virtualization is <strong>optional</strong> — the seminars work without it</li>
+                        <li>The VM must be <strong>powered off</strong> when running the command</li>
+                        <li>Requires CPU with hardware support VT-x (Intel) or AMD-V (AMD)</li>
+                    </ul>
+                </div>
+
+                <h4>On Windows (PowerShell as Administrator)</h4>
+
+                <p><strong>Step 1: Find the exact VM name</strong></p>
+                <p>Open PowerShell as Administrator and run:</p>
+                <pre data-lang="PowerShell"><span class="syntax-comment"># List all existing VMs</span>
+& <span class="syntax-string">"C:\Program Files\Oracle\VirtualBox\VBoxManage.exe"</span> list vms</pre>
+
+                <p>You will see output like:</p>
+                <pre data-lang="Output"><span class="syntax-string">"Ubuntu-Server-24"</span> {a1b2c3d4-e5f6-...}
+<span class="syntax-string">"Windows10-Test"</span> {f7g8h9i0-j1k2-...}</pre>
+
+                <p><strong>Step 2: Enable nested virtualization</strong></p>
+                <p>Use the exact name from the list above:</p>
+                <pre data-lang="PowerShell">& <span class="syntax-string">"C:\Program Files\Oracle\VirtualBox\VBoxManage.exe"</span> modifyvm <span class="syntax-string">"Ubuntu-Server-24"</span> <span class="syntax-flag">--nested-hw-virt on</span></pre>
+
+                <div class="note">
+                    <strong>Why is the full path required?</strong><br>
+                    On Windows, <code>VBoxManage.exe</code> is not automatically added to the PATH environment variable.
+                    You must use the full path: <code>"C:\Program Files\Oracle\VirtualBox\VBoxManage.exe"</code><br>
+                    The <code>&</code> character in PowerShell allows execution of a program with spaces in the path.
+                </div>
+
+                <p><strong>Alternative — Add VirtualBox to PATH (permanent):</strong></p>
+                <pre data-lang="PowerShell"><span class="syntax-comment"># Run once to permanently add to PATH</span>
+[<span class="syntax-var">Environment</span>]::<span class="syntax-command">SetEnvironmentVariable</span>(<span class="syntax-string">"Path"</span>, <span class="syntax-var">$env:Path</span> + <span class="syntax-string">";C:\Program Files\Oracle\VirtualBox"</span>, <span class="syntax-string">"User"</span>)
+<span class="syntax-comment"># Restart PowerShell, then you can use directly:</span>
+VBoxManage list vms</pre>
+
+                <h4>On Linux/macOS</h4>
+                <pre data-lang="Bash"><span class="syntax-comment"># List VMs</span>
+VBoxManage list vms
+
+<span class="syntax-comment"># Enable nested virtualization</span>
+VBoxManage modifyvm <span class="syntax-string">"VMName"</span> <span class="syntax-flag">--nested-hw-virt on</span></pre>
+
+                <h4>Verify Activation</h4>
+                <p>After starting the VM, verify from inside Ubuntu:</p>
+                <pre data-lang="Bash"><span class="syntax-comment"># Check virtualization support</span>
+egrep -c <span class="syntax-string">'(vmx|svm)'</span> /proc/cpuinfo
+<span class="syntax-comment"># Result > 0 means nested virt is working</span></pre>
+
+                <h3 id="s1-4">1.4 Install VirtualBox Guest Additions (CLI)</h3>
+                <p>Guest Additions provide important functionality: shared folders, shared clipboard, dynamic resolution, and improved performance.</p>
+
+                <h4>Method 1: From VirtualBox CD (Recommended — current version)</h4>
+
+                <p><strong>Step 1: Install required dependencies</strong></p>
+                <pre data-lang="Bash"><span class="syntax-keyword">sudo</span> apt update
+<span class="syntax-keyword">sudo</span> apt install build-essential dkms linux-headers-<span class="syntax-var">$(uname -r)</span> <span class="syntax-flag">-y</span></pre>
+
+                <p><strong>Step 2: Mount the Guest Additions CD</strong></p>
+                <p>In the VirtualBox VM window:</p>
+                <div class="config-block">Devices → Insert Guest Additions CD image...</div>
+
+                <p><strong>Step 3: Mount and run the installer</strong></p>
+                <pre data-lang="Bash"><span class="syntax-comment"># Mount the CD</span>
+<span class="syntax-keyword">sudo</span> mount /dev/cdrom /mnt
+
+<span class="syntax-comment"># Run the installer</span>
+<span class="syntax-keyword">sudo</span> /mnt/VBoxLinuxAdditions.run</pre>
+
+                <p><strong>Step 4: Unmount and reboot</strong></p>
+                <pre data-lang="Bash"><span class="syntax-keyword">sudo</span> umount /mnt
+<span class="syntax-keyword">sudo</span> reboot</pre>
+
+                <p><strong>Step 5: Verify installation</strong></p>
+                <pre data-lang="Bash">lsmod | grep vbox
+<span class="syntax-comment"># You should see: vboxguest, vboxsf, vboxvideo</span></pre>
+
+                <h4>Method 2: From Ubuntu Repositories (Simpler, possibly older version)</h4>
+                <pre data-lang="Bash"><span class="syntax-keyword">sudo</span> apt install virtualbox-guest-utils virtualbox-guest-dkms <span class="syntax-flag">-y</span>
+<span class="syntax-keyword">sudo</span> reboot</pre>
+
+                <h4>Troubleshooting Guest Additions</h4>
+
+                <p><strong>Kernel headers error:</strong></p>
+                <pre data-lang="Bash"><span class="syntax-keyword">sudo</span> apt install linux-headers-generic <span class="syntax-flag">-y</span></pre>
+
+                <p><strong>If <code>/dev/cdrom</code> doesn't exist:</strong></p>
+                <pre data-lang="Bash"><span class="syntax-comment"># Check available device</span>
+lsblk
+<span class="syntax-comment"># Usually it's /dev/sr0</span>
+<span class="syntax-keyword">sudo</span> mount /dev/sr0 /mnt</pre>
+
+                <p><strong>Final verification:</strong></p>
+                <pre data-lang="Bash"><span class="syntax-comment"># Check loaded modules</span>
+lsmod | grep vbox
+
+<span class="syntax-comment"># Check Guest Additions version</span>
+VBoxControl <span class="syntax-flag">--version</span></pre>
+
+                <h3 id="s1-5">1.5 Configure Port Forwarding for SSH (with NAT)</h3>
+                <p>When using <strong>NAT</strong> as the network adapter, the guest is not directly accessible from the host. You need to configure <strong>Port Forwarding</strong> to access SSH.</p>
+
+                <h4>Configuration in VirtualBox</h4>
+
+                <p><strong>Step 1:</strong> With the VM stopped or running, open:</p>
+                <div class="config-block">VM Settings → Network → Adapter 1 (NAT) → Advanced → Port Forwarding</div>
+
+                <p><strong>Step 2:</strong> Click the <strong>+</strong> icon (Add new rule) and fill in:</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Protocol</th>
+                            <th>Host IP</th>
+                            <th>Host Port</th>
+                            <th>Guest IP</th>
+                            <th>Guest Port</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>SSH</td>
+                            <td>TCP</td>
+                            <td>127.0.0.1</td>
+                            <td>2222</td>
+                            <td>10.0.2.15</td>
+                            <td>22</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <strong>Note:</strong> You can leave <strong>Guest IP</strong> empty — VirtualBox will forward to any IP in the guest.
+                </div>
+
+                <p><strong>Step 3:</strong> Click <strong>OK</strong> to save.</p>
+
+                <h4>Configure SSH in Ubuntu Guest</h4>
+                <p>Ensure SSH is running in the VM:</p>
+                <pre data-lang="Bash"><span class="syntax-keyword">sudo</span> systemctl enable ssh
+<span class="syntax-keyword">sudo</span> systemctl start ssh
+<span class="syntax-keyword">sudo</span> systemctl status ssh</pre>
+
+                <h4>Connect from Windows</h4>
+
+                <p><strong>Option A: PowerShell / Command Prompt</strong></p>
+                <pre data-lang="PowerShell">ssh username@127.0.0.1 <span class="syntax-flag">-p 2222</span></pre>
+
+                <p><strong>Option B: PuTTY</strong></p>
+                <ul>
+                    <li><strong>Host Name:</strong> <code>127.0.0.1</code></li>
+                    <li><strong>Port:</strong> <code>2222</code></li>
+                    <li><strong>Connection type:</strong> SSH</li>
+                </ul>
+
+                <p><strong>Option C: Windows Terminal</strong></p>
+                <pre data-lang="PowerShell">ssh username@localhost <span class="syntax-flag">-p 2222</span></pre>
+
+                <h4>Connect from Linux/macOS (from host)</h4>
+                <pre data-lang="Bash">ssh username@127.0.0.1 <span class="syntax-flag">-p 2222</span></pre>
+
+                <h4>Additional Port Forwarding (Optional)</h4>
+                <p>To access other services from the VM, add additional rules:</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Protocol</th>
+                            <th>Host Port</th>
+                            <th>Guest Port</th>
+                            <th>Usage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>HTTP</td><td>TCP</td><td>8080</td><td>80</td><td>Web server</td></tr>
+                        <tr><td>HTTPS</td><td>TCP</td><td>8443</td><td>443</td><td>Secure web server</td></tr>
+                        <tr><td>Flask</td><td>TCP</td><td>5000</td><td>5000</td><td>Python Flask applications</td></tr>
+                        <tr><td>Custom</td><td>TCP</td><td>3333</td><td>3333</td><td>Custom protocols (WEEK4)</td></tr>
+                    </tbody>
+                </table>
+
+                <div class="warning">
+                    <strong>Alternative:</strong> If you configured <strong>Adapter 2 as Host-Only</strong> (section 1.2), you can access the VM directly on the 192.168.56.x network IP without port forwarding.
+                </div>
+            </section>
+
+            <hr>
+
+            <!-- Section 2: System Update -->
+            <section id="section2">
+                <h2 class="section-title">🔄 2. System Update and Essential Packages</h2>
+
+                <h3>2.1 First Connection and Update</h3>
+                <p>After installing Ubuntu Server and first login:</p>
+
+                <pre data-lang="Bash"><span class="syntax-comment"># Full system update</span>
+<span class="syntax-keyword">sudo</span> apt update && <span class="syntax-keyword">sudo</span> apt upgrade <span class="syntax-flag">-y</span>
+
+<span class="syntax-comment"># Install essential base packages</span>
+<span class="syntax-keyword">sudo</span> apt install <span class="syntax-flag">-y</span> \
+    build-essential \
+    software-properties-common \
+    apt-transport-https \
+    ca-certificates \
+    gnupg \
+    lsb-release \
+    curl \
+    wget \
+    git \
+    vim \
+    nano \
+    htop \
+    tree \
+    unzip \
+    zip \
+    jq \
+    make \
+    gcc \
+    g++</pre>
+
+                <h3>2.2 Configure Localisation and Timezone</h3>
+                <pre data-lang="Bash"><span class="syntax-comment"># Set timezone to Bucharest</span>
+<span class="syntax-keyword">sudo</span> timedatectl set-timezone Europe/Bucharest
+
+<span class="syntax-comment"># Verify</span>
+timedatectl
+
+<span class="syntax-comment"># Configure locales (optional)</span>
+<span class="syntax-keyword">sudo</span> locale-gen en_GB.UTF-8
+<span class="syntax-keyword">sudo</span> update-locale LANG=en_GB.UTF-8</pre>
+
+                <h3>2.3 Configure SSH for Remote Access</h3>
+                <pre data-lang="Bash"><span class="syntax-comment"># Install OpenSSH Server (if not installed)</span>
+<span class="syntax-keyword">sudo</span> apt install <span class="syntax-flag">-y</span> openssh-server
+
+<span class="syntax-comment"># Start and enable at boot</span>
+<span class="syntax-keyword">sudo</span> systemctl enable <span class="syntax-flag">--now</span> ssh
+
+<span class="syntax-comment"># Check status</span>
+<span class="syntax-keyword">sudo</span> systemctl status ssh
+
+<span class="syntax-comment"># Display IP for connection</span>
+ip addr show</pre>
+            </section>
+
+            <hr>
+
+            <!-- Section 3: Network Tools -->
+            <section id="section3">
+                <h2 class="section-title">🌐 3. Network Tools</h2>
+
+                <h3>3.1 Essential Networking Packages</h3>
+                <pre data-lang="Bash"><span class="syntax-comment"># Basic diagnostics</span>
+<span class="syntax-keyword">sudo</span> apt install <span class="syntax-flag">-y</span> iputils-ping iproute2 net-tools dnsutils traceroute mtr-tiny whois
+
+<span class="syntax-comment"># Connectivity and transfer</span>
+<span class="syntax-keyword">sudo</span> apt install <span class="syntax-flag">-y</span> netcat-openbsd socat curl wget lftp openssh-client
+
+<span class="syntax-comment"># Traffic monitoring</span>
+<span class="syntax-keyword">sudo</span> apt install <span class="syntax-flag">-y</span> tcpdump iftop nethogs nload bmon
+
+<span class="syntax-comment"># Scanning and security</span>
+<span class="syntax-keyword">sudo</span> apt install <span class="syntax-flag">-y</span> nmap hping3 iperf3 arping
+
+<span class="syntax-comment"># Firewall</span>
+<span class="syntax-keyword">sudo</span> apt install <span class="syntax-flag">-y</span> iptables conntrack
+<span class="syntax-keyword">sudo</span> apt install <span class="syntax-flag">-y</span> iptables-persistent  <span class="syntax-comment"># Will prompt for saving rules</span>
+
+<span class="syntax-comment"># Ethernet bridging and VLAN</span>
+<span class="syntax-keyword">sudo</span> apt install <span class="syntax-flag">-y</span> bridge-utils vlan arptables</pre>
+
+                <p>Or all in a single command (without comments):</p>
+                <pre data-lang="Bash"><span class="syntax-keyword">sudo</span> apt install <span class="syntax-flag">-y</span> \
+    iputils-ping iproute2 net-tools dnsutils traceroute mtr-tiny whois \
+    netcat-openbsd socat curl wget lftp openssh-client \
+    tcpdump iftop nethogs nload bmon \
+    nmap hping3 iperf3 arping \
+    iptables iptables-persistent conntrack \
+    bridge-utils vlan arptables</pre>
+
+                <h3>3.2 Configure Permissions for Packet Capture</h3>
+                <pre data-lang="Bash"><span class="syntax-comment"># Allow tcpdump without sudo</span>
+<span class="syntax-keyword">sudo</span> setcap cap_net_raw,cap_net_admin+eip /usr/bin/tcpdump
+
+<span class="syntax-comment"># Verify</span>
+getcap /usr/bin/tcpdump</pre>
+            </section>
+
+            <hr>
+
+            <!-- Section 4: Python -->
+            <section id="section4">
+                <h2 class="section-title">🐍 4. Python and Libraries</h2>
+
+                <h3>4.1 Install Python 3 and Pip</h3>
+                <p>Ubuntu 24.04 comes with Python 3.12. We also install additional components:</p>
+                <pre data-lang="Bash"><span class="syntax-keyword">sudo</span> apt install <span class="syntax-flag">-y</span> \
+    python3 \
+    python3-pip \
+    python3-venv \
+    python3-dev \
+    python3-setuptools \
+    python3-wheel</pre>
+
+                <h3>4.2 Python Libraries for WEEK1–WEEK14 Seminars</h3>
+
+                <pre data-lang="Bash"><span class="syntax-comment"># Required flags in Ubuntu 24.04:</span>
+<span class="syntax-comment">#   --break-system-packages  = allows installation in the system environment</span>
+<span class="syntax-comment">#   --ignore-installed       = avoids conflicts with packages installed by apt/debian</span>
+<span class="syntax-comment">#</span>
+<span class="syntax-comment"># The warning about "Running pip as root" can be ignored in the context of a lab VM</span>
+
+<span class="syntax-comment"># Packet manipulation and sniffing (WEEK1, WEEK3, WEEK6, WEEK7, WEEK13)</span>
+<span class="syntax-keyword">sudo</span> pip3 install <span class="syntax-flag">--break-system-packages --ignore-installed</span> scapy
+
+<span class="syntax-comment"># Pcap parsing (WEEK1, WEEK2)</span>
+<span class="syntax-keyword">sudo</span> pip3 install <span class="syntax-flag">--break-system-packages --ignore-installed</span> dpkt pyshark
+
+<span class="syntax-comment"># Network interface information (WEEK2)</span>
+<span class="syntax-keyword">sudo</span> pip3 install <span class="syntax-flag">--break-system-packages --ignore-installed</span> netifaces
+
+<span class="syntax-comment"># HTTP and REST API (WEEK8, WEEK10)</span>
+<span class="syntax-keyword">sudo</span> pip3 install <span class="syntax-flag">--break-system-packages --ignore-installed</span> flask requests
+
+<span class="syntax-comment"># DNS (WEEK10, WEEK11, WEEK12)</span>
+<span class="syntax-keyword">sudo</span> pip3 install <span class="syntax-flag">--break-system-packages --ignore-installed</span> dnslib dnspython
+
+<span class="syntax-comment"># SSH and SFTP (WEEK10, WEEK11)</span>
+<span class="syntax-keyword">sudo</span> pip3 install <span class="syntax-flag">--break-system-packages --ignore-installed</span> paramiko
+
+<span class="syntax-comment"># FTP Server (WEEK9, WEEK10, WEEK11)</span>
+<span class="syntax-keyword">sudo</span> pip3 install <span class="syntax-flag">--break-system-packages --ignore-installed</span> pyftpdlib
+
+<span class="syntax-comment"># MQTT for IoT (WEEK13)</span>
+<span class="syntax-keyword">sudo</span> pip3 install <span class="syntax-flag">--break-system-packages --ignore-installed</span> paho-mqtt
+
+<span class="syntax-comment"># gRPC for advanced RPC (WEEK12)</span>
+<span class="syntax-keyword">sudo</span> pip3 install <span class="syntax-flag">--break-system-packages --ignore-installed</span> grpcio grpcio-tools protobuf
+
+<span class="syntax-comment"># Utilities</span>
+<span class="syntax-keyword">sudo</span> pip3 install <span class="syntax-flag">--break-system-packages --ignore-installed</span> pyyaml colorama colorlog tabulate psutil
+
+<span class="syntax-comment"># SDN Controller (WEEK6)</span>
+<span class="syntax-keyword">sudo</span> pip3 install <span class="syntax-flag">--break-system-packages --ignore-installed</span> os-ken
+
+<span class="syntax-comment"># Documentation (optional)</span>
+<span class="syntax-keyword">sudo</span> pip3 install <span class="syntax-flag">--break-system-packages --ignore-installed</span> python-docx</pre>
+
+                <p>Or all in a single command:</p>
+                <pre data-lang="Bash"><span class="syntax-keyword">sudo</span> pip3 install <span class="syntax-flag">--break-system-packages --ignore-installed</span> \
+    scapy dpkt pyshark netifaces \
+    flask requests \
+    dnslib dnspython \
+    paramiko pyftpdlib \
+    paho-mqtt \
+    grpcio grpcio-tools protobuf \
+    pyyaml colorama colorlog tabulate psutil \
+    os-ken python-docx</pre>
+
+                <div class="note">
+                    <strong>Note:</strong> The <code>--ignore-installed</code> flag resolves errors like <code>Cannot uninstall X, RECORD file not found</code> that occur when pip tries to update packages installed by the operating system (apt/debian).
+                </div>
+
+                <h3>4.3 Verify Python Installation</h3>
+                <pre data-lang="Bash"><span class="syntax-comment"># Check versions</span>
+python3 <span class="syntax-flag">--version</span>
+pip3 <span class="syntax-flag">--version</span>
+
+<span class="syntax-comment"># Test import of essential libraries</span>
+python3 -c <span class="syntax-string">"
+import scapy.all
+import socket
+import ipaddress
+import struct
+import threading
+import scapy
+print('✓ All standard modules are working')
+print(f'  Scapy version: {scapy.VERSION}')
+"</span></pre>
+
+                <p>Quick verification for all installed libraries:</p>
+                <pre data-lang="Bash">python3 -c <span class="syntax-string">"
+libs = ['scapy', 'dpkt', 'flask', 'requests', 'dns', 'paramiko', 'pyftpdlib', 'paho', 'grpc', 'colorama']
+for lib in libs:
+    try:
+        __import__(lib)
+        print(f'✓ {lib}')
+    except ImportError:
+        print(f'✗ {lib} - MISSING')
+"</span></pre>
+            </section>
+
+            <hr>
+
+            <!-- Section 5: Docker -->
+            <section id="section5">
+                <h2 class="section-title">🐳 5. Docker and Docker Compose</h2>
+
+                <h3>5.1 Install Docker Engine</h3>
+                <pre data-lang="Bash"><span class="syntax-comment"># Remove old versions (if they exist)</span>
+<span class="syntax-keyword">sudo</span> apt remove <span class="syntax-flag">-y</span> docker docker-engine docker.io containerd runc 2>/dev/null || true
+
+<span class="syntax-comment"># Add official Docker repository</span>
+<span class="syntax-keyword">sudo</span> install <span class="syntax-flag">-m 0755 -d</span> /etc/apt/keyrings
+curl <span class="syntax-flag">-fsSL</span> https://download.docker.com/linux/ubuntu/gpg | <span class="syntax-keyword">sudo</span> gpg <span class="syntax-flag">--dearmor</span> -o /etc/apt/keyrings/docker.gpg
+<span class="syntax-keyword">sudo</span> chmod a+r /etc/apt/keyrings/docker.gpg
+
+echo \
+  <span class="syntax-string">"deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable"</span> | \
+  <span class="syntax-keyword">sudo</span> tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+<span class="syntax-comment"># Install Docker</span>
+<span class="syntax-keyword">sudo</span> apt update
+<span class="syntax-keyword">sudo</span> apt install <span class="syntax-flag">-y</span> docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+<span class="syntax-comment"># Verify installation</span>
+<span class="syntax-keyword">sudo</span> docker <span class="syntax-flag">--version</span>
+<span class="syntax-keyword">sudo</span> docker compose version</pre>
+
+                <h3>5.2 Configure Docker for Non-Root User</h3>
+                <pre data-lang="Bash"><span class="syntax-comment"># Add current user to docker group</span>
+<span class="syntax-keyword">sudo</span> usermod <span class="syntax-flag">-aG</span> docker <span class="syntax-var">$USER</span>
+
+<span class="syntax-comment"># Apply changes (or re-login)</span>
+newgrp docker
+
+<span class="syntax-comment"># Verify (should work without sudo)</span>
+docker run hello-world</pre>
+
+                <h3>5.3 Configure Docker for Automatic Startup</h3>
+                <pre data-lang="Bash"><span class="syntax-comment"># Enable at boot</span>
+<span class="syntax-keyword">sudo</span> systemctl enable docker
+<span class="syntax-keyword">sudo</span> systemctl enable containerd
+
+<span class="syntax-comment"># Check status</span>
+<span class="syntax-keyword">sudo</span> systemctl status docker</pre>
+            </section>
+
+            <hr>
+
+            <!-- Section 6: Mininet -->
+            <section id="section6">
+                <h2 class="section-title">🔀 6. Mininet and Open vSwitch</h2>
+
+                <h3>6.1 Install Mininet</h3>
+                <pre data-lang="Bash"><span class="syntax-comment"># Install Mininet from official Ubuntu repository</span>
+<span class="syntax-keyword">sudo</span> apt install <span class="syntax-flag">-y</span> mininet
+
+<span class="syntax-comment"># Install Open vSwitch (required for Mininet)</span>
+<span class="syntax-keyword">sudo</span> apt install <span class="syntax-flag">-y</span> \
+    openvswitch-switch \
+    openvswitch-common \
+    openvswitch-testcontroller</pre>
+
+                <h3>6.2 Configure and Start Open vSwitch</h3>
+                <pre data-lang="Bash"><span class="syntax-comment"># Start OVS service</span>
+<span class="syntax-keyword">sudo</span> systemctl enable <span class="syntax-flag">--now</span> openvswitch-switch
+
+<span class="syntax-comment"># Check status</span>
+<span class="syntax-keyword">sudo</span> systemctl status openvswitch-switch
+
+<span class="syntax-comment"># Check OVS version</span>
+<span class="syntax-keyword">sudo</span> ovs-vsctl <span class="syntax-flag">--version</span></pre>
+
+                <h3>6.3 Test Mininet</h3>
+                <pre data-lang="Bash"><span class="syntax-comment"># Quick test (requires sudo)</span>
+<span class="syntax-keyword">sudo</span> mn <span class="syntax-flag">--test</span> pingall
+
+<span class="syntax-comment"># Extended test with custom topology</span>
+<span class="syntax-keyword">sudo</span> mn <span class="syntax-flag">--topo</span> tree,depth=2,fanout=2 <span class="syntax-flag">--test</span> pingall
+
+<span class="syntax-comment"># Cleanup after tests</span>
+<span class="syntax-keyword">sudo</span> mn <span class="syntax-flag">-c</span></pre>
+
+                <h3>6.4 Install Additional SDN Controller (Optional)</h3>
+                <pre data-lang="Bash"><span class="syntax-comment"># Os-ken (modern fork of Ryu) - already installed via pip</span>
+<span class="syntax-comment"># Verify</span>
+python3 -c <span class="syntax-string">"import os_ken; print(f'OS-Ken version: {os_ken.__version__}')"</span></pre>
+            </section>
+
+            <hr>
+
+            <!-- Section 7: Wireshark -->
+            <section id="section7">
+                <h2 class="section-title">🦈 7. Wireshark/TShark</h2>
+
+                <h3>7.1 Install Wireshark and TShark</h3>
+                <pre data-lang="Bash"><span class="syntax-comment"># Install (TShark for CLI, Wireshark for GUI if you have X11)</span>
+<span class="syntax-keyword">sudo</span> apt install <span class="syntax-flag">-y</span> tshark wireshark-common
+
+<span class="syntax-comment"># During installation, select "Yes" to allow</span>
+<span class="syntax-comment"># non-root users to capture packets</span></pre>
+
+                <h3>7.2 Configure Wireshark Permissions</h3>
+                <pre data-lang="Bash"><span class="syntax-comment"># Add user to wireshark group</span>
+<span class="syntax-keyword">sudo</span> usermod <span class="syntax-flag">-aG</span> wireshark <span class="syntax-var">$USER</span>
+
+<span class="syntax-comment"># Configure capabilities for dumpcap</span>
+<span class="syntax-keyword">sudo</span> setcap cap_net_raw,cap_net_admin+eip /usr/bin/dumpcap
+
+<span class="syntax-comment"># Verify</span>
+getcap /usr/bin/dumpcap
+
+<span class="syntax-comment"># Re-login or:</span>
+newgrp wireshark</pre>
+
+                <h3>7.3 Verify TShark</h3>
+                <pre data-lang="Bash"><span class="syntax-comment"># Check version</span>
+tshark <span class="syntax-flag">--version</span> | head -3
+
+<span class="syntax-comment"># Test capture (stop with Ctrl+C)</span>
+<span class="syntax-keyword">sudo</span> tshark <span class="syntax-flag">-i any -c 10</span></pre>
+            </section>
+
+            <hr>
+
+            <!-- Section 8: Additional Configuration -->
+            <section id="section8">
+                <h2 class="section-title">🔧 8. Additional Configuration</h2>
+
+                <h3>8.1 Configure IP Forwarding (for NAT/Routing)</h3>
+                <pre data-lang="Bash"><span class="syntax-comment"># Temporary activation</span>
+<span class="syntax-keyword">sudo</span> sysctl <span class="syntax-flag">-w</span> net.ipv4.ip_forward=1
+<span class="syntax-keyword">sudo</span> sysctl <span class="syntax-flag">-w</span> net.ipv6.conf.all.forwarding=1
+
+<span class="syntax-comment"># Permanent activation</span>
+echo <span class="syntax-string">"net.ipv4.ip_forward=1"</span> | <span class="syntax-keyword">sudo</span> tee -a /etc/sysctl.d/99-networking.conf
+echo <span class="syntax-string">"net.ipv6.conf.all.forwarding=1"</span> | <span class="syntax-keyword">sudo</span> tee -a /etc/sysctl.d/99-networking.conf
+<span class="syntax-keyword">sudo</span> sysctl <span class="syntax-flag">--system</span></pre>
+
+                <h3>8.2 Disable Systemd-Resolved (Optional, for custom DNS)</h3>
+                <pre data-lang="Bash"><span class="syntax-comment"># Only if you have conflicts with local DNS server (port 53)</span>
+<span class="syntax-comment"># sudo systemctl disable systemd-resolved</span>
+<span class="syntax-comment"># sudo systemctl stop systemd-resolved</span>
+<span class="syntax-comment"># sudo rm /etc/resolv.conf</span>
+<span class="syntax-comment"># echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf</span></pre>
+
+                <h3>8.3 Configure UFW Firewall</h3>
+                <pre data-lang="Bash"><span class="syntax-comment"># Install and basic configuration</span>
+<span class="syntax-keyword">sudo</span> apt install <span class="syntax-flag">-y</span> ufw
+
+<span class="syntax-comment"># Allow SSH (important!)</span>
+<span class="syntax-keyword">sudo</span> ufw allow ssh
+
+<span class="syntax-comment"># Allow common ports for labs</span>
+<span class="syntax-keyword">sudo</span> ufw allow 8080/tcp  <span class="syntax-comment"># Alternative HTTP</span>
+<span class="syntax-keyword">sudo</span> ufw allow 3333/tcp  <span class="syntax-comment"># Custom protocols</span>
+<span class="syntax-keyword">sudo</span> ufw allow 4444/tcp  <span class="syntax-comment"># Custom protocols</span>
+<span class="syntax-keyword">sudo</span> ufw allow 5555/udp  <span class="syntax-comment"># UDP sensors</span>
+<span class="syntax-keyword">sudo</span> ufw allow 1025/tcp  <span class="syntax-comment"># Educational SMTP</span>
+<span class="syntax-keyword">sudo</span> ufw allow 2121/tcp  <span class="syntax-comment"># Alternative FTP</span>
+
+<span class="syntax-comment"># Enable (caution - make sure SSH is allowed!)</span>
+<span class="syntax-comment"># sudo ufw enable</span></pre>
+
+                <h3>8.4 Create Directory Structure</h3>
+                <pre data-lang="Bash"><span class="syntax-comment"># Create working directories</span>
+mkdir <span class="syntax-flag">-p</span> ~/networking/{seminars,pcap,logs,scripts,docs}
+
+<span class="syntax-comment"># Set permissions</span>
+chmod 755 ~/networking</pre>
+
+                <h3>8.5 Configure Git (Optional)</h3>
+                <pre data-lang="Bash">git config <span class="syntax-flag">--global</span> user.name <span class="syntax-string">"Your Name"</span>
+git config <span class="syntax-flag">--global</span> user.email <span class="syntax-string">"email@example.com"</span>
+git config <span class="syntax-flag">--global</span> init.defaultBranch main</pre>
+
+                <h3>8.6 Useful Aliases (Optional)</h3>
+                <pre data-lang="Bash"><span class="syntax-comment"># Add to ~/.bashrc</span>
+cat >> ~/.bashrc << <span class="syntax-string">'EOF'</span>
+
+<span class="syntax-comment"># === Networking Lab Aliases ===</span>
+<span class="syntax-keyword">alias</span> ll=<span class="syntax-string">'ls -alF'</span>
+<span class="syntax-keyword">alias</span> la=<span class="syntax-string">'ls -A'</span>
+<span class="syntax-keyword">alias</span> l=<span class="syntax-string">'ls -CF'</span>
+
+<span class="syntax-comment"># Docker</span>
+<span class="syntax-keyword">alias</span> dc=<span class="syntax-string">'docker compose'</span>
+<span class="syntax-keyword">alias</span> dps=<span class="syntax-string">'docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"'</span>
+<span class="syntax-keyword">alias</span> dlog=<span class="syntax-string">'docker logs -f'</span>
+
+<span class="syntax-comment"># Mininet</span>
+<span class="syntax-keyword">alias</span> mnc=<span class="syntax-string">'sudo mn -c'</span>  <span class="syntax-comment"># Cleanup</span>
+<span class="syntax-keyword">alias</span> mnt=<span class="syntax-string">'sudo mn --test pingall'</span>
+
+<span class="syntax-comment"># Network</span>
+<span class="syntax-keyword">alias</span> ports=<span class="syntax-string">'sudo netstat -tulpn'</span>
+<span class="syntax-keyword">alias</span> myip=<span class="syntax-string">'ip -4 addr show | grep -oP "(?<=inet\s)\d+(\.\d+){3}" | grep -v 127.0.0.1'</span>
+
+<span class="syntax-comment"># Python</span>
+<span class="syntax-keyword">alias</span> py=<span class="syntax-string">'python3'</span>
+<span class="syntax-keyword">alias</span> pip=<span class="syntax-string">'pip3'</span>
+
+<span class="syntax-comment"># Capture</span>
+<span class="syntax-keyword">alias</span> tcap=<span class="syntax-string">'sudo tcpdump -i any -nn'</span>
+<span class="syntax-keyword">alias</span> tcapw=<span class="syntax-string">'sudo tcpdump -i any -w'</span>
+EOF
+
+<span class="syntax-comment"># Apply</span>
+source ~/.bashrc</pre>
+            </section>
+
+            <hr>
+
+            <!-- Section 9: Transfer Materials -->
+            <section id="section9">
+                <h2 class="section-title">📦 9. Transfer and Organise Materials</h2>
+
+                <h3>9.1 Options for Transferring WEEK1-14.zip Archive</h3>
+
+                <p><strong>Option A: SCP from host machine</strong></p>
+                <pre data-lang="Bash"><span class="syntax-comment"># From the host machine terminal (Windows/Linux/macOS)</span>
+scp WEEK1-14.zip username@VM_IP:~/networking/seminars/</pre>
+
+                <p><strong>Option B: VirtualBox Shared Folder</strong></p>
+                <pre data-lang="Bash"><span class="syntax-comment"># 1. In VirtualBox: Settings → Shared Folders → Add</span>
+<span class="syntax-comment">#    - Folder Path: path to folder with archive</span>
+<span class="syntax-comment">#    - Folder Name: shared</span>
+<span class="syntax-comment">#    - ☑ Auto-mount</span>
+
+<span class="syntax-comment"># 2. In VM:</span>
+<span class="syntax-keyword">sudo</span> apt install <span class="syntax-flag">-y</span> virtualbox-guest-utils virtualbox-guest-additions-iso
+<span class="syntax-keyword">sudo</span> usermod <span class="syntax-flag">-aG</span> vboxsf <span class="syntax-var">$USER</span>
+<span class="syntax-comment"># Reboot required</span>
+
+<span class="syntax-comment"># 3. Copy the file</span>
+cp /media/sf_shared/WEEK1-14.zip ~/networking/seminars/</pre>
+
+                <p><strong>Option C: wget/curl (if you have a URL)</strong></p>
+                <pre data-lang="Bash">cd ~/networking/seminars
+wget <span class="syntax-string">"ARCHIVE_URL"</span> -O WEEK1-14.zip
+<span class="syntax-comment"># or</span>
+curl <span class="syntax-flag">-L</span> <span class="syntax-string">"ARCHIVE_URL"</span> -o WEEK1-14.zip</pre>
+
+                <h3>9.2 Extract and Organise</h3>
+                <pre data-lang="Bash">cd ~/networking/seminars
+
+<span class="syntax-comment"># Extract</span>
+unzip WEEK1-14.zip
+
+<span class="syntax-comment"># Check structure</span>
+tree <span class="syntax-flag">-L 2</span> WEEK*
+
+<span class="syntax-comment"># Set permissions for scripts</span>
+find . -name <span class="syntax-string">"*.sh"</span> -exec chmod +x {} \;
+find . -name <span class="syntax-string">"*.py"</span> -exec chmod +x {} \;</pre>
+            </section>
+
+            <hr>
+
+            <!-- Section 10: Verification Script -->
+            <section id="section10">
+                <h2 class="section-title">✅ 10. Verification Script</h2>
+
+                <p>Create a script to verify the complete installation:</p>
+
+                <div class="script-block">
+                    <div class="script-header">verify_installation.sh</div>
+                    <pre data-lang="Bash">cat > ~/networking/scripts/verify_installation.sh << <span class="syntax-string">'SCRIPT'</span>
+<span class="syntax-comment">#!/bin/bash</span>
+<span class="syntax-comment"># =============================================================================</span>
+<span class="syntax-comment"># Installation Verification Script - Networking Lab Ubuntu 24.04</span>
+<span class="syntax-comment"># =============================================================================</span>
+
+<span class="syntax-var">RED</span>=<span class="syntax-string">'\033[0;31m'</span>
+<span class="syntax-var">GREEN</span>=<span class="syntax-string">'\033[0;32m'</span>
+<span class="syntax-var">YELLOW</span>=<span class="syntax-string">'\033[1;33m'</span>
+<span class="syntax-var">NC</span>=<span class="syntax-string">'\033[0m'</span> <span class="syntax-comment"># No Color</span>
+
+echo <span class="syntax-string">"╔══════════════════════════════════════════════════════════════╗"</span>
+echo <span class="syntax-string">"║     INSTALLATION VERIFICATION - NETWORKING LAB UBUNTU 24.04  ║"</span>
+echo <span class="syntax-string">"╚══════════════════════════════════════════════════════════════╝"</span>
+echo <span class="syntax-string">""</span>
+
+<span class="syntax-command">check</span>() {
+    <span class="syntax-keyword">if</span> $1 &>/dev/null; <span class="syntax-keyword">then</span>
+        echo -e <span class="syntax-string">"${GREEN}✓${NC} $2"</span>
+        <span class="syntax-keyword">return</span> 0
+    <span class="syntax-keyword">else</span>
+        echo -e <span class="syntax-string">"${RED}✗${NC} $2"</span>
+        <span class="syntax-keyword">return</span> 1
+    <span class="syntax-keyword">fi</span>
+}
+
+<span class="syntax-command">check_version</span>() {
+    <span class="syntax-var">version</span>=$($1 2>&1 | head -1)
+    echo -e <span class="syntax-string">"${GREEN}✓${NC} $2: ${YELLOW}$version${NC}"</span>
+}
+
+<span class="syntax-var">ERRORS</span>=0
+
+echo <span class="syntax-string">"═══ SYSTEM ═══"</span>
+check_version <span class="syntax-string">"cat /etc/os-release | grep PRETTY_NAME | cut -d'\"' -f2"</span> <span class="syntax-string">"OS"</span>
+check_version <span class="syntax-string">"uname -r"</span> <span class="syntax-string">"Kernel"</span>
+
+echo <span class="syntax-string">""</span>
+echo <span class="syntax-string">"═══ PYTHON ═══"</span>
+check <span class="syntax-string">"python3 --version"</span> <span class="syntax-string">"Python3"</span> || ((<span class="syntax-var">ERRORS</span>++))
+check <span class="syntax-string">"pip3 --version"</span> <span class="syntax-string">"Pip3"</span> || ((<span class="syntax-var">ERRORS</span>++))
+
+echo <span class="syntax-string">""</span>
+echo <span class="syntax-string">"═══ PYTHON LIBRARIES ═══"</span>
+<span class="syntax-keyword">for</span> lib <span class="syntax-keyword">in</span> scapy dpkt flask requests dnslib dnspython paramiko pyftpdlib paho grpc colorama; <span class="syntax-keyword">do</span>
+    check <span class="syntax-string">"python3 -c 'import $lib'"</span> <span class="syntax-string">"$lib"</span> || ((<span class="syntax-var">ERRORS</span>++))
+<span class="syntax-keyword">done</span>
+
+echo <span class="syntax-string">""</span>
+echo <span class="syntax-string">"═══ DOCKER ═══"</span>
+check <span class="syntax-string">"docker --version"</span> <span class="syntax-string">"Docker Engine"</span> || ((<span class="syntax-var">ERRORS</span>++))
+check <span class="syntax-string">"docker compose version"</span> <span class="syntax-string">"Docker Compose"</span> || ((<span class="syntax-var">ERRORS</span>++))
+check <span class="syntax-string">"docker ps"</span> <span class="syntax-string">"Docker daemon running"</span> || ((<span class="syntax-var">ERRORS</span>++))
+
+echo <span class="syntax-string">""</span>
+echo <span class="syntax-string">"═══ MININET & OVS ═══"</span>
+check <span class="syntax-string">"which mn"</span> <span class="syntax-string">"Mininet"</span> || ((<span class="syntax-var">ERRORS</span>++))
+check <span class="syntax-string">"sudo ovs-vsctl --version"</span> <span class="syntax-string">"Open vSwitch"</span> || ((<span class="syntax-var">ERRORS</span>++))
+check <span class="syntax-string">"systemctl is-active openvswitch-switch"</span> <span class="syntax-string">"OVS Service"</span> || ((<span class="syntax-var">ERRORS</span>++))
+
+echo <span class="syntax-string">""</span>
+echo <span class="syntax-string">"═══ NETWORK TOOLS ═══"</span>
+<span class="syntax-keyword">for</span> tool <span class="syntax-keyword">in</span> tcpdump tshark nmap hping3 iperf3 netcat curl wget traceroute; <span class="syntax-keyword">do</span>
+    check <span class="syntax-string">"which $tool"</span> <span class="syntax-string">"$tool"</span> || ((<span class="syntax-var">ERRORS</span>++))
+<span class="syntax-keyword">done</span>
+
+echo <span class="syntax-string">""</span>
+echo <span class="syntax-string">"═══ PERMISSIONS ═══"</span>
+check <span class="syntax-string">"groups | grep -q docker"</span> <span class="syntax-string">"User in docker group"</span> || ((<span class="syntax-var">ERRORS</span>++))
+check <span class="syntax-string">"groups | grep -q wireshark"</span> <span class="syntax-string">"User in wireshark group"</span> || ((<span class="syntax-var">ERRORS</span>++))
+
+echo <span class="syntax-string">""</span>
+echo <span class="syntax-string">"═══ SERVICES ═══"</span>
+check <span class="syntax-string">"systemctl is-active ssh"</span> <span class="syntax-string">"SSH"</span> || ((<span class="syntax-var">ERRORS</span>++))
+check <span class="syntax-string">"systemctl is-active docker"</span> <span class="syntax-string">"Docker"</span> || ((<span class="syntax-var">ERRORS</span>++))
+check <span class="syntax-string">"systemctl is-active openvswitch-switch"</span> <span class="syntax-string">"OVS"</span> || ((<span class="syntax-var">ERRORS</span>++))
+
+echo <span class="syntax-string">""</span>
+echo <span class="syntax-string">"═══ NETWORK ═══"</span>
+echo <span class="syntax-string">"Network interfaces:"</span>
+ip -br addr show
+
+echo <span class="syntax-string">""</span>
+<span class="syntax-keyword">if</span> [ <span class="syntax-var">$ERRORS</span> -eq 0 ]; <span class="syntax-keyword">then</span>
+    echo -e <span class="syntax-string">"${GREEN}╔══════════════════════════════════════════════════════════════╗${NC}"</span>
+    echo -e <span class="syntax-string">"${GREEN}║  ALL VERIFICATIONS PASSED SUCCESSFULLY!                      ║${NC}"</span>
+    echo -e <span class="syntax-string">"${GREEN}╚══════════════════════════════════════════════════════════════╝${NC}"</span>
+<span class="syntax-keyword">else</span>
+    echo -e <span class="syntax-string">"${RED}╔══════════════════════════════════════════════════════════════╗${NC}"</span>
+    echo -e <span class="syntax-string">"${RED}║  $ERRORS ERRORS DETECTED - CHECK INSTALLATION!                  ║${NC}"</span>
+    echo -e <span class="syntax-string">"${RED}╚══════════════════════════════════════════════════════════════╝${NC}"</span>
+<span class="syntax-keyword">fi</span>
+
+exit <span class="syntax-var">$ERRORS</span>
+SCRIPT
+
+chmod +x ~/networking/scripts/verify_installation.sh</pre>
+                </div>
+
+                <p><strong>Run verification:</strong></p>
+                <pre data-lang="Bash">~/networking/scripts/verify_installation.sh</pre>
+            </section>
+
+            <hr>
+
+            <!-- Section 11: Troubleshooting -->
+            <section id="section11">
+                <h2 class="section-title">🔧 11. Troubleshooting</h2>
+
+                <h3>11.1 Common Problems and Solutions</h3>
+
+                <h4>Docker: "permission denied"</h4>
+                <pre data-lang="Bash"><span class="syntax-comment"># Cause: User is not in the docker group</span>
+<span class="syntax-keyword">sudo</span> usermod <span class="syntax-flag">-aG</span> docker <span class="syntax-var">$USER</span>
+<span class="syntax-comment"># Then logout/login or:</span>
+newgrp docker</pre>
+
+                <h4>Mininet: "Cannot find required executable..."</h4>
+                <pre data-lang="Bash"><span class="syntax-comment"># Cause: OVS is not running</span>
+<span class="syntax-keyword">sudo</span> systemctl start openvswitch-switch
+<span class="syntax-keyword">sudo</span> mn <span class="syntax-flag">-c</span>  <span class="syntax-comment"># Cleanup</span></pre>
+
+                <h4>TShark: "permission denied"</h4>
+                <pre data-lang="Bash"><span class="syntax-comment"># Cause: Insufficient permissions</span>
+<span class="syntax-keyword">sudo</span> usermod <span class="syntax-flag">-aG</span> wireshark <span class="syntax-var">$USER</span>
+<span class="syntax-keyword">sudo</span> setcap cap_net_raw,cap_net_admin+eip /usr/bin/dumpcap
+newgrp wireshark</pre>
+
+                <h4>Python: "externally-managed-environment"</h4>
+                <pre data-lang="Bash"><span class="syntax-comment"># Cause: Ubuntu 24.04 protects system packages</span>
+<span class="syntax-comment"># Solution 1: Use --break-system-packages</span>
+pip3 install package <span class="syntax-flag">--break-system-packages</span>
+
+<span class="syntax-comment"># Solution 2: Use venv (recommended for production projects)</span>
+python3 -m venv ~/venv
+source ~/venv/bin/activate
+pip install package</pre>
+
+                <h4>Python: "Cannot uninstall X, RECORD file not found"</h4>
+                <pre data-lang="Bash"><span class="syntax-comment"># Cause: Conflict between packages installed by apt and pip</span>
+<span class="syntax-comment"># Solution: Add --ignore-installed</span>
+<span class="syntax-keyword">sudo</span> pip3 install <span class="syntax-flag">--break-system-packages --ignore-installed</span> flask
+
+<span class="syntax-comment"># For multiple packages:</span>
+<span class="syntax-keyword">sudo</span> pip3 install <span class="syntax-flag">--break-system-packages --ignore-installed</span> package1 package2</pre>
+
+                <h4>Port 53 occupied (DNS)</h4>
+                <pre data-lang="Bash"><span class="syntax-comment"># Cause: systemd-resolved is using the port</span>
+<span class="syntax-keyword">sudo</span> systemctl stop systemd-resolved
+<span class="syntax-comment"># Or use a different port for custom DNS (e.g.: 5353)</span></pre>
+
+                <h4>Mininet cleanup</h4>
+                <pre data-lang="Bash"><span class="syntax-comment"># After crash or errors, clean up with:</span>
+<span class="syntax-keyword">sudo</span> mn <span class="syntax-flag">-c</span>
+<span class="syntax-keyword">sudo</span> ovs-vsctl <span class="syntax-flag">--if-exists</span> del-br ovs-br0
+<span class="syntax-keyword">sudo</span> killall controller 2>/dev/null</pre>
+
+                <h3>11.2 Useful Diagnostic Commands</h3>
+                <pre data-lang="Bash"><span class="syntax-comment"># Check ports in use</span>
+<span class="syntax-keyword">sudo</span> ss -tulpn
+<span class="syntax-keyword">sudo</span> netstat -tulpn
+
+<span class="syntax-comment"># Check network processes</span>
+ps aux | grep -E <span class="syntax-string">"(python|docker|mn|ovs)"</span>
+
+<span class="syntax-comment"># Check system logs</span>
+<span class="syntax-keyword">sudo</span> journalctl -xe
+<span class="syntax-keyword">sudo</span> journalctl -u docker
+<span class="syntax-keyword">sudo</span> journalctl -u openvswitch-switch
+
+<span class="syntax-comment"># Check disk space</span>
+df -h
+
+<span class="syntax-comment"># Check memory</span>
+free -h
+
+<span class="syntax-comment"># Check connectivity</span>
+ping -c 3 8.8.8.8
+ping -c 3 google.com</pre>
+            </section>
+
+            <hr>
+
+            <!-- Complete Script Summary -->
+            <section id="complete-script">
+                <h2 class="section-title">📜 Complete Commands Summary (All-in-One Script)</h2>
+
+                <p>For convenience, all installation commands in a single block:</p>
+
+                <div class="script-block">
+                    <div class="script-header">install_networking_lab.sh — Run with: sudo bash install_networking_lab.sh</div>
+                    <pre data-lang="Bash"><span class="syntax-comment">#!/bin/bash</span>
+<span class="syntax-comment"># RUN WITH: sudo bash install_networking_lab.sh</span>
+
+set -e
+
+echo <span class="syntax-string">"=== System update ==="</span>
+apt update && apt upgrade <span class="syntax-flag">-y</span>
+
+echo <span class="syntax-string">"=== Essential packages ==="</span>
+apt install <span class="syntax-flag">-y</span> build-essential software-properties-common apt-transport-https \
+    ca-certificates gnupg lsb-release curl wget git vim nano htop tree unzip zip jq make gcc g++
+
+echo <span class="syntax-string">"=== Network tools ==="</span>
+apt install <span class="syntax-flag">-y</span> iputils-ping iproute2 net-tools dnsutils traceroute mtr-tiny whois \
+    netcat-openbsd socat curl wget lftp openssh-client tcpdump iftop nethogs nload bmon \
+    nmap hping3 iperf3 arping iptables iptables-persistent conntrack bridge-utils vlan arptables
+
+echo <span class="syntax-string">"=== Python ==="</span>
+apt install <span class="syntax-flag">-y</span> python3 python3-pip python3-venv python3-dev python3-setuptools python3-wheel
+
+echo <span class="syntax-string">"=== Python libraries ==="</span>
+pip3 install <span class="syntax-flag">--break-system-packages --ignore-installed</span> scapy dpkt pyshark netifaces flask requests dnslib \
+    dnspython paramiko pyftpdlib paho-mqtt grpcio grpcio-tools protobuf pyyaml colorama \
+    colorlog tabulate psutil os-ken python-docx
+
+echo <span class="syntax-string">"=== Docker ==="</span>
+install <span class="syntax-flag">-m 0755 -d</span> /etc/apt/keyrings
+curl <span class="syntax-flag">-fsSL</span> https://download.docker.com/linux/ubuntu/gpg | gpg <span class="syntax-flag">--dearmor</span> -o /etc/apt/keyrings/docker.gpg
+chmod a+r /etc/apt/keyrings/docker.gpg
+echo <span class="syntax-string">"deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable"</span> | tee /etc/apt/sources.list.d/docker.list > /dev/null
+apt update
+apt install <span class="syntax-flag">-y</span> docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+systemctl enable docker containerd
+
+echo <span class="syntax-string">"=== Mininet & OVS ==="</span>
+apt install <span class="syntax-flag">-y</span> mininet openvswitch-switch openvswitch-common openvswitch-testcontroller
+systemctl enable <span class="syntax-flag">--now</span> openvswitch-switch
+
+echo <span class="syntax-string">"=== Wireshark/TShark ==="</span>
+<span class="syntax-var">DEBIAN_FRONTEND</span>=noninteractive apt install <span class="syntax-flag">-y</span> tshark wireshark-common
+setcap cap_net_raw,cap_net_admin+eip /usr/bin/dumpcap
+setcap cap_net_raw,cap_net_admin+eip /usr/bin/tcpdump
+
+echo <span class="syntax-string">"=== Final configuration ==="</span>
+echo <span class="syntax-string">"net.ipv4.ip_forward=1"</span> >> /etc/sysctl.d/99-networking.conf
+echo <span class="syntax-string">"net.ipv6.conf.all.forwarding=1"</span> >> /etc/sysctl.d/99-networking.conf
+sysctl <span class="syntax-flag">--system</span>
+
+echo <span class="syntax-string">"=== INSTALLATION COMPLETE ==="</span>
+echo <span class="syntax-string">"Run the following commands manually as normal user:"</span>
+echo <span class="syntax-string">"  sudo usermod -aG docker \$USER"</span>
+echo <span class="syntax-string">"  sudo usermod -aG wireshark \$USER"</span>
+echo <span class="syntax-string">"  newgrp docker"</span>
+echo <span class="syntax-string">"  newgrp wireshark"</span></pre>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <footer>
+        <strong>Document generated for the Computer Networks course, ASE-CSIE Bucharest</strong><br>
+        Ubuntu Server 24.04 LTS — Complete Installation Guide for WEEK1–WEEK14
+    </footer>
+
+    <script>
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Add copy functionality to code blocks
+        document.querySelectorAll('pre').forEach(pre => {
+            const btn = document.createElement('button');
+            btn.className = 'copy-btn';
+            btn.textContent = 'Copy';
+            btn.addEventListener('click', () => {
+                const code = pre.textContent.replace(pre.getAttribute('data-lang') || '', '').trim();
+                navigator.clipboard.writeText(code).then(() => {
+                    btn.textContent = 'Copied!';
+                    setTimeout(() => btn.textContent = 'Copy', 2000);
+                });
+            });
+            pre.appendChild(btn);
+        });
+    </script>
+</body>
+</html>

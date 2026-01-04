@@ -1,11 +1,11 @@
-version: "3.8"
-
 services:
   lab:
     build:
       context: ..
       dockerfile: docker/Dockerfile
     working_dir: /work
+    # Run as host user to preserve file ownership
+    user: "${UID:-1000}:${GID:-1000}"
     volumes:
       - ..:/work:rw
       - ../artifacts:/work/artifacts:rw

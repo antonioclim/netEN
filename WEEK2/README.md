@@ -10,6 +10,68 @@
 
 ---
 
+
+## 🚀 Quick Clone & Setup
+
+To clone **only this week's content** directly into `~/WEEK2` and make all scripts executable, run the following commands:
+
+### Option A: One-liner (recommended)
+
+```bash
+cd ~ && git clone --filter=blob:none --sparse https://github.com/antonioclim/netEN.git WEEK2 && cd WEEK2 && git sparse-checkout set WEEK2 && shopt -s dotglob && mv WEEK2/* . && rmdir WEEK2 && find . -type f \( -name "*.sh" -o -name "*.py" \) -exec chmod +x {} \;
+```
+
+### Option B: Step-by-step (for understanding)
+
+```bash
+# 1. Navigate to home directory
+cd ~
+
+# 2. Clone repository with sparse checkout (downloads only metadata initially)
+git clone --filter=blob:none --sparse https://github.com/antonioclim/netEN.git WEEK2
+
+# 3. Enter the cloned directory
+cd WEEK2
+
+# 4. Configure sparse checkout to fetch only WEEK2
+git sparse-checkout set WEEK2
+
+# 5. Move contents up one level (flatten structure)
+shopt -s dotglob
+mv WEEK2/* .
+rmdir WEEK2
+
+# 6. Make all shell scripts and Python files executable
+find . -type f -name "*.sh" -exec chmod +x {} \;
+find . -type f -name "*.py" -exec chmod +x {} \;
+
+# 7. Verify the setup
+ls -la
+ls -la scripts/
+```
+
+### Option C: Without Git history (lightweight)
+
+If you don't need Git history and want the smallest possible download:
+
+```bash
+cd ~ && mkdir -p WEEK2 && cd WEEK2 && curl -L https://github.com/antonioclim/netEN/archive/refs/heads/main.tar.gz | tar -xz --strip-components=2 netEN-main/WEEK2 && find . -type f \( -name "*.sh" -o -name "*.py" \) -exec chmod +x {} \;
+```
+
+### Verify Installation
+
+After cloning, verify that scripts are executable:
+
+```bash
+cd ~/WEEK2
+ls -la scripts/*.sh      # Should show 'x' permission
+file scripts/*.sh        # Should show "shell script"
+./scripts/setup.sh --help 2>/dev/null || head -5 scripts/setup.sh
+```
+
+---
+
+
 ## What We Will Learn
 
 This week introduces the **architectural fundamentals** of network communications and lays the groundwork for **network programmeming** using sockets.
@@ -31,6 +93,7 @@ As a future programmemer in the economic/IT field, you will constantly encounter
 - **Architecture**: Choosing TCP (reliability) vs UDP (speed) for financial applications
 
 ---
+
 
 ## Kit Structure
 
@@ -80,6 +143,7 @@ starterkit_s2/
 
 ---
 
+
 ## System Requirements
 
 ### Recommended Environment
@@ -98,6 +162,7 @@ netcat-openbsd
 ```
 
 ---
+
 
 ## Quick Start
 
@@ -145,6 +210,7 @@ make analyze-udp
 
 ---
 
+
 ## Makefile Targets
 
 | Command | Description |
@@ -166,6 +232,7 @@ make analyze-udp
 | `make clean-all` | Complete cleanup (+ pcap, logs) |
 
 ---
+
 
 ## Weekly Content
 
@@ -212,6 +279,7 @@ make analyze-udp
 
 ---
 
+
 ## Troubleshooting
 
 | Problem | Solution |
@@ -223,6 +291,7 @@ make analyze-udp
 | `mn: command not found` | `sudo apt-get install mininet` |
 
 ---
+
 
 ## Additional Resources
 
@@ -242,6 +311,7 @@ make analyze-udp
 
 ---
 
+
 ## Contribution to Team Project
 
 This week brings the following **incremental artefact**:
@@ -253,6 +323,7 @@ This week brings the following **incremental artefact**:
 
 ---
 
+
 ## Licence
 
 Educational material for internal use — ASE Bucharest, CSIE.
@@ -260,6 +331,7 @@ Educational material for internal use — ASE Bucharest, CSIE.
 *Revolvix&Hypotheticalandrei*
 
 ---
+
 
 ## Standardisation (v2.1.0)
 
@@ -302,3 +374,4 @@ After `run_all.sh`, in `artifacts/`:
 | Week Base | 5200-5299 |
 
 ---
+

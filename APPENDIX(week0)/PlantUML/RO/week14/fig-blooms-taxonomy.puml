@@ -1,0 +1,18 @@
+@startuml fig-blooms-taxonomy
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+title Intrebari Aparare pe Nivel Cognitiv
+
+card "N1 Memorie\nCe port? Ce protocol?\nNumeste flag-urile TCP" as l1 #E3F2FD
+card "N2 Intelegere\nExplica fluxul cererii\nDe ce TCP in loc de UDP?" as l2 #C8E6C9
+card "N3 Aplicare\nModifica timeout-ul\nArata o captura de pachete" as l3 #FFF9C4
+card "N4 Analiza\nDe ce blocheaza recv()?\nGaseste bottleneck-ul" as l4 #FFE0B2
+card "N5 Evaluare\nE vulnerabil la DoS?\nCum ai scala?" as l5 #F8BBD9
+
+l1 -d-> l2
+l2 -d-> l3
+l3 -d-> l4
+l4 -d-> l5
+@enduml

@@ -1,0 +1,26 @@
+@startuml fig-ipv4-vs-ipv6
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+title Comparatie IPv4 vs IPv6
+
+package "IPv4" as v4 #E3F2FD {
+    card "Adresa 32-bit\n4.3 miliarde\n192.168.1.1" as v4a #BBDEFB
+    card "Header 20-60B\nChecksum" as v4h #BBDEFB
+    card "NAT necesar" as v4n #FFCDD2
+}
+
+package "IPv6" as v6 #E8F5E9 {
+    card "Adresa 128-bit\n340 undecilioane\n2001:db8::1" as v6a #C8E6C9
+    card "Header 40B fix\nFara checksum" as v6h #C8E6C9
+    card "NAT nenecesar" as v6n #C8E6C9
+}
+
+legend bottom
+IPv4: zecimal punctat, /24, broadcast
+IPv6: hex cu doua puncte, /64, fara broadcast
+Autoconfig: DHCP vs SLAAC
+IPsec: optional vs integrat
+endlegend
+@enduml

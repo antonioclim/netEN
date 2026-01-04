@@ -1,0 +1,28 @@
+@startuml fig-tcp-sliding-window
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title Fereastra Glisanta TCP
+
+package "Perspectiva Emitator" as send #E3F2FD {
+    card "Trimis+Confirmat" as sa #C8E6C9
+    card "Trimis, neconfirmat" as su #FFF9C4
+    card "Poate trimite" as cs #BBDEFB
+    card "Nu poate trimite" as cn #ECEFF1
+}
+
+package "Perspectiva Receptor" as recv #E8F5E9 {
+    card "Primit" as ra #C8E6C9
+    card "Fereastra Receptie" as rw #BBDEFB
+    card "Inca nu" as ny #ECEFF1
+}
+
+legend bottom
+Fereastra = min(cwnd, rwnd)
+cwnd: fereastra congestie (emitator)
+rwnd: fereastra receptie (receptor)
+Fereastra=0 inseamna oprire trimitere
+Anuntata in antetul TCP
+endlegend
+@enduml

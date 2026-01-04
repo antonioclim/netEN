@@ -1,0 +1,28 @@
+@startuml fig-binary-protocol
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+left to right direction
+title Structura Mesaj Protocol Binar
+
+card "Magic\n2B\n0xCAFE" as magic #E1BEE7
+card "Versiune\n1B" as ver #BBDEFB
+card "Tip\n1B" as type #BBDEFB
+card "Lungime\n4B" as len #C8E6C9
+card "Payload\nvariabil" as pay #FFF9C4
+card "Checksum\n2B" as csum #FFCDD2
+
+magic -r[hidden]-> ver
+ver -r[hidden]-> type
+type -r[hidden]-> len
+len -r[hidden]-> pay
+pay -r[hidden]-> csum
+
+legend bottom
+Magic: identificator protocol, sincronizare
+Lungime: ordine octeti retea (big-endian)
+struct.pack('!HBBI', magic, ver, type, len)
+struct.unpack('!HBBI', header)
+endlegend
+@enduml

@@ -1,0 +1,32 @@
+@startuml fig-debugging-workflow
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title Flux Depanare Retea
+
+start
+:Identifica simptom\nConexiune refuzata? Timeout?;
+:Verifica server\ndocker-compose ps\nss -tlnp;
+if (Ruleaza?) then (da)
+else (nu)
+    :Porneste server, verifica loguri;
+    stop
+endif
+:Testeaza conectivitate\nnc -zv SERVER PORT;
+if (Accesibil?) then (da)
+else (nu)
+    :Verifica firewall/retea;
+    stop
+endif
+:Captureaza trafic\ntcpdump -w debug.pcap;
+:Analizeaza\ntshark -r debug.pcap;
+if (Protocol OK?) then (da)
+    :Revizuieste loguri aplicatie;
+else (nu)
+    :Repara serializarea;
+    stop
+endif
+:Aplica fix si testeaza;
+stop
+@enduml

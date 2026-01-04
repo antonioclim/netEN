@@ -1,0 +1,28 @@
+@startuml fig-udp-multicast
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title UDP Multicast cu IGMP
+
+node "Router Multicast" as router #90CAF9
+rectangle "Emitator\n192.168.1.10" as sender #FFE0B2
+rectangle "Receptor 1\ninscris 239.0.0.1" as r1 #C8E6C9
+rectangle "Receptor 2\ninscris 239.0.0.1" as r2 #C8E6C9
+rectangle "Host 3\nNEinscris" as r3 #ECEFF1
+
+sender -- router
+r1 -- router
+r2 -- router
+r3 -- router
+
+sender .[#43A047].> r1 : redirectionat
+sender .[#43A047].> r2 : redirectionat
+
+legend bottom
+Emitator: IP_MULTICAST_TTL, sendto(239.0.0.1)
+Receptor: IP_ADD_MEMBERSHIP pentru inscriere
+IGMP Query (0x11), Report (0x16), Leave (0x17)
+Interval multicast: 224.0.0.0 - 239.255.255.255
+endlegend
+@enduml

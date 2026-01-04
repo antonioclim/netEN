@@ -1,0 +1,34 @@
+@startuml fig-iot-attack-vectors
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+title Vectori de Atac IoT
+
+package "Nivel Dispozitiv" as dev #FFCDD2 {
+    card "Credentiale implicite" as v1
+    card "Interfete debug UART/JTAG" as v2
+    card "Firmware invechit" as v3
+}
+
+package "Nivel Retea" as net #FFF3E0 {
+    card "Trafic necriptat" as n1
+    card "Man-in-the-Middle" as n2
+    card "DDoS (Mirai)" as n3
+}
+
+package "Nivel Aplicatie" as app #E3F2FD {
+    card "API-uri nesecurizate" as a1
+    card "Autentificare slaba" as a2
+    card "Scurgere date" as a3
+}
+
+legend bottom
+OWASP IoT Top 10:
+1. Parole slabe
+2. Servicii retea nesecurizate
+3. Ecosistem nesecurizat
+4. Lipsa actualizare securizata
+5. Componente nesecurizate
+endlegend
+@enduml

@@ -1,0 +1,30 @@
+@startuml fig-endianness
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+title Ordinea Octetilor (Endianness)
+
+package "Big-Endian (Retea)" as big #E3F2FD {
+    card "Adr0: 0x12" as b0
+    card "Adr1: 0x34" as b1
+    card "Adr2: 0x56" as b2
+    card "Adr3: 0x78" as b3
+}
+
+package "Little-Endian (x86)" as little #E8F5E9 {
+    card "Adr0: 0x78" as l0
+    card "Adr1: 0x56" as l1
+    card "Adr2: 0x34" as l2
+    card "Adr3: 0x12" as l3
+}
+
+legend bottom
+Valoare: 0x12345678
+Big: MSB primul (protocoale retea)
+Little: LSB primul (procesoare x86/x64)
+htons/htonl: host la retea
+ntohs/ntohl: retea la host
+struct: ! = retea, < = little, > = big
+endlegend
+@enduml

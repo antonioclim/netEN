@@ -1,0 +1,26 @@
+@startuml fig-http-request-response
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+title Structura Cerere-Raspuns HTTP
+
+package "Cerere HTTP" as req #E3F2FD {
+    card "Linie Cerere\nGET /api/users HTTP/1.1" as rl #BBDEFB
+    card "Antete\nHost, Content-Type" as rh #BBDEFB
+    card "Corp (optional)\nJSON payload" as rb #FFF9C4
+}
+
+package "Raspuns HTTP" as res #E8F5E9 {
+    card "Linie Status\nHTTP/1.1 200 OK" as sl #C8E6C9
+    card "Antete\nContent-Type, Length" as sh #C8E6C9
+    card "Corp\nDate raspuns" as sbo #FFF9C4
+}
+
+legend bottom
+Metode: GET, POST, PUT, DELETE, PATCH
+Status: 2xx OK, 3xx Redirectare, 4xx Eroare Client, 5xx Server
+Antete: Host obligatoriu in HTTP/1.1
+Comune: Content-Type, Authorization, Accept
+endlegend
+@enduml

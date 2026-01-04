@@ -1,0 +1,28 @@
+@startuml fig-http2-features
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+title HTTP/2 vs HTTP/1.1
+
+package "HTTP/1.1" as h1 #FFCDD2 {
+    card "Bazat text" as h1t
+    card "O cerere/conexiune" as h1r
+    card "Blocare HOL" as h1h
+}
+
+package "HTTP/2" as h2 #C8E6C9 {
+    card "Cadre binare" as h2t
+    card "Fluxuri multiplexate" as h2r
+    card "Compresie antete" as h2h
+    card "Server push" as h2p
+}
+
+legend bottom
+HTTP/2: conexiune unica, cereri paralele
+HPACK: compresie antete
+Fara blocare HOL la nivel HTTP
+Cadre: DATA, HEADERS, PRIORITY, SETTINGS
+curl --http2 https://example.com
+endlegend
+@enduml

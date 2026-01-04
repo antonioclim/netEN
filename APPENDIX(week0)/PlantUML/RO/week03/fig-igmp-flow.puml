@@ -1,0 +1,26 @@
+@startuml fig-igmp-flow
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title Flux Protocol IGMP
+
+participant "Host A\nvrea sa se inscrie" as A
+participant "Router\nIGMP Querier" as R
+participant "Host B\ndeja membru" as B
+
+A -[#43A047]> R : IGMP Report (Type 0x16)\nInscriere 239.0.0.1
+R -[#1565C0]> A : IGMP Query (Type 0x11)
+R -[#1565C0]> B : IGMP Query
+B -[#43A047]-> R : Report 239.0.0.1
+A -[#E53935]> R : IGMP Leave (Type 0x17)
+R -[#1565C0]> B : Group-Specific Query
+B -[#43A047]-> R : Report (inca membru)
+
+legend right
+tcpdump -i eth0 igmp
+Report: inscriere grup
+Leave: iesire grup
+Query: routerul intreaba
+endlegend
+@enduml

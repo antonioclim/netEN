@@ -1,0 +1,26 @@
+@startuml fig-quic-vs-tcp
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+title QUIC vs TCP+TLS
+
+package "TCP + TLS" as tcptls #E3F2FD {
+    card "Handshake TCP\n1 RTT" as tcp_hs #BBDEFB
+    card "Handshake TLS\n1-2 RTT" as tls_hs #BBDEFB
+    card "Total: 2-3 RTT" as tcp_tot #FFCDD2
+}
+
+package "QUIC (HTTP/3)" as quic #E8F5E9 {
+    card "Handshake QUIC\n1 RTT sau 0-RTT" as q_hs #C8E6C9
+    card "Total: 1 sau 0 RTT" as q_tot #C8E6C9
+}
+
+legend bottom
+TCP: straturi separate, blocare HOL
+QUIC: criptare integrata, fara blocare HOL
+QUIC: migrare conexiune (schimbare IP OK)
+QUIC: bazat UDP, in userspace
+Folosit de HTTP/3, servicii Google
+endlegend
+@enduml

@@ -1,0 +1,30 @@
+@startuml fig-tcp-handshake
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+
+title Stabilirea Conexiunii TCP (Three-Way Handshake)
+
+participant "Client\nnc localhost 9999" as C
+participant "Server\nnc -l -p 9999" as S
+
+C -> S : SYN (Seq=1000)
+S --> C : SYN-ACK (Seq=5000, Ack=1001)
+C -> S : ACK (Seq=1001, Ack=5001)
+
+== CONEXIUNE STABILITA ==
+
+C <-> S : Transfer date
+
+C -> S : PSH-ACK "Hello"
+S --> C : ACK
+
+legend right
+Pasul 1: Client trimite SYN
+Pasul 2: Server trimite SYN-ACK
+Pasul 3: Client trimite ACK
+Conexiune stabilita
+endlegend
+@enduml

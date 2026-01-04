@@ -1,0 +1,40 @@
+@startuml fig-port-probe-flow
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title Flux Sondare Porturi
+
+participant "Sonda\nport_probe.py" as P
+participant "Host\nTinta" as T
+
+== Port TCP Deschis ==
+P -> T : TCP SYN catre port 9090
+T --> P : SYN-ACK
+P -> T : RST (inchide)
+note right: Port DESCHIS
+
+== Port TCP Inchis ==
+P -> T : TCP SYN catre port 9091
+T --> P : RST
+note right: Port INCHIS
+
+== Port TCP Filtrat ==
+P -> T : TCP SYN catre port 9092
+P -> P : timeout (fara raspuns)
+note right: Port FILTRAT\n(firewall DROP)
+
+== Verificare UDP ==
+P -> T : Pachet UDP catre port 9091
+T --> P : ICMP Port Unreachable
+note right: Port INCHIS
+P -> T : Pachet UDP catre port 9091
+note right: Fara raspuns =\nDESCHIS sau FILTRAT
+
+legend right
+Output port_probe.py:
+9090/tcp OPEN
+9091/tcp CLOSED
+9092/tcp FILTERED
+endlegend
+@enduml

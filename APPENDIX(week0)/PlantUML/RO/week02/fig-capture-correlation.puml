@@ -1,0 +1,25 @@
+@startuml fig-capture-correlation
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title Corelarea Log-urilor cu Captura de Pachete
+
+participant "Client h2" as C
+participant "Server h1" as S
+
+C -> S : SYN (Pachet #1)
+S --> C : SYN-ACK (Pachet #2)
+C -> S : ACK (Pachet #3)
+
+C -> S : PSH-ACK "Hello" (Pachet #4)
+S --> C : PSH-ACK "OK" (Pachet #5)
+
+legend right
+Log aplicatie: Connected 14:32:15
+Pachet #4: timestamp corespunde
+tshark -r demo.pcap
+  -T fields -e frame.number
+  -e tcp.payload
+endlegend
+@enduml

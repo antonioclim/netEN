@@ -1,0 +1,36 @@
+@startuml fig-udp-vs-tcp-sockets
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+title API Socket UDP vs TCP
+
+package "TCP SOCK_STREAM" as tcp #E3F2FD {
+    card "socket()" as ts1
+    card "bind()" as ts2
+    card "listen()" as ts3
+    card "accept()" as ts4 #FFF9C4
+    card "recv/send" as ts5
+    card "close()" as ts6
+    ts1 -d-> ts2
+    ts2 -d-> ts3
+    ts3 -d-> ts4
+    ts4 -d-> ts5
+    ts5 -d-> ts6
+}
+
+package "UDP SOCK_DGRAM" as udp #E8F5E9 {
+    card "socket()" as us1
+    card "bind()" as us2
+    card "recvfrom()" as us3 #C8E6C9
+    card "sendto()" as us4
+    us1 -d-> us2
+    us2 -d-> us3
+    us3 -d-> us4
+}
+
+legend bottom
+TCP: Orientat conexiune, fiabil
+UDP: Fara conexiune, nu necesita accept
+endlegend
+@enduml

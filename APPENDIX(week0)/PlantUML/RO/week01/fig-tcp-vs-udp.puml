@@ -1,0 +1,27 @@
+@startuml fig-tcp-vs-udp
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+left to right direction
+title TCP vs UDP - Trimiterea mesajului "Hello"
+
+package "TCP (7 pachete)" as tcp #E3F2FD {
+    card "1.SYN" as t1
+    card "2.SYN-ACK" as t2
+    card "3.ACK" as t3
+    card "4.DATE" as t4 #C8E6C9
+    card "5.FIN" as t5
+    card "6.FIN-ACK" as t6
+    card "7.ACK" as t7
+}
+
+package "UDP (1 pachet)" as udp #FFF3E0 {
+    card "1.DATE" as u1 #C8E6C9
+}
+
+legend bottom
+TCP: Fiabil, ordonat, orientat conexiune
+UDP: Rapid, fara garantii, fara conexiune
+endlegend
+@enduml

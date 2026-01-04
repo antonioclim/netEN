@@ -1,0 +1,22 @@
+@startuml fig-iot-defence-layers
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+title Straturi Defensive Securitate IoT
+
+card "S1: Intarire Dispozitiv\nSchimba implicite, dezactiveaza neutilizate\nBoot securizat, stocare criptata" as l1 #E8F5E9
+
+card "S2: Segmentare Retea\nVLAN IoT separat\nFirewall, fara Internet direct" as l2 #E3F2FD
+
+card "S3: Comunicatii Criptate\nTLS pentru tot traficul\nMQTT peste TLS :8883" as l3 #FFF3E0
+
+card "S4: Control Acces\nAutentificare puternica, RBAC\nRate limiting API, audit" as l4 #FCE4EC
+
+card "S5: Monitorizare\nDetectie anomalii\nLogare centralizata" as l5 #E8EAF6
+
+l1 -d-> l2
+l2 -d-> l3
+l3 -d-> l4
+l4 -d-> l5
+@enduml

@@ -1,0 +1,24 @@
+@startuml fig-mininet-topology
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title Topologie Laborator Mininet
+
+node "Switch s1\nOVS Bridge" as s1 #90CAF9
+
+rectangle "h1 - Server\n10.0.2.100" as h1 #C8E6C9
+rectangle "h2 - Client\n10.0.0.2" as h2 #C8E6C9
+rectangle "h3 - Observator\n10.0.0.3" as h3 #C8E6C9
+
+h1 -- s1 : eth1
+h2 -- s1 : eth2
+h3 -- s1 : eth3
+
+legend bottom
+CLI: nodes, net, dump, pingall
+h1 ping h2, xterm h1
+Server: python3 ex_tcp.py server
+Client: python3 ex_tcp.py client
+endlegend
+@enduml

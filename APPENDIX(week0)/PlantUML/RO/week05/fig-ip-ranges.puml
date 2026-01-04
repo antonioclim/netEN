@@ -1,0 +1,26 @@
+@startuml fig-ip-ranges
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+title Intervale IP Private si Speciale
+
+package "Private RFC 1918" as priv #E8F5E9 {
+    card "10.0.0.0/8\n16M adrese" as p1 #C8E6C9
+    card "172.16.0.0/12\n1M adrese" as p2 #C8E6C9
+    card "192.168.0.0/16\n65K adrese" as p3 #C8E6C9
+}
+
+package "Intervale Speciale" as spec #FFF3E0 {
+    card "127.0.0.0/8\nLoopback" as s1 #FFE0B2
+    card "169.254.0.0/16\nAPIA Link-Local" as s2 #FFE0B2
+    card "224.0.0.0/4\nMulticast" as s3 #FFE0B2
+}
+
+legend bottom
+Private: nerutabile, folosesc NAT
+Loopback: localhost (127.0.0.1)
+APIPA: auto-config fara DHCP
+Multicast: 224-239.x.x.x
+endlegend
+@enduml

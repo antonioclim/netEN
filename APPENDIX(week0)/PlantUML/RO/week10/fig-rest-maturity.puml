@@ -1,0 +1,23 @@
+@startuml fig-rest-maturity
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+title Modelul de Maturitate API REST
+
+card "Nivel 3: HATEOAS\nLinkuri hypermedia in raspuns" as l3 #C8E6C9
+card "Nivel 2: Verbe HTTP\nGET/POST/PUT/DELETE + coduri status" as l2 #BBDEFB
+card "Nivel 1: Resurse\nURI-uri individuale: /users/1" as l1 #FFE0B2
+card "Nivel 0: POX\nUn singur URI, doar POST, stil RPC" as l0 #FFCDD2
+
+l3 -d-> l2
+l2 -d-> l1
+l1 -d-> l0
+
+legend bottom
+L0: /api?action=getUser&id=1
+L1: /users/1, /users/1/orders
+L2: GET /users, POST /users
+L3: Raspunsul include linkuri relationate
+endlegend
+@enduml

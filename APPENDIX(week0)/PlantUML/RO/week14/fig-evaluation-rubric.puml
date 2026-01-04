@@ -1,0 +1,19 @@
+@startuml fig-evaluation-rubric
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+title Grila Evaluare Proiect (100 puncte)
+
+card "Complexitate 40%\n36-40 Excelent\n28-35 Bun\n20-27 Suficient" as comp #E3F2FD
+card "Functionalitate 30%\n27-30 Excelent\n21-26 Bun\n15-20 Suficient" as func #E8F5E9
+card "Prezentare 20%\n18-20 Excelent\n14-17 Bun\n10-13 Suficient" as pres #FFF3E0
+card "Documentatie 10%\n9-10 Excelent\n7-8 Bun\n5-6 Suficient" as doc #FCE4EC
+
+legend bottom
+Complexitate: multi-componenta, protocoale, tratare erori
+Functionalitate: functioneaza corect, reproductibil
+Prezentare: explicatii clare, raspunde la intrebari
+Documentatie: README, comentarii cod
+endlegend
+@enduml

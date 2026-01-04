@@ -1,0 +1,29 @@
+@startuml fig-smtp-session
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title Flux Sesiune SMTP
+
+participant "Client" as C
+participant "Server :587" as S
+
+C -> S : TCP Connect
+S --> C : 220 ESMTP Gata
+C -> S : EHLO client.domeniu
+S --> C : 250 Hello, STARTTLS, AUTH
+C -> S : STARTTLS
+S --> C : 220 Gata pentru TLS
+C -> S : AUTH LOGIN (base64)
+S --> C : 235 Autentificat
+C -> S : MAIL FROM:<alice@exemplu.com>
+S --> C : 250 OK
+C -> S : RCPT TO:<bob@exemplu.com>
+S --> C : 250 OK
+C -> S : DATA
+S --> C : 354 Incepe introducerea
+C -> S : Subject: Test\n\nSalut!\n.
+S --> C : 250 Mesaj acceptat
+C -> S : QUIT
+S --> C : 221 Pa
+@enduml

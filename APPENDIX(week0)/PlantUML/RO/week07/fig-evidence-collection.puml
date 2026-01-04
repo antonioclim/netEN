@@ -1,0 +1,36 @@
+@startuml fig-evidence-collection
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+title Colectarea Dovezilor pentru Depanare Retea
+
+package "Faza Captura" as cap #E3F2FD {
+    card "tcpdump\n-w demo.pcap" as tcpd
+    card "Loguri\nAplicatie" as logs
+    card "Dump reguli\niptables" as rules
+}
+
+package "Faza Analiza" as anal #E8F5E9 {
+    card "tshark\nfiltru + campuri" as tsh
+    card "Corelatie\nloguri" as corr
+    card "Reconstructie\ncronologie" as time
+}
+
+package "Documentatie" as doc #FFF3E0 {
+    card "artifacts/\ndemo.pcap\ndemo.log\nvalidation.txt" as art
+}
+
+cap -d-> anal
+anal -d-> doc
+
+legend bottom
+Lista verificare dovezi:
+1. Fisier PCAP cu trafic relevant
+2. Loguri aplicatie cu timestamp-uri
+3. Output iptables -S inainte/dupa
+4. Comenzi folosite (reproductibil)
+5. Comportament asteptat vs real
+6. Cauza radacina si remediere
+endlegend
+@enduml

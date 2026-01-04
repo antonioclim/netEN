@@ -1,0 +1,33 @@
+@startuml fig-typical-architecture
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+left to right direction
+title Arhitectura Tipica Proiect Retea
+
+package "Nivel Client" as cli #E3F2FD {
+    component "CLI (argparse)" as clii
+    component "Teste (pytest)" as test
+}
+
+package "Nivel Retea" as net #FFF3E0 {
+    component "Handler Socket" as sock
+    component "Logica Protocol" as proto
+    component "Wrapper TLS" as tls
+}
+
+package "Nivel Server" as srv #C8E6C9 {
+    component "Listener" as listen
+    component "Handler Cereri" as handler
+}
+
+package "Nivel Date" as data #FCE4EC {
+    component "Stocare" as stor
+    component "Manager Stare" as state
+}
+
+cli -d-> net
+net -d-> srv
+srv -d-> data
+@enduml

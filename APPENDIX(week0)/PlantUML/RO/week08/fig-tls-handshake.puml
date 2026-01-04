@@ -1,0 +1,24 @@
+@startuml fig-tls-handshake
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title Handshake TLS 1.3 (1-RTT)
+
+participant "Client" as C
+participant "Server" as S
+
+C -> S : ClientHello\n+ suite cifrare + partajare cheie
+S --> C : ServerHello + partajare cheie\n+ Certificat + Finished
+C -> S : Finished
+
+== Date Aplicatie Criptate ==
+C <-> S : Trafic HTTPS
+
+legend right
+TLS 1.3: 1-RTT (vs 2-RTT in 1.2)
+Reluare 0-RTT cu PSK
+Secretul forward obligatoriu
+AES_256_GCM_SHA384
+endlegend
+@enduml

@@ -1,0 +1,29 @@
+@startuml fig-switch-mac-learning
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title Invatarea Adreselor MAC de catre Switch
+
+participant "Host A\nMAC:AAAA Port1" as A
+participant "Switch\nTabela CAM" as S
+participant "Host B\nMAC:BBBB Port2" as B
+participant "Host C\nMAC:CCCC Port3" as C
+
+A -> S : Cadru AAAA->BBBB
+S -> B : FLOOD (dest necunoscut)
+S -> C : FLOOD
+
+B -> S : Cadru BBBB->AAAA
+S -> A : FORWARD Port1 (cunoscut)
+
+A -> S : Cadru AAAA->BBBB
+S -> B : FORWARD Port2 (cunoscut)
+
+legend right
+LEARN: MAC sursa -> port
+FLOOD: unicast necunoscut
+FORWARD: unicast cunoscut
+TTL: 300s default aging
+endlegend
+@enduml

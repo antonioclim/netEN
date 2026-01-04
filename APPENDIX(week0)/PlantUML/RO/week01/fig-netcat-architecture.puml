@@ -1,0 +1,28 @@
+@startuml fig-netcat-architecture
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+left to right direction
+title Arhitectura Client-Server cu Netcat
+
+package "SERVER (Terminal 1)" as srv #E3F2FD {
+    component "nc -l -p 9999\nstare LISTEN" as server
+}
+
+package "CLIENT (Terminal 2)" as cli #E8F5E9 {
+    component "nc localhost 9999\nstare ESTABLISHED" as client
+}
+
+package "MONITOR (Terminal 3)" as mon #FFF3E0 {
+    component "ss -tnp | grep 9999" as monitor
+}
+
+server <-[#1565C0,thickness=3]-> client : Bidirectional
+
+legend bottom
+Server asculta pe portul 9999
+Client se conecteaza, date circula in ambele directii
+Monitor afiseaza starile socket-urilor
+endlegend
+@enduml

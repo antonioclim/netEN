@@ -1,0 +1,30 @@
+@startuml fig-tcp-tunnel
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title Tunel TCP (Port Forwarding)
+
+participant "Client\n192.168.1.10" as client
+participant "Intrare Tunel\n192.168.1.100:8080" as tin
+participant "Iesire Tunel\n10.0.0.100" as tout
+participant "Tinta\n10.0.0.50:80" as server
+
+client -> tin : Conectare :8080
+tin -> tout : Redirectionare
+tout -> server : Conectare :80
+
+client -> tin : HTTP GET /
+tin -> tout : forward
+tout -> server : HTTP GET /
+
+server --> tout : HTTP 200 OK
+tout --> tin : forward
+tin --> client : HTTP 200 OK
+
+legend right
+Client vede: 192.168.1.100:8080
+Server vede: 10.0.0.100
+Utilizare: bypass firewall, ssh -L
+endlegend
+@enduml

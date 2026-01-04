@@ -1,0 +1,32 @@
+@startuml fig-https-encryption
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title Straturile de Criptare HTTPS
+
+package "Aplicatie" as app #FFF9C4 {
+    component "Cerere/Raspuns HTTP" as http
+}
+
+package "Nivel TLS" as tls #E3F2FD {
+    component "Criptare AES-256" as enc
+    component "Autentificare Certificate" as auth
+    component "Integritate HMAC" as integ
+}
+
+package "Nivel TCP" as tcp #E8F5E9 {
+    component "Transport Fiabil" as rel
+}
+
+app -d-> tls
+tls -d-> tcp
+
+legend bottom
+TLS ofera: confidentialitate, autentificare, integritate
+Port 443 (HTTPS) vs 80 (HTTP)
+Atacatorul vede: IP, porturi, dimensiuni, timing
+Nu poate vedea: cale URL, antete, corp
+Nota: SNI dezvaluie hostname-ul
+endlegend
+@enduml

@@ -1,0 +1,37 @@
+@startuml fig-email-architecture
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+left to right direction
+title Arhitectura Sistemului de Email
+
+package "Emitator" as send #E8F5E9 {
+    component "MUA\nThunderbird" as mua1
+    component "MSA\n:587" as msa
+}
+
+package "Transport" as trans #FFF3E0 {
+    component "MTA\nsmtp.emitator.com" as mta1
+    component "MTA\nmx.receptor.com" as mta2
+}
+
+package "Receptor" as recv #E3F2FD {
+    component "MDA" as mda
+    component "MUA\nGmail" as mua2
+}
+
+mua1 -r-> msa : SMTP
+msa -r-> mta1
+mta1 -r-> mta2 : SMTP :25
+mta2 -r-> mda
+mda -r-> mua2 : IMAP :993
+
+legend bottom
+MUA: Mail User Agent (client)
+MSA: Mail Submission Agent (:587)
+MTA: Mail Transfer Agent (server)
+MDA: Mail Delivery Agent (stocheaza)
+Interogare DNS MX pentru destinatie
+endlegend
+@enduml

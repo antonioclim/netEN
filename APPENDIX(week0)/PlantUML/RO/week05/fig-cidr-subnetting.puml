@@ -1,0 +1,25 @@
+@startuml fig-cidr-subnetting
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title Flux Subnetting CIDR
+
+start
+:Dat: 192.168.1.0/24\nNecesar: 4 subretele;
+:Biti necesari: 2^n >= 4\nn = 2 biti imprumutati;
+:Prefix nou: /24 + 2 = /26;
+:Biti host: 32 - 26 = 6\nHosturi per subretea: 2^6 - 2 = 62;
+:Subretea 0: 192.168.1.0/26\nInterval: .1-.62, Bcast: .63;
+:Subretea 1: 192.168.1.64/26\nInterval: .65-.126, Bcast: .127;
+:Subretea 2: 192.168.1.128/26\nInterval: .129-.190, Bcast: .191;
+:Subretea 3: 192.168.1.192/26\nInterval: .193-.254, Bcast: .255;
+stop
+
+legend right
+/24=254, /25=126
+/26=62, /27=30
+/28=14, /29=6
+/30=2 hosturi
+endlegend
+@enduml

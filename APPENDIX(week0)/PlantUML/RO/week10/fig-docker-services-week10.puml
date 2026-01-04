@@ -1,0 +1,28 @@
+@startuml fig-docker-services-week10
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title Servicii Docker Compose - Saptamana 10
+
+package "Retea Docker" as net #F5F5F5 {
+    component "DNS :53" as dns #E1BEE7
+    component "SSH :22" as ssh #E3F2FD
+    component "FTP :21" as ftp #E3F2FD
+    component "HTTP :80,:443" as http #C8E6C9
+    component "Client" as client #FFE0B2
+}
+
+client --> dns
+client --> ssh
+client --> ftp
+client --> http
+
+legend bottom
+docker-compose up -d
+docker exec -it client sh
+curl http://http
+ssh user@ssh
+Servicii: bind9, openssh, vsftpd, nginx
+endlegend
+@enduml

@@ -1,0 +1,22 @@
+@startuml fig-dhcp-dora
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title Procesul DHCP DORA
+
+participant "Client\n(fara IP)" as C
+participant "Server DHCP\n192.168.1.1" as S
+
+C -> S : D: Discover (broadcast)\nSrc: 0.0.0.0 Dst: 255.255.255.255
+S --> C : O: Offer\nIP: 192.168.1.100 Lease: 86400s
+C -> S : R: Request (broadcast)\nSolicit 192.168.1.100
+S --> C : A: Acknowledge\nAtribuit, lease confirmat
+
+legend right
+Port 67 (server), 68 (client)
+DHCP furnizeaza: IP, masca
+gateway, DNS, durata lease
+tcpdump port 67 or 68
+endlegend
+@enduml

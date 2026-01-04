@@ -1,0 +1,28 @@
+@startuml fig-ftp-architecture
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+left to right direction
+title Model FTP cu Doua Conexiuni
+
+package "Client FTP" as cli #E8F5E9 {
+    component "Control" as cp_c
+    component "Date" as dp_c
+}
+
+package "Server FTP" as srv #E3F2FD {
+    component "Control\nPort 21" as cp_s
+    component "Date\nPort 20/*" as dp_s
+}
+
+cp_c <-[#1565C0]-> cp_s : Control (comenzi)
+dp_c <-[#43A047]-> dp_s : Date (fisiere)
+
+legend bottom
+Activ: serverul conecteaza CATRE client
+Pasiv (PASV): clientul conecteaza CATRE server
+Comenzi: USER, PASS, LIST, RETR, STOR
+Modul pasiv e prietenos cu firewall-ul
+endlegend
+@enduml

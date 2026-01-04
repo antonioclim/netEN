@@ -1,0 +1,31 @@
+@startuml fig-packet-capture-workflow
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title Flux de Captura si Analiza Pachete
+
+start
+:Porneste captura\ntcpdump -i any -w demo.pcap;
+:Genereaza trafic\nClient/Server TCP, Emitator UDP;
+:Opreste captura\nCtrl+C;
+:Analizeaza cu tshark\ntshark -r demo.pcap;
+:Filtreaza trafic specific\ntshark -Y "tcp.port==9090";
+:Extrage campuri\ntshark -T fields\n-e ip.src -e tcp.flags;
+:Genereaza statistici\ntshark -q -z conv,tcp;
+:Documenteaza dovezi\nSalveaza pcap + loguri;
+stop
+
+legend right
+Flag-uri tcpdump:
+-i any : toate interfetele
+-nn : fara rezolutie DNS
+-w fisier : scrie in pcap
+-U : output nebuferat
+
+Filtre tshark:
+-Y : filtru afisare
+-T fields : format iesire
+-q -z : mod statistici
+endlegend
+@enduml

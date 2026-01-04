@@ -1,0 +1,24 @@
+@startuml fig-evidence-artefacts
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+title Dovezi si Artefacte Proiect
+
+package "Artefacte Necesare" as req #F5F5F5 {
+    card "Loguri\nartifacts/demo.log\nartifacts/server.log" as logs #E3F2FD
+    card "Capturi\nartifacts/demo.pcap\nartifacts/handshake.pcap" as caps #E8F5E9
+    card "Validare\nartifacts/validation.txt\noutput teste" as valid #FFF3E0
+}
+
+package "Documentatie" as docs #FCE4EC {
+    card "README.md\nDescriere, Instalare\nQuickstart, Configurare" as readme
+}
+
+legend bottom
+Generare:
+make demo > artifacts/demo.log 2>&1
+tcpdump -w artifacts/demo.pcap &
+./tests/smoke_test.sh | tee validation.txt
+endlegend
+@enduml

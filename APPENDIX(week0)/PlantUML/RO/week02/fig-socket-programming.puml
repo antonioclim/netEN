@@ -1,0 +1,30 @@
+@startuml fig-socket-programming
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title Model de Programare Socket TCP
+
+|Server|
+start
+:socket(AF_INET, SOCK_STREAM);
+:bind(adresa, port);
+:listen(backlog);
+repeat
+  :conn = accept();
+  :data = recv(conn);
+  :send(conn, raspuns);
+  :close(conn);
+repeat while (in executie)
+:close(socket);
+stop
+
+|Client|
+start
+:socket(AF_INET, SOCK_STREAM);
+:connect(server, port);
+:send(date);
+:raspuns = recv();
+:close();
+stop
+@enduml

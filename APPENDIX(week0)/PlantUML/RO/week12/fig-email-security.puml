@@ -1,0 +1,26 @@
+@startuml fig-email-security
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+title Autentificare Email SPF/DKIM/DMARC
+
+package "SPF" as spf #E3F2FD {
+    card "DNS TXT: v=spf1\nip4:x.x.x.x -all\nVerifica IP emitator" as spf_d
+}
+
+package "DKIM" as dkim #E8F5E9 {
+    card "Semnatura in antet\nCheie publica DNS\nVerifica integritate" as dkim_d
+}
+
+package "DMARC" as dmarc #FFF3E0 {
+    card "DNS: v=DMARC1 p=reject\nCombina SPF+DKIM\nAplicare politica" as dmarc_d
+}
+
+legend bottom
+SPF: IP-ul emitatorului e autorizat?
+DKIM: Mesajul e nemodificat?
+DMARC: Se aliniaza cu From?
+Politica: none, quarantine, reject
+endlegend
+@enduml

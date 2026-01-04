@@ -1,0 +1,35 @@
+@startuml fig-broadcast-vs-multicast
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+title Unicast vs Broadcast vs Multicast
+
+package "UNICAST" as uni #E3F2FD {
+    card "Emitator" as us
+    card "Tinta" as ut #C8E6C9
+    card "Altul" as uo #ECEFF1
+    us -> ut
+}
+
+package "BROADCAST" as bcast #FFF3E0 {
+    card "Emitator" as bs
+    card "Toti 1" as bt1 #C8E6C9
+    card "Toti 2" as bt2 #C8E6C9
+    bs -> bt1
+    bs -> bt2
+}
+
+package "MULTICAST" as mcast #E8F5E9 {
+    card "Emitator" as ms
+    card "Inscris" as mt1 #C8E6C9
+    card "Neinscris" as mt2 #ECEFF1
+    ms -> mt1
+}
+
+legend bottom
+Unicast: destinatie unica (HTTP, SSH)
+Broadcast: toate hosturile, doar L2 (ARP, DHCP)
+Multicast: doar interesati (IPTV, bursa)
+endlegend
+@enduml

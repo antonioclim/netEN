@@ -1,0 +1,34 @@
+@startuml fig-sdn-architecture
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title Arhitectura SDN
+
+package "Nivel Aplicatie" as app #E1BEE7 {
+    component "Aplicatii Retea\nLB, Firewall, QoS" as apps
+}
+
+package "Nivel Control" as ctrl #E3F2FD {
+    component "Controller SDN\nOpenDaylight, ONOS, Ryu" as controller
+}
+
+package "Nivel Date" as data #E8F5E9 {
+    component "Switch 1" as s1
+    component "Switch 2" as s2
+    component "Switch 3" as s3
+    s1 -- s2
+    s2 -- s3
+}
+
+apps -d-> controller : API Northbound (REST)
+controller -d-> s1 : Southbound (OpenFlow)
+controller -d-> s2
+controller -d-> s3
+
+legend bottom
+Plan control: centralizat in controller
+Plan date: doar forwarding pachete
+Avantaje: programabil, independent de vendor
+endlegend
+@enduml

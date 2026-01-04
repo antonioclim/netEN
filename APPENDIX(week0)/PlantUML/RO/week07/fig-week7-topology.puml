@@ -1,0 +1,29 @@
+@startuml fig-week7-topology
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title Topologie Mininet Saptamana 7
+
+node "Switch s1" as s1 #90CAF9
+
+rectangle "h1 (Client)\n10.0.7.11" as h1 #C8E6C9
+rectangle "h2 (Server)\n10.0.7.12\nTCP:9090 UDP:9091" as h2 #C8E6C9
+rectangle "fw (Firewall)\n10.0.7.100\nreguli iptables" as fw #FFCDD2
+
+h1 -- s1 : eth0
+h2 -- s1 : eth0
+fw -- s1 : eth0
+
+h1 .[#1565C0].> fw : traficul trece\nprin fw
+fw .[#1565C0].> h2 : trafic filtrat
+
+legend bottom
+Flux demo:
+1. h2 ruleaza tcp_server.py pe 9090
+2. fw aplica reguli iptables
+3. h1 ruleaza tcp_client.py
+4. tcpdump captureaza pe fw
+5. Analiza cu tshark
+endlegend
+@enduml

@@ -1,0 +1,45 @@
+@startuml fig-diagnostic-workflow
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title Flux de Diagnosticare Retea
+
+start
+:Verifica interfata\nip addr show;
+if (Interfata UP?) then (da)
+else (nu)
+    #FFCDD2:ip link set eth0 up;
+    stop
+endif
+
+:Test loopback\nping 127.0.0.1;
+if (OK?) then (da)
+else (nu)
+    #FFCDD2:Eroare stiva TCP/IP;
+    stop
+endif
+
+:Test gateway\nping GATEWAY;
+if (OK?) then (da)
+else (nu)
+    #FFCDD2:Verifica cablu/DHCP;
+    stop
+endif
+
+:Test Internet\nping 8.8.8.8;
+if (OK?) then (da)
+else (nu)
+    #FFCDD2:Verifica firewall;
+    stop
+endif
+
+:Test DNS\nping google.com;
+if (OK?) then (da)
+    #C8E6C9:CONECTIVITATE COMPLETA;
+else (nu)
+    #FFCDD2:Repara resolv.conf;
+    stop
+endif
+stop
+@enduml

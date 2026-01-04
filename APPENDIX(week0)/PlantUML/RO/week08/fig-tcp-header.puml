@@ -1,0 +1,24 @@
+@startuml fig-tcp-header
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+left to right direction
+title Antetul TCP (20-60 octeti)
+
+card "Port Sursa\n16 biti" as sp #BBDEFB
+card "Port Dest\n16 biti" as dp #BBDEFB
+card "Numar Secventa\n32 biti" as seq #C8E6C9
+card "Numar Confirmare\n32 biti" as ack #C8E6C9
+card "Flag-uri\nSYN ACK FIN RST" as fl #FFF9C4
+card "Fereastra\n16 biti" as win #FFE0B2
+card "Checksum\n16 biti" as cs #FFCDD2
+
+legend bottom
+Secventa: pozitia octetului in flux
+Confirmare: urmatorul octet asteptat
+Fereastra: spatiu buffer receptor
+Flag-uri: SYN=conectare, FIN=inchidere, RST=anulare
+Comune: SYN, SYN-ACK, ACK, FIN-ACK
+endlegend
+@enduml

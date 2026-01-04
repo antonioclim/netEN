@@ -1,0 +1,25 @@
+@startuml fig-icmp-messages
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+title Tipuri de Mesaje ICMP
+
+package "Mesaje Eroare" as err #FFCDD2 {
+    card "Type 3\nDestinatie Inaccesibila" as t3 #FFEBEE
+    card "Type 11\nTimp Depasit" as t11 #FFEBEE
+    card "Type 5\nRedirectare" as t5 #FFEBEE
+}
+
+package "Informationale" as info #C8E6C9 {
+    card "Type 8\nEcho Request\n(ping)" as t8 #E8F5E9
+    card "Type 0\nEcho Reply\n(pong)" as t0 #E8F5E9
+}
+
+legend bottom
+Coduri Dest Unreachable:
+0=retea, 1=host, 3=port, 4=fragm necesar
+traceroute foloseste TTL exceeded (Type 11)
+tcpdump icmp
+endlegend
+@enduml

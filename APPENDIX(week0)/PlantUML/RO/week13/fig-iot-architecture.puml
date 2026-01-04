@@ -1,0 +1,41 @@
+@startuml fig-iot-architecture
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title Arhitectura Retea IoT
+
+package "Cloud" as cloud #E3F2FD {
+    component "Platforma IoT" as plat
+    component "Stocare" as stor
+    component "Analiza" as anal
+}
+
+package "Edge" as edge #FFF3E0 {
+    component "Gateway IoT\nTraducere protocol" as gw
+}
+
+package "Dispozitive" as dev #E8F5E9 {
+    component "Senzori" as sens
+    component "Actuatori" as act
+    component "Camere" as cam
+}
+
+package "Interfata" as ui #FCE4EC {
+    component "Aplicatie Mobila" as app
+    component "Dashboard" as dash
+}
+
+sens -u-> gw : MQTT/Zigbee
+act -u-> gw
+cam -u-> gw : RTSP
+gw -u-> plat : MQTT/HTTPS
+plat --> app
+plat --> dash
+
+legend bottom
+Gateway: punte protocoale, automatizare locala
+Cloud: AWS IoT, Azure IoT Hub
+Protocoale: MQTT, CoAP, HTTP, Zigbee
+endlegend
+@enduml

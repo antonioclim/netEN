@@ -1,0 +1,22 @@
+@startuml fig-vlsm-allocation
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title Exemplu Alocare VLSM
+
+package "192.168.1.0/24 (256 adrese)" as main #F5F5F5 {
+    component "Dept A: 100 hosturi\n192.168.1.0/25\n128 adrese" as a #BBDEFB
+    component "Dept B: 50 hosturi\n192.168.1.128/26\n64 adrese" as b #C8E6C9
+    component "Dept C: 25 hosturi\n192.168.1.192/27\n32 adrese" as c #FFE0B2
+    component "Legaturi /30\n192.168.1.224+\n4 adrese fiecare" as links #E1BEE7
+}
+
+legend bottom
+Pasi VLSM:
+1. Sorteaza de la cel mai mare
+2. Aloca pe granita corecta
+3. Continua cu spatiul ramas
+Granita: Adresa retea divizibila cu dimensiunea
+endlegend
+@enduml

@@ -1,0 +1,26 @@
+@startuml fig-tshark-workflow
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title Flux de Captura Trafic
+
+start
+:Porneste captura\ntshark -i lo -f "port 9999" -w capture.pcap;
+:Genereaza trafic\ncomenzi nc in alte terminale;
+:Opreste captura\nCtrl+C;
+:Citeste captura\ntshark -r capture.pcap;
+:Aplica filtru\ntshark -r capture.pcap -Y "tcp.flags.syn==1";
+:Extrage campuri\ntshark -T fields -e ip.src -e tcp.srcport;
+:Export CSV\ntshark -E header=y -E separator=,;
+stop
+
+legend right
+-i : interfata
+-f : filtru captura (BPF)
+-w : scrie fisier
+-r : citeste fisier
+-Y : filtru afisare
+-T : format iesire
+endlegend
+@enduml

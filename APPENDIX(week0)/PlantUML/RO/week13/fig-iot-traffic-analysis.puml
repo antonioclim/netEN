@@ -1,0 +1,21 @@
+@startuml fig-iot-traffic-analysis
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title Analiza Trafic IoT
+
+start
+:Captureaza trafic\ntcpdump -i eth0 -w iot.pcap;
+:Identifica dispozitive\nnmap -sn 192.168.1.0/24;
+:Statistici protocol\ntshark -q -z io,phs;
+:Harta endpoint-uri\ntshark -q -z endpoints,ip;
+if (Anomalie?) then (da)
+    #FFCDD2:Marcheaza pentru revizuire;
+else (nu)
+    #C8E6C9:Trafic normal;
+endif
+:Analiza MQTT\ntshark -Y mqtt -e mqtt.topic;
+:Genereaza raport;
+stop
+@enduml

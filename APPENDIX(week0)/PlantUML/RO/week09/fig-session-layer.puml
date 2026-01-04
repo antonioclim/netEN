@@ -1,0 +1,22 @@
+@startuml fig-session-layer
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title Nivelul Sesiune OSI (L5)
+
+package "Functii Sesiune" as sess #F5F5F5 {
+    component "Control Dialog\nSimplex/Half/Full Duplex" as dc #BBDEFB
+    component "Sincronizare\nCheckpoint-uri, Token-uri" as sync #C8E6C9
+    component "Gestionare Sesiune\nStabilire/Mentinere/Terminare" as mgmt #FFE0B2
+}
+
+legend bottom
+Echivalente moderne:
+Sesiuni HTTP (cookies)
+Conexiuni WebSocket
+Reluare sesiune TLS
+Gestionare sesiune RPC
+Sesiunea persista peste mai multe conexiuni
+endlegend
+@enduml

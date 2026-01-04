@@ -1,0 +1,35 @@
+@startuml fig-iptables-chains
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+left to right direction
+title Lanturile de Filtrare iptables
+
+card "Pachet\nIntrat" as inp #FFE0B2
+
+package "Tabela Filter" as filter #F5F5F5 {
+    card "INPUT\n(catre proces local)" as input #C8E6C9
+    card "FORWARD\n(prin router)" as forward #BBDEFB
+    card "OUTPUT\n(de la proces local)" as output #E1BEE7
+}
+
+card "Proces\nLocal" as local #FFF9C4
+card "Pachet\nIesit" as outp #FFE0B2
+
+inp --> input : destinat\nhostului
+inp --> forward : rutat\nprin
+input --> local
+local --> output
+output --> outp
+forward --> outp
+
+legend bottom
+iptables -I FORWARD 1 -p tcp --dport 9090 -j REJECT
+iptables -L -n -v (listeaza reguli)
+iptables -F FORWARD (goleste lantul)
+INPUT: trafic CATRE acest host
+FORWARD: trafic PRIN acest host (router)
+OUTPUT: trafic DE LA acest host
+endlegend
+@enduml

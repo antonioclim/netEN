@@ -1,0 +1,33 @@
+@startuml fig-threaded-server
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+left to right direction
+title Server TCP Concurent - Cu Fire de Executie
+
+package "Firul Principal" as main #E3F2FD {
+    component "Socket Server\nLISTEN :9090" as ssock
+}
+
+package "Fire de Lucru" as workers #FFF3E0 {
+    component "Fir 1\nClient 10.0.0.2" as t1
+    component "Fir 2\nClient 10.0.0.3" as t2
+}
+
+package "Clienti" as clients #E8F5E9 {
+    component "h2" as c1
+    component "h3" as c2
+}
+
+ssock -d-> t1 : accept()
+ssock -d-> t2 : accept()
+c1 <-> t1
+c2 <-> t2
+
+legend bottom
+Principal: accept() creaza fir nou
+Lucrator: gestioneaza clientul independent
+Avantaje: clienti multipli, izolare
+endlegend
+@enduml

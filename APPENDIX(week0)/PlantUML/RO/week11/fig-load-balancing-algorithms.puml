@@ -1,0 +1,29 @@
+@startuml fig-load-balancing-algorithms
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+title Algoritmi de Echilibrare Incarcarii
+
+package "Round Robin" as rr #E3F2FD {
+    card "Cer1->A, Cer2->B\nCer3->C, Cer4->A..." as rr_d
+}
+
+package "Round Robin Ponderat" as wrr #E3F2FD {
+    card "A(p=3): 3 cereri\nB(p=1): 1 cerere" as wrr_d
+}
+
+package "Cele Mai Putine Conexiuni" as lc #C8E6C9 {
+    card "Trimite la serverul\ncu cele mai putine conn" as lc_d
+}
+
+package "Hash IP" as iph #FFE0B2 {
+    card "hash(client_ip)%N\nAcelasi client->acelasi server" as iph_d
+}
+
+legend bottom
+Nginx: upstream { server s1; server s2; }
+least_conn; ip_hash;
+server s1 weight=3;
+endlegend
+@enduml

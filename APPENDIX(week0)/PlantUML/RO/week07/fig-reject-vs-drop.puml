@@ -1,0 +1,45 @@
+@startuml fig-reject-vs-drop
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title Comportament REJECT vs DROP
+
+participant "Client" as C
+participant "Firewall" as FW
+participant "Server\n(blocat)" as S
+
+== REJECT (esec rapid) ==
+
+C -> FW : TCP SYN catre port 9090
+FW -[#E53935]-> C : ICMP Port Unreachable\nsau TCP RST
+note right of C #C8E6C9
+Clientul primeste imediat
+raspuns de eroare
+"Connection refused"
+endnote
+
+== DROP (esec lent) ==
+
+C -> FW : TCP SYN catre port 9090
+FW -[#E53935]x S : aruncat silentios
+C -> FW : SYN reincercare (timeout)
+C -> FW : SYN reincercare (timeout)
+note right of C #FFCDD2
+Clientul asteapta pana
+expira timeout-ul
+"Connection timed out"
+endnote
+
+legend right
+REJECT: refuz explicit
+- Clientul stie imediat
+- Usor de depanat
+- Foloseste in dezvoltare
+
+DROP: aruncare silentioasa
+- Clientul asteapta timeout
+- Mai greu pentru atacator
+- Foloseste in productie
+endlegend
+@enduml

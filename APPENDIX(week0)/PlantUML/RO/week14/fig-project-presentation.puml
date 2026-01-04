@@ -1,0 +1,24 @@
+@startuml fig-project-presentation
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title Structura Prezentare Proiect (7-10 min)
+
+card "1. Introducere (1 min)\nNume proiect, tehnologii, echipa" as intro #E3F2FD
+card "2. Demo Live (4 min)\nStart curat, configurare, functionalitati, captura" as demo #C8E6C9
+card "3. Arhitectura (2 min)\nComponente, flux date, decizii design" as arch #FFF3E0
+card "4. Intrebari si Aparare (3 min)\nIntrebari tehnice, lectii invatate" as qa #FCE4EC
+
+intro -d-> demo
+demo -d-> arch
+arch -d-> qa
+
+legend bottom
+Lista verificare:
+README complet
+Demo testat pe VM curat
+Video backup inregistrat
+Fisiere PCAP pregatite
+endlegend
+@enduml

@@ -1,0 +1,25 @@
+@startuml fig-health-checks
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title Verificari Sanatate si Failover
+
+component "Load Balancer" as lb #E3F2FD
+
+component "Server 1\nSANATOS" as s1 #C8E6C9
+component "Server 2\nSANATOS" as s2 #C8E6C9
+component "Server 3\nNESANATOS" as s3 #FFCDD2
+
+lb -d-> s1 : Activ
+lb -d-> s2 : Activ
+lb .[#E53935,dashed].> s3 : Eliminat
+
+legend bottom
+Tipuri Verificare Sanatate:
+TCP: poate conecta?
+HTTP: GET /health returneaza 200?
+Nginx: max_fails=3 fail_timeout=30s
+Dupa 3 esecuri in 30s -> marcat down
+endlegend
+@enduml

@@ -13,8 +13,6 @@
 # but is useful for rapid testing and development.
 # =============================================================================
 
-version: '3.8'
-
 services:
   # =========================================================================
   # Backend Server 1
@@ -106,6 +104,8 @@ services:
       - lb
     volumes:
       - ../artifacts:/app/artifacts
+    # Run as host user to preserve file ownership
+    user: "${UID:-1000}:${GID:-1000}"
     command: bash
 
   # =========================================================================

@@ -1,0 +1,442 @@
+================================================================================
+SLIDES OUTLINE SEMINAR 8 - IMPLEMENTATION SERVER HTTP & REVERSE PROXY
+================================================================================
+Subject: Retele de Calculatoare
+Week: 8 | Year 3, Semester 2 | Business Informatics ASE Bucharest
+Topic: "Internet Services: implementing an HTTP server. Reverse proxies."
+Recommended export: PowerPoint / reveal.js / Google Slides
+================================================================================
+
+──────────────────────────────────────────────────────────────────────────────
+SLIDE 1: SEMINAR TITLE
+──────────────────────────────────────────────────────────────────────────────
+• Seminar 8: Server HTTP & Reverse Proxy
+• Code-assisted development
+• [Logo universitate] [Logo curs]
+• Data: [auto-fill]
+
+──────────────────────────────────────────────────────────────────────────────
+SLIDE 2: PRACTICAL OBJECTIVES
+──────────────────────────────────────────────────────────────────────────────
+• At the end of the seminar you will be able to:
+  1. Implement a minimal HTTP server In Python
+  2. Understand parsing request-urilor HTTP
+  3. Generate correct HTTP responses
+  4. Build a reverse proxy cu load balancing
+  5. Analyse TCP traffic cu tshark
+• All with functional code, tested, reproducible
+
+──────────────────────────────────────────────────────────────────────────────
+SLIDE 3: PREREQUISITES AND SETUP
+──────────────────────────────────────────────────────────────────────────────
+• Required knowledge:
+  - Socket programming (Seminar 2-3)
+  - TCP Protocol (Curs 8)
+  - Linux basics/Bash
+• Environment setup:
+  cd starterkit_s8
+  make verify          # validare dependency
+  make setup           # pregatire mediu
+• files importante:
+  - python/demos/demo_http_server.py
+  - python/demos/demo_reverse_proxy.py
+  - python/utils/net_utils.py
+
+──────────────────────────────────────────────────────────────────────────────
+SLIDE 4: GENERAL ARCHITECTURE
+──────────────────────────────────────────────────────────────────────────────
+• System diagram:
+  ┌─────────────┐     ┌─────────────────┐     ┌─────────────┐
+  │   Client    │────▶│  Reverse Proxy  │────▶│  Backend A  │
+  │  (browser)  │     │    (port 8080)  │──┬──│  (port 8081)│
+  └─────────────┘     └─────────────────┘  │  └─────────────┘
+                             │             │  ┌─────────────┐
+                             ▼             └──│  Backend B  │
+                      ┌─────────────┐         │  (port 8082)│
+                      │   tshark    │         └─────────────┘
+                      │  (captura)  │
+                      └─────────────┘
+• Componentele vor fi implementate Step cu Step
+
+──────────────────────────────────────────────────────────────────────────────
+SLIDE 5: DEMO 1 - HTTP SERVER SIMPLU
+──────────────────────────────────────────────────────────────────────────────
+• Starting server:
+  python3 python/demos/demo_http_server.py --port 8081 --docroot www/
+• Test cu curl:
+  curl -v http://localhost:8081/
+  curl http://localhost:8081/hello.txt
+  curl http://localhost:8081/nonexistent.html  # 404
+• Observam In terminal: log-uri cu timestamp, method, path, status
+
+──────────────────────────────────────────────────────────────────────────────
+SLIDE 6: STRUCTURA HTTP REQUEST
+──────────────────────────────────────────────────────────────────────────────
+• Format cerere HTTP/1.1:
+  ┌────────────────────────────────────────┐
+  │ GET /index.html HTTP/1.1               │ ← Request Line
+  │ Host: localhost:8081                   │ ← Headers
+  │ User-Agent: curl/7.68.0                │
+  │ Accept: */*                            │
+  │                                        │ ← Linie goala (CRLF)
+  │ [body if exista]                     │
+  └────────────────────────────────────────┘
+• Separatoare: \r\n (CRLF) intre linii
+
+──────────────────────────────────────────────────────────────────────────────
+SLIDE 7: PARSARE REQUEST - COD
+──────────────────────────────────────────────────────────────────────────────
+• Algoritmul:
+  1. Citeste pana to \r\n\r\n (end of headers)
+  2. Split pe primul \r\n → request line
+  3. Split request line pe spatii → method, path, version
+  4. Restul liniilor sunt headers (key: value)
+• Cod esential:
+  lines = request.split('\r\n')
+  method, path, version = lines[0].split(' ', 2)
+  headers = {}
+  for line in lines[1:]:
+      if ':' in line:
+          key, value = line.split(':', 1)
+          headers[key.strip().lower()] = value.strip()
+
+──────────────────────────────────────────────────────────────────────────────
+SLIDE 8: STRUCTURA HTTP RESPONSE
+──────────────────────────────────────────────────────────────────────────────
+• Format raspuns:
+  ┌────────────────────────────────────────┐
+  │ HTTP/1.1 200 OK                        │ ← Status Line
+  │ Content-Type: text/html                │ ← Headers
+  │ Content-Length: 1234                   │
+  │ Server: SimpleHTTP/1.0                 │
+  │                                        │ ← Linie goala
+  │ <html>...</html>                       │ ← Body
+  └────────────────────────────────────────┘
+• Headers obligatorii: Content-Type, Content-Length
+
+──────────────────────────────────────────────────────────────────────────────
+SLIDE 9: GENERARE RESPONSE - COD
+──────────────────────────────────────────────────────────────────────────────
+• Constructia raspunsului:
+  def build_response(status_code, status_text, headers, body):
+      response = f"HTTP/1.1 {status_code} {status_text}\r\n"
+      for key, value in headers.items():
+          response += f"{key}: {value}\r\n"
+      response += "\r\n"
+      return response.encode('utf-8') + body
+• Exemplu apel:
+  headers = {"Content-Type": "text/html", "Content-Length": len(body)}
+  return build_response(200, "OK", headers, body)
+
+──────────────────────────────────────────────────────────────────────────────
+SLIDE 10: serving FISIERELOR STATICE
+──────────────────────────────────────────────────────────────────────────────
+• Algoritmul:
+  1. Extrage path din request
+  2. Normalizeaza (elimina ../)  ← SECURITATE!
+  3. Construieste cale completea: docroot + path
+  4. check existenta file
+  5. Determina Content-Type din extensie
+  6. Citeste and returneaza content
+• MIME types:
+  .html → text/html
+  .css  → text/css
+  .js   → application/javascript
+  .json → application/json
+  .png  → image/png
+
+──────────────────────────────────────────────────────────────────────────────
+SLIDE 11: SECURITATE - DIRECTORY TRAVERSAL
+──────────────────────────────────────────────────────────────────────────────
+• Atacul:
+  GET /../../../etc/passwd HTTP/1.1
+• Fara protectie → server expune sistem de files!
+• Solutie In Python:
+  import os
+  safe_path = os.path.normpath(path)
+  full_path = os.path.join(docroot, safe_path)
+  # check ca full_path incepe cu docroot
+  if not full_path.startswith(os.path.abspath(docroot)):
+      return 403, "Forbidden"
+• Testare: curl http://localhost:8081/../etc/passwd
+
+──────────────────────────────────────────────────────────────────────────────
+SLIDE 12: DEMO 2 - CAPTURA TSHARK
+──────────────────────────────────────────────────────────────────────────────
+• in a terminal:
+  sudo tshark -i lo -f "tcp port 8081" -c 20
+• In alt terminal:
+  curl http://localhost:8081/
+• Observam:
+  Pachet 1: SYN (client → server)
+  Pachet 2: SYN-ACK (server → client)
+  Pachet 3: ACK (client → server)
+  Pachet 4: PSH,ACK - HTTP GET
+  Pachet 5: PSH,ACK - HTTP Response
+  Pachet 6-7: FIN,ACK - inchidere
+
+──────────────────────────────────────────────────────────────────────────────
+SLIDE 13: INTERPRETARE CAPTURA
+──────────────────────────────────────────────────────────────────────────────
+• Tabel interpretare flags TCP:
+  | Nr | Flags   | Directie | Descriere               |
+  |----|---------|----------|-------------------------|
+  | 1  | SYN     | C→S      | Initiere conexiune      |
+  | 2  | SYN,ACK | S→C      | Acceptare conexiune     |
+  | 3  | ACK     | C→S      | Confirmare, conn. ready |
+  | 4  | PSH,ACK | C→S      | GET /index.html         |
+  | 5  | PSH,ACK | S→C      | HTTP 200 OK + body      |
+  | 6  | FIN,ACK | C→S      | Inchidere client        |
+  | 7  | FIN,ACK | S→C      | Inchidere server        |
+
+──────────────────────────────────────────────────────────────────────────────
+SLIDE 14: REVERSE PROXY - CONCEPT
+──────────────────────────────────────────────────────────────────────────────
+• Rol:
+  - Primeste cereri from clienti
+  - Le distribuie catre backend-uri
+  - Agrega raspunsurile catre client
+• De ce e util:
+  - Load balancing
+  - High availability
+  - SSL termination
+  - Caching
+  - Security (ascunde backend-uri)
+• In practica: nginx, HAProxy, Traefik, AWS ALB
+
+──────────────────────────────────────────────────────────────────────────────
+SLIDE 15: DEMO 3 - REVERSE PROXY
+──────────────────────────────────────────────────────────────────────────────
+• Step 1: Pornim 2 backend-uri
+  python3 python/demos/demo_http_server.py --port 8081 --docroot www/
+  python3 python/demos/demo_http_server.py --port 8082 --docroot www/
+• Step 2: Pornim reverse proxy
+  python3 python/demos/demo_reverse_proxy.py \
+      --port 8080 \
+      --backends localhost:8081,localhost:8082
+• Step 3: Test
+  for i in {1..6}; do curl http://localhost:8080/; done
+• Observam alternarea: A, B, A, B, A, B (Round Robin)
+
+──────────────────────────────────────────────────────────────────────────────
+SLIDE 16: IMPLEMENTATION ROUND ROBIN
+──────────────────────────────────────────────────────────────────────────────
+• Algoritm:
+  class RoundRobinBalancer:
+      def __init__(self, backends):
+          self.backends = backends  # lista
+          self.index = 0
+      
+      def next_backend(self):
+          backend = self.backends[self.index]
+          self.index = (self.index + 1) % len(self.backends)
+          return backend
+• Thread-safety: folosim threading.Lock() for index
+
+──────────────────────────────────────────────────────────────────────────────
+SLIDE 17: FORWARDING REQUEST
+──────────────────────────────────────────────────────────────────────────────
+• steps:
+  1. Primeste request from client
+  2. Alege backend (round robin)
+  3. Deschide conexiune TCP catre backend
+  4. Trimite request modificat (Host header)
+  5. Primeste raspuns from backend
+  6. Trimite raspuns catre client original
+• Modificari header:
+  - Host: trebuie schimbat to adresa backend-ului
+  - X-Forwarded-For: adauga IP client original
+  - X-Forwarded-Proto: http or https
+
+──────────────────────────────────────────────────────────────────────────────
+SLIDE 18: HEADER FORWARDING - COD
+──────────────────────────────────────────────────────────────────────────────
+• Adaugare headers proxy:
+  def add_proxy_headers(headers, client_ip):
+      # Pastreaza or adauga X-Forwarded-For
+      xff = headers.get('x-forwarded-for', '')
+      if xff:
+          headers['x-forwarded-for'] = f"{xff}, {client_ip}"
+      else:
+          headers['x-forwarded-for'] = client_ip
+      
+      # Adauga Via header
+      headers['via'] = '1.1 proxy'
+      return headers
+
+──────────────────────────────────────────────────────────────────────────────
+SLIDE 19: DEMO 4 - CAPTURA PROXY
+──────────────────────────────────────────────────────────────────────────────
+• Captura pe mai multe porturi:
+  sudo tshark -i lo -f "tcp port 8080 or tcp port 8081 or tcp port 8082" -c 30
+• Facem request:
+  curl http://localhost:8080/
+• Observam DOUA conexiuni TCP:
+  1. Client (port efemer) ↔ Proxy (8080)
+  2. Proxy (port efemer) ↔ Backend (8081 or 8082)
+• Proxy-ul mentine conexiuni separate!
+
+──────────────────────────────────────────────────────────────────────────────
+SLIDE 20: DEBUGGING FRECVENT
+──────────────────────────────────────────────────────────────────────────────
+• Tabel erori comune:
+  | Simptom                | Cauza                    | Solutie                |
+  |------------------------|--------------------------|------------------------|
+  | Connection refused     | Server nu ruleaza        | check cu ss -tuln   |
+  | Address already in use | Port ocupat              | Schimba port or kill  |
+  | 404 Not Found          | file lipsa or path    | check docroot       |
+  | Headers malformate     | CRLF lipsa               | check \r\n          |
+  | Timeout                | Server blocat In read    | check dimensiune buf|
+
+──────────────────────────────────────────────────────────────────────────────
+SLIDE 21: COMENZI DEBUGGING
+──────────────────────────────────────────────────────────────────────────────
+• Verification porturi:
+  ss -tuln | grep 808          # ce porturi sunt deschise
+  lsof -i :8080                # ce proces foloseste portul
+• Test conexiune:
+  nc -vz localhost 8080        # test port
+  curl -v http://localhost:8080/  # verbose output
+• Stop proces:
+  kill $(lsof -t -i :8080)     # kill by port
+• Log detailat:
+  strace -f -e trace=network python3 server.py
+
+──────────────────────────────────────────────────────────────────────────────
+SLIDE 22: EXERCITIU 1 - COMPLETARE SERVER
+──────────────────────────────────────────────────────────────────────────────
+• file: python/exercises/ex01_http_server.py
+• Cerinte:
+  1. Implement functia parse_request()
+  2. Implement functia serve_file()
+  3. Adaugati suport for HEAD method
+• Test:
+  python3 -m pytest tests/test_http_server.py -v
+• Timp estimat: 30 minute
+
+──────────────────────────────────────────────────────────────────────────────
+SLIDE 23: EXERCITIU 2 - COMPLETARE PROXY
+──────────────────────────────────────────────────────────────────────────────
+• file: python/exercises/ex02_reverse_proxy.py
+• Cerinte:
+  1. Implement forward_request()
+  2. Adaugati headers X-Forwarded-For and Via
+  3. Implement health check for backend-uri
+• Test:
+  python3 -m pytest tests/test_reverse_proxy.py -v
+• Timp estimat: 30 minute
+
+──────────────────────────────────────────────────────────────────────────────
+SLIDE 24: EXERCITIU 3 - POST SUPPORT
+──────────────────────────────────────────────────────────────────────────────
+• Extindere server for POST:
+  - Citire body (Content-Length header)
+  - Parsare form data (application/x-www-form-urlencoded)
+  - Return JSON cu datele primite
+• Exemplu test:
+  curl -X POST -d "name=John&age=25" http://localhost:8081/api/form
+  → {"name": "John", "age": "25"}
+• Timp estimat: 25 minute (exercitiu avansat)
+
+──────────────────────────────────────────────────────────────────────────────
+SLIDE 25: EXERCITIU 4 - RATE LIMITING
+──────────────────────────────────────────────────────────────────────────────
+• Implementare limitare cereri:
+  - Maximum 10 cereri pe minut per IP
+  - Returneaza 429 Too Many Requests if depaandt
+  - Folositi dictionar cu timestamp-uri
+• Structura:
+  rate_limits = {}  # ip -> [list of timestamps]
+  def check_rate_limit(ip, max_requests=10, window=60):
+      # TODO: implementare
+• Timp estimat: 20 minute
+
+──────────────────────────────────────────────────────────────────────────────
+SLIDE 26: EXERCITIU CHALLENGE - CACHING PROXY
+──────────────────────────────────────────────────────────────────────────────
+• Implementare cache In proxy:
+  - Cache for raspunsuri GET
+  - TTL configurabil (ex: 60 secunde)
+  - Respecta Cache-Control headers
+• Bonus:
+  - Statistici cache (hits vs misses)
+  - Endpoint /cache/stats for monitorizare
+  - Invalidare manuala /cache/clear
+• Timp estimat: 45 minute (for studenti avansati)
+
+──────────────────────────────────────────────────────────────────────────────
+SLIDE 27: EXTENSII OPTIONALE
+──────────────────────────────────────────────────────────────────────────────
+• TLS Support:
+  - Generare certificate self-signed
+  - Wrap socket cu ssl.wrap_socket()
+  - Test cu curl --insecure
+• Docker Compose:
+  - 2 container-e backend (nginx)
+  - 1 container proxy (Python)
+  - Network internal for backend
+• Mininet:
+  - Topologie cu 3 host-uri
+  - Delay artificial for observare RTT
+  - Pierdere pachete configurabila
+
+──────────────────────────────────────────────────────────────────────────────
+SLIDE 28: CONTRIBUTIE PROIECT ECHIPA
+──────────────────────────────────────────────────────────────────────────────
+• Artefact livrabil saptamana 8:
+  1. Server HTTP functional (cod Python)
+  2. Reverse proxy cu load balancing
+  3. README cu instructiuni completee
+  4. Captura tshark annotata (10+ pachete)
+• Integrare:
+  - Componenta "http-layer" In proiect
+  - Pregatire for autentificare (Sapt. 9-10)
+  - Baza for REST API (Sapt. 10)
+
+──────────────────────────────────────────────────────────────────────────────
+SLIDE 29: RECAPITULARE
+──────────────────────────────────────────────────────────────────────────────
+• Ce am invatat practic:
+  ✓ Parsare HTTP request/response
+  ✓ Server files statice cu securitate
+  ✓ Reverse proxy cu round robin
+  ✓ Analiza trafic TCP cu tshark
+  ✓ Debugging conexiuni de retea
+• Unde se foloseste In industrie:
+  - Backend development (Django, Flask, FastAPI)
+  - DevOps (nginx, HAProxy, Traefik)
+  - Cloud (ALB, API Gateway)
+
+──────────────────────────────────────────────────────────────────────────────
+SLIDE 30: RESURSE SUPLIMENTARE
+──────────────────────────────────────────────────────────────────────────────
+• Documentatie:
+  - RFC 7230-7235: HTTP/1.1 Semantics
+  - https://developer.mozilla.org/en-US/docs/Web/HTTP
+• Tools:
+  - httpbin.org - testare HTTP
+  - requestbin.com - inspect requests
+• Practica:
+  - Implement un mini-framework web
+  - Extindeti cu WebSockets
+  - Adaugati middleware pattern
+
+================================================================================
+NOTE for CADRU DIDACTIC
+================================================================================
+• Timing: 2 ore (100 minute activitate, 20 minute pauza)
+• Structura recomandata:
+  - 0-15 min: Setup, recap, obiective
+  - 15-40 min: Demo server HTTP + captura
+  - 40-50 min: Pauza scurta
+  - 50-80 min: Demo reverse proxy + captura
+  - 80-100 min: Exercitii ghidate
+  - 100-120 min: Challenge + discutii
+• Pregatire:
+  - Verificati ca toate demo-urile ruleaza
+  - Pregatiti backup for conexiune internet
+  - Aveti solutii pregatite for exercitii
+
+================================================================================
+© Revolvix&Hypotheticalandrei
+================================================================================

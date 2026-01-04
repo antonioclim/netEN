@@ -1,0 +1,14 @@
+services:
+  lab:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    working_dir: /work
+    volumes:
+      - ..:/work:rw
+    network_mode: bridge
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1
+      - HOME=/home/lab
+    # Note: Removed user mapping to avoid permission issues with artifacts
+    # The container runs as root but only for demo/test purposes

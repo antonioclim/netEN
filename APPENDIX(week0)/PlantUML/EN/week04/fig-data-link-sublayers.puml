@@ -1,0 +1,24 @@
+@startuml fig-data-link-sublayers
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title OSI Layer 2 Sublayers
+
+package "Data Link Layer (L2)" as l2 #F5F5F5 {
+    component "LLC\nLogical Link Control\nIEEE 802.2" as llc #BBDEFB
+    component "MAC\nMedia Access Control\nIEEE 802.3/802.11" as mac #C8E6C9
+}
+
+component "Physical Layer (L1)" as l1 #FFE0B2
+
+llc -d-> mac
+mac -d-> l1
+
+legend bottom
+LLC: flow control, error detect, mux
+MAC: addressing, frame delimit, CSMA
+MAC Address: 48-bit (6 bytes)
+OUI (3B) + NIC ID (3B)
+endlegend
+@enduml

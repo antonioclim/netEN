@@ -1,0 +1,26 @@
+@startuml fig-ipv4-vs-ipv6
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+title IPv4 vs IPv6 Comparison
+
+package "IPv4" as v4 #E3F2FD {
+    card "32-bit address\n4.3 billion\n192.168.1.1" as v4a #BBDEFB
+    card "Header 20-60B\nChecksum" as v4h #BBDEFB
+    card "NAT required" as v4n #FFCDD2
+}
+
+package "IPv6" as v6 #E8F5E9 {
+    card "128-bit address\n340 undecillion\n2001:db8::1" as v6a #C8E6C9
+    card "Header 40B fixed\nNo checksum" as v6h #C8E6C9
+    card "No NAT needed" as v6n #C8E6C9
+}
+
+legend bottom
+IPv4: dotted decimal, /24, broadcast
+IPv6: colon hex, /64, no broadcast
+Autoconfig: DHCP vs SLAAC
+IPsec: optional vs built-in
+endlegend
+@enduml

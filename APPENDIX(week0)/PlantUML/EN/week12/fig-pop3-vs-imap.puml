@@ -1,0 +1,22 @@
+@startuml fig-pop3-vs-imap
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+title POP3 vs IMAP
+
+package "POP3 :110/995" as pop3 #FFF3E0 {
+    card "Download + Delete\nSingle device\nOffline access\nSimple protocol" as pop_d
+}
+
+package "IMAP :143/993" as imap #E3F2FD {
+    card "Sync with server\nMultiple devices\nServer-side folders\nPartial download" as imap_d
+}
+
+legend bottom
+POP3: USER, PASS, LIST, RETR, DELE
+IMAP: LOGIN, SELECT, FETCH, SEARCH
+POP3: local storage, high bandwidth
+IMAP: server storage, multi-device sync
+endlegend
+@enduml

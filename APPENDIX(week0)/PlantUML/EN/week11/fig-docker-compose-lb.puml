@@ -1,0 +1,26 @@
+@startuml fig-docker-compose-lb
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+title Docker Compose Load Balancing
+
+package "Docker Network" as net #F5F5F5 {
+    component "nginx (LB)\n:80" as lb #E3F2FD
+    component "app_1 :8080" as a1 #C8E6C9
+    component "app_2 :8080" as a2 #C8E6C9
+    component "app_3 :8080" as a3 #C8E6C9
+}
+
+lb -d-> a1
+lb -d-> a2
+lb -d-> a3
+
+legend bottom
+docker-compose up -d --scale app=3
+services:
+  nginx: ports "80:80"
+  app: deploy: replicas: 3
+docker-compose ps, logs -f nginx
+endlegend
+@enduml

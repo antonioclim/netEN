@@ -1,0 +1,32 @@
+@startuml fig-debugging-workflow
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title Network Debugging Workflow
+
+start
+:Identify symptom\nConnection refused? Timeout?;
+:Check server\ndocker-compose ps\nss -tlnp;
+if (Running?) then (yes)
+else (no)
+    :Start server, check logs;
+    stop
+endif
+:Test connectivity\nnc -zv SERVER PORT;
+if (Reachable?) then (yes)
+else (no)
+    :Check firewall/network;
+    stop
+endif
+:Capture traffic\ntcpdump -w debug.pcap;
+:Analyse\ntshark -r debug.pcap;
+if (Protocol OK?) then (yes)
+    :Review app logs;
+else (no)
+    :Fix serialization;
+    stop
+endif
+:Apply fix and test;
+stop
+@enduml

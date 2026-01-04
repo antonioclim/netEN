@@ -1,0 +1,29 @@
+@startuml fig-week7-topology
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title Week 7 Mininet Topology
+
+node "Switch s1" as s1 #90CAF9
+
+rectangle "h1 (Client)\n10.0.7.11" as h1 #C8E6C9
+rectangle "h2 (Server)\n10.0.7.12\nTCP:9090 UDP:9091" as h2 #C8E6C9
+rectangle "fw (Firewall)\n10.0.7.100\niptables rules" as fw #FFCDD2
+
+h1 -- s1 : eth0
+h2 -- s1 : eth0
+fw -- s1 : eth0
+
+h1 .[#1565C0].> fw : traffic passes\nthrough fw
+fw .[#1565C0].> h2 : filtered traffic
+
+legend bottom
+Demo flow:
+1. h2 runs tcp_server.py on 9090
+2. fw applies iptables rules
+3. h1 runs tcp_client.py
+4. tcpdump captures on fw
+5. Analyze with tshark
+endlegend
+@enduml

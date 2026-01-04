@@ -1,0 +1,27 @@
+@startuml fig-nat-pat-operation
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title NAT/PAT Operation
+
+package "Private 192.168.1.0/24" as priv #E8F5E9 {
+    component "PC1\n192.168.1.10:5000" as pc1 #C8E6C9
+    component "PC2\n192.168.1.11:5000" as pc2 #C8E6C9
+}
+
+component "NAT Router\n203.0.113.1" as nat #FFF3E0
+
+component "Web Server\n8.8.8.8:80" as web #E3F2FD
+
+pc1 -r-> nat : src .10:5000
+pc2 -r-> nat : src .11:5000
+nat -r-> web : src 203.0.113.1:10001\nsrc 203.0.113.1:10002
+
+legend bottom
+PAT: Multiple private IPs share one public
+NAT Table tracks port mappings
+Inside: 192.168.1.10:5000 -> Outside: 203.0.113.1:10001
+Inside: 192.168.1.11:5000 -> Outside: 203.0.113.1:10002
+endlegend
+@enduml

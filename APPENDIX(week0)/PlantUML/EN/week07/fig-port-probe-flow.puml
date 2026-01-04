@@ -1,0 +1,40 @@
+@startuml fig-port-probe-flow
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+title Port Probing Flow
+
+participant "Prober\nport_probe.py" as P
+participant "Target\nHost" as T
+
+== TCP Port Open ==
+P -> T : TCP SYN to port 9090
+T --> P : SYN-ACK
+P -> T : RST (close)
+note right: Port OPEN
+
+== TCP Port Closed ==
+P -> T : TCP SYN to port 9091
+T --> P : RST
+note right: Port CLOSED
+
+== TCP Port Filtered ==
+P -> T : TCP SYN to port 9092
+P -> P : timeout (no response)
+note right: Port FILTERED\n(firewall DROP)
+
+== UDP Check ==
+P -> T : UDP packet to port 9091
+T --> P : ICMP Port Unreachable
+note right: Port CLOSED
+P -> T : UDP packet to port 9091
+note right: No response =\nOPEN or FILTERED
+
+legend right
+port_probe.py output:
+9090/tcp OPEN
+9091/tcp CLOSED
+9092/tcp FILTERED
+endlegend
+@enduml

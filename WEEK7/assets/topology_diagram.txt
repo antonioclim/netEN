@@ -1,0 +1,9 @@
+Week 7 topology diagram (router firewall)
+
+      (10.0.7.0/25)                    (10.0.7.128/25)
+  h1:10.0.7.11 ---- s1 ---- fw ---- s2 ---- h2:10.0.7.200
+                      |      |
+                 fw-eth0  fw-eth1
+                 10.0.7.1 10.0.7.129
+
+Traffic between h1 and h2 must pass through fw, which is where filtering rules apply.

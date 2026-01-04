@@ -7,6 +7,68 @@
 
 ---
 
+
+## 🚀 Quick Clone & Setup
+
+To clone **only this week's content** directly into `~/WEEK4` and make all scripts executable, run the following commands:
+
+### Option A: One-liner (recommended)
+
+```bash
+cd ~ && git clone --filter=blob:none --sparse https://github.com/antonioclim/netEN.git WEEK4 && cd WEEK4 && git sparse-checkout set WEEK4 && shopt -s dotglob && mv WEEK4/* . && rmdir WEEK4 && find . -type f \( -name "*.sh" -o -name "*.py" \) -exec chmod +x {} \;
+```
+
+### Option B: Step-by-step (for understanding)
+
+```bash
+# 1. Navigate to home directory
+cd ~
+
+# 2. Clone repository with sparse checkout (downloads only metadata initially)
+git clone --filter=blob:none --sparse https://github.com/antonioclim/netEN.git WEEK4
+
+# 3. Enter the cloned directory
+cd WEEK4
+
+# 4. Configure sparse checkout to fetch only WEEK4
+git sparse-checkout set WEEK4
+
+# 5. Move contents up one level (flatten structure)
+shopt -s dotglob
+mv WEEK4/* .
+rmdir WEEK4
+
+# 6. Make all shell scripts and Python files executable
+find . -type f -name "*.sh" -exec chmod +x {} \;
+find . -type f -name "*.py" -exec chmod +x {} \;
+
+# 7. Verify the setup
+ls -la
+ls -la scripts/
+```
+
+### Option C: Without Git history (lightweight)
+
+If you don't need Git history and want the smallest possible download:
+
+```bash
+cd ~ && mkdir -p WEEK4 && cd WEEK4 && curl -L https://github.com/antonioclim/netEN/archive/refs/heads/main.tar.gz | tar -xz --strip-components=2 netEN-main/WEEK4 && find . -type f \( -name "*.sh" -o -name "*.py" \) -exec chmod +x {} \;
+```
+
+### Verify Installation
+
+After cloning, verify that scripts are executable:
+
+```bash
+cd ~/WEEK4
+ls -la scripts/*.sh      # Should show 'x' permission
+file scripts/*.sh        # Should show "shell script"
+./scripts/setup.sh --help 2>/dev/null || head -5 scripts/setup.sh
+```
+
+---
+
+
 ## 📋 Table of Contents
 
 1. [Learning Objectives](#-learning-objectives)
@@ -20,6 +82,7 @@
 9. [Resources and References](#-resources-and-references)
 
 ---
+
 
 ## 🎯 Learning Objectives
 
@@ -43,6 +106,7 @@ By the end of this laboratory, students will be able to:
 - Diagnose communication issues at byte level
 
 ---
+
 
 ## 📁 Starterkit Structure
 
@@ -82,6 +146,7 @@ starterkit_s4/
 
 ---
 
+
 ## 💻 System Requirements
 
 ### Mandatory
@@ -99,6 +164,7 @@ starterkit_s4/
 **Note:** All required Python modules are from the standard library (socket, struct, zlib, threading).
 
 ---
+
 
 ## 🚀 Quick Installation
 
@@ -119,6 +185,7 @@ make run-demo
 ```
 
 ---
+
 
 ## 📖 Usage Guide
 
@@ -187,6 +254,7 @@ python3 python/apps/udp_sensor_client.py --host localhost --port 5402 \
 
 ---
 
+
 ## 📡 Implemented Protocols
 
 ### 1. TEXT Protocol over TCP (Port 5400)
@@ -242,6 +310,7 @@ Example: "11 SET name Alice"
 ```
 
 ---
+
 
 ## 📝 Practical Exercises
 
@@ -303,6 +372,7 @@ Calculate the overhead for storing the same value:
 
 ---
 
+
 ## 🛠️ Troubleshooting
 
 ### Port already in use
@@ -336,6 +406,7 @@ python3 python/apps/text_proto_server.py
 
 ---
 
+
 ## 📚 Resources and References
 
 ### Bibliography
@@ -354,12 +425,14 @@ python3 python/apps/text_proto_server.py
 
 ---
 
+
 ## 📄 Licence
 
 Educational material for the use of ASE-CSIE students.  
 © 2025 Department of Economic Informatics and Cybernetics
 
 ---
+
 
 *Last updated: December 2025*  
 *Revolvix&Hypotheticalandrei*

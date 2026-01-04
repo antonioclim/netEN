@@ -5,6 +5,8 @@ services:
       dockerfile: docker/Dockerfile
     container_name: week4_demo
     working_dir: /app
+    # Run as host user to preserve file ownership
+    user: "${UID:-1000}:${GID:-1000}"
     volumes:
       - ../artifacts:/app/artifacts
     ports:

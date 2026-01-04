@@ -1,0 +1,141 @@
+// Protocol Buffers – Calculator Service
+// Săptămâna 12: Remote Procedure Call (gRPC)
+//
+// Acest fișier definește contractul între client și server.
+// După modificări, regenerați codul cu:
+//   python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. calculator.proto
+//
+// Autor: ASE-CSIE, Rețele de Calculatoare
+
+syntax = "proto3";
+
+package calculator;
+
+// ============================================================================
+// Mesaje pentru operații aritmetice
+// ============================================================================
+
+// Request pentru Add(a, b) și Subtract(a, b)
+message BinaryOpRequest {
+  int32 a = 1;
+  int32 b = 2;
+}
+
+// Response cu rezultat simplu
+message IntResult {
+  int32 result = 1;
+}
+
+// Response cu rezultat float
+message FloatResult {
+  double result = 1;
+}
+
+// Request pentru Power(base, exponent)
+message PowerRequest {
+  int32 base = 1;
+  int32 exponent = 2;
+}
+
+// ============================================================================
+// Mesaje pentru verificări
+// ============================================================================
+
+// Request cu un singur număr
+message SingleNumberRequest {
+  int32 n = 1;
+}
+
+// Response boolean
+message BoolResult {
+  bool result = 1;
+}
+
+// ============================================================================
+// Mesaje pentru operații pe liste
+// ============================================================================
+
+// Request cu listă de numere
+message NumberListRequest {
+  repeated int32 values = 1;
+}
+
+// Response cu listă de numere
+message NumberListResult {
+  repeated int32 values = 1;
+}
+
+// ============================================================================
+// Mesaje pentru operații pe stringuri
+// ============================================================================
+
+message StringRequest {
+  string text = 1;
+}
+
+message StringResult {
+  string result = 1;
+}
+
+// ============================================================================
+// Mesaje pentru health check și statistici
+// ============================================================================
+
+message Empty {}
+
+message HealthResponse {
+  string status = 1;
+  string timestamp = 2;
+}
+
+message StatsResponse {
+  map<string, int32> call_counts = 1;
+  int32 total_calls = 2;
+}
+
+// ============================================================================
+// Definirea serviciului Calculator
+// ============================================================================
+
+service Calculator {
+  // Operații aritmetice de bază
+  rpc Add(BinaryOpRequest) returns (IntResult);
+  rpc Subtract(BinaryOpRequest) returns (IntResult);
+  rpc Multiply(BinaryOpRequest) returns (IntResult);
+  rpc Divide(BinaryOpRequest) returns (FloatResult);
+  rpc Power(PowerRequest) returns (IntResult);
+  
+  // Verificări
+  rpc IsEven(SingleNumberRequest) returns (BoolResult);
+  rpc IsPrime(SingleNumberRequest) returns (BoolResult);
+  
+  // Operații pe liste
+  rpc SortList(NumberListRequest) returns (NumberListResult);
+  rpc SumList(NumberListRequest) returns (IntResult);
+  
+  // Operații pe stringuri
+  rpc ReverseString(StringRequest) returns (StringResult);
+  rpc Sha256Hash(StringRequest) returns (StringResult);
+  
+  // Utilități
+  rpc Health(Empty) returns (HealthResponse);
+  rpc GetStats(Empty) returns (StatsResponse);
+}
+
+// ============================================================================
+// TODO pentru studenți:
+// ============================================================================
+// 
+// 1. Adăugați un mesaj ModuloRequest cu câmpurile 'a' și 'b'
+// 2. Adăugați un mesaj pentru Factorial cu un câmp 'n'
+// 3. Adăugați metodele Modulo și Factorial în serviciul Calculator
+// 4. Implementați metodele în grpc_server.py
+// 5. Testați cu grpc_client.py
+//
+// Exemplu de adăugare metodă:
+//   message FactorialRequest {
+//     int32 n = 1;
+//   }
+//   
+//   rpc Factorial(FactorialRequest) returns (IntResult);
+// ============================================================================

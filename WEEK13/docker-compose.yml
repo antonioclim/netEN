@@ -1,0 +1,103 @@
+version: '3.8'
+
+# =============================================================================
+# Starterkit S13 - Docker Compose
+# Infrastructura laboratory IoT and Security
+# =============================================================================
+# Plan unitar of addresses (WEEK=13):
+#   Network: 10.0.13.0/24
+#   MQTT Broker: 10.0.13.100
+#   DVWA: 10.0.13.11, vsftpd: 10.0.13.12
+#   IoT: 10.0.13.30-31
+# =============================================================================
+
+networks:
+  pentestnet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.0.13.0/24
+
+services:
+  # MQTT Broker - Mosquitto
+  mosquitto:
+    image: eclipse-mosquitto:latest
+    container_name: mqtt-broker
+    hostname: mqtt-broker
+    networks:
+      pentestnet:
+        ipv4_address: 10.0.13.100
+    ports:
+      - "1883:1883"   # Plaintext MQTT
+      - "8883:8883"   # TLS MQTT
+      - "9001:9001"   # WebSocket
+    volumes:
+      - ./configs/mosquitto/plain.conf:/mosquitto/config/mosquitto.conf:ro
+      - ./configs/certs:/mosquitto/certs:ro
+    restart: unless-stopped
+
+  # DVWA - Damn Vulnerable Web Application
+  dvwa:
+    image: vulnerables/web-dvwa:latest
+    container_name: dvwa
+    hostname: dvwa
+    networks:
+      pentestnet:
+        ipv4_address: 10.0.13.11
+    ports:
+      - "8080:80"
+    environment:
+      - MYSQL_PASSWORD=p@ssw0rd
+    restart: unless-stopped
+
+  # vsftpd vulnerabil (CVE-2011-2523)
+  # Imaginea is build local for demonstration controlata
+  vsftpd:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile.vulnerable
+    container_name: vsftpd-vuln
+    hostname: vsftpd
+    networks:
+      pentestnet:
+        ipv4_address: 10.0.13.12
+    ports:
+      - "2121:21"
+      - "6200:6200"
+    restart: unless-stopped
+
+  # IoT Sensor Simulator
+  iot-sensor:
+    image: python:3.10-slim
+    container_name: iot-sensor
+    hostname: iot-sensor
+    networks:
+      pentestnet:
+        ipv4_address: 10.0.13.30
+    volumes:
+      - ./python/apps:/app:ro
+      - ./requirements.txt:/requirements.txt:ro
+    command: >
+      bash -c "pip install -q paho-mqtt &&
+               python /app/iot_sensor.py --broker 10.0.13.100 --topic iot/sensors/temp --interval 5"
+    depends_on:
+      - mosquitto
+    restart: unless-stopped
+
+  # IoT Controller
+  iot-controller:
+    image: python:3.10-slim
+    container_name: iot-controller
+    hostname: iot-controller
+    networks:
+      pentestnet:
+        ipv4_address: 10.0.13.31
+    volumes:
+      - ./python/apps:/app:ro
+    command: >
+      bash -c "pip install -q paho-mqtt &&
+               python /app/iot_controller.py --broker 10.0.13.100 --topic 'iot/#'"
+    depends_on:
+      - mosquitto
+      - iot-sensor
+    restart: unless-stopped

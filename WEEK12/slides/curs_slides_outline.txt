@@ -1,0 +1,367 @@
+# =============================================================================
+# COURSE PRESENTATION OUTLINE — Week 12
+# Email Protocols: SMTP, POP3, IMAP, WebMail
+# =============================================================================
+# Format: Import to PowerPoint or reveal.js
+# Estimate: 28 slides | ~90 minutes lecture
+# =============================================================================
+
+## SECTION 0: OPENING
+---
+### Slide 1: Title
+- **Lecture 12: Protocoale de Email**
+- SMTP • POP3 • IMAP • WebMail
+- Computer Networks — Semester 2
+- [Institution Logo] | [Date]
+
+### Slide 2: Agenda
+- Email Systems Architecture
+- SMTP: Simple Mail Transfer Protocol
+- POP3: Post Office Protocol
+- IMAP: Internet Message Access Protocol
+- MIME and Message Formatting
+- Security: SPF, DKIM, DMARC
+- WebMail și Modern APIs
+
+### Slide 3: Objectives
+- What we will learn:
+  - Email system components (MUA, MTA, MDA)
+  - Communication protocols and their differences
+  - Message format (RFC 5322, MIME)
+  - Mecanismele de securitate anti-spoofing
+- De ce contează:
+  - Email rămâne cel mai utilizat canal de comunicare B2B
+  - Înțelegerea protocoalelor → debugging și automation
+  - Securitatea email → protecția datelor sensibile
+
+---
+## SECTION 1: ARHITECTURA EMAIL
+---
+### Slide 4: Componentele Sistemului
+- **MUA** (Mail User Agent): Thunderbird, Outlook, Gmail web
+- **MTA** (Mail Transfer Agent): Postfix, Sendmail, Exchange
+- **MDA** (Mail Delivery Agent): Dovecot, Cyrus
+- [Diagramă: User → MUA → MTA → MTA → MDA → Mailbox → MUA]
+
+### Slide 5: Fluxul unui Email
+1. Alice compune mesaj în MUA
+2. MUA trimite către MTA local via SMTP
+3. MTA local interogă DNS pentru MX record
+4. MTA local trimite către MTA destinație via SMTP
+5. MTA destinație predă către MDA
+6. MDA stochează în mailbox Bob
+7. Bob accesează via POP3/IMAP
+
+### Slide 6: Envelope vs Headers
+- **Envelope** (protocol-level):
+  - MAIL FROM: adresa reală de retur (bounce)
+  - RCPT TO: destinația reală
+- **Headers** (message-level):
+  - From: afișat în client
+  - To: afișat în client
+- ⚠️ Pot fi diferite! Baza spoofing-ului
+
+### Slide 7: DNS și MX Records
+- MX (Mail Exchanger) record indică serverul de email
+- Prioritate: număr mai mic = preferință mai mare
+- Exemplu:
+  ```
+  example.com.  MX  10 mail1.example.com.
+  example.com.  MX  20 mail2.example.com.
+  ```
+- Fallback automat pentru redundanță
+
+---
+## SECTION 2: SMTP
+---
+### Slide 8: SMTP — Introducere
+- **Simple Mail Transfer Protocol** (RFC 5321)
+- Protocol text-based, port 25 (sau 587 submission)
+- Comandă-răspuns, similar HTTP dar mai simplu
+- Funcție: transfer mesaje între MTA-uri
+
+### Slide 9: Comenzile SMTP
+| Comandă | Descriere | Exemplu |
+|---------|-----------|---------|
+| HELO/EHLO | Salut, inițiere sesiune | EHLO client.local |
+| MAIL FROM | Specifică expeditor (envelope) | MAIL FROM:<alice@x.com> |
+| RCPT TO | Specifică destinatar | RCPT TO:<bob@y.com> |
+| DATA | Începe corpul mesajului | DATA |
+| QUIT | Închide conexiunea | QUIT |
+| RSET | Resetează starea | RSET |
+
+### Slide 10: Codurile de Răspuns SMTP
+- **2xx** — Success (250 OK, 220 Ready)
+- **3xx** — Intermediar (354 Start mail input)
+- **4xx** — Error temporară (421 Service unavailable)
+- **5xx** — Error permanentă (550 User not found)
+- Similar cu HTTP status codes
+
+### Slide 11: Sesiune SMTP Completeă
+```
+S: 220 mail.example.com ESMTP ready
+C: EHLO client.local
+S: 250-mail.example.com
+S: 250-SIZE 10485760
+S: 250 8BITMIME
+C: MAIL FROM:<alice@sender.com>
+S: 250 OK
+C: RCPT TO:<bob@example.com>
+S: 250 OK
+C: DATA
+S: 354 End data with <CR><LF>.<CR><LF>
+C: Subject: Test
+C: From: alice@sender.com
+C: To: bob@example.com
+C:
+C: Hello Bob!
+C: .
+S: 250 OK: queued as 12345
+C: QUIT
+S: 221 Bye
+```
+
+### Slide 12: SMTP Extensions (ESMTP)
+- EHLO în loc de HELO → anunță extensii
+- **AUTH** — autentificare client
+- **STARTTLS** — upgrade la TLS
+- **SIZE** — limită dimensiune mesaj
+- **8BITMIME** — suport caractere non-ASCII
+- **PIPELINING** — comenzi multiple fără waiting
+
+### Slide 13: SMTP AUTH
+- Mecanisme: PLAIN, LOGIN, CRAM-MD5, OAUTH2
+- Obligatoriu pentru submission (port 587)
+- Previne open relay abuse
+- Exemplu PLAIN (base64):
+  ```
+  C: AUTH PLAIN AGFsaWNlAHBhc3N3b3Jk
+  S: 235 Authentication successsful
+  ```
+
+---
+## SECTION 3: POP3
+---
+### Slide 14: POP3 — Introducere
+- **Post Office Protocol v3** (RFC 1939)
+- Port 110 (sau 995 cu TLS)
+- Model: download-and-delete
+- Simplu, stateless (după autentificare)
+
+### Slide 15: Comenzile POP3
+| Comandă | Descriere |
+|---------|-----------|
+| USER | Specifică username |
+| PASS | Specifică parolă |
+| STAT | Status mailbox (nr mesaje, dimensiune) |
+| LIST | Listează mesajele |
+| RETR n | Descarcă mesajul n |
+| DELE n | Marchează pentru ștergere |
+| QUIT | Commit ștergeri și deconectare |
+
+### Slide 16: Sesiune POP3
+```
+S: +OK POP3 server ready
+C: USER alice
+S: +OK
+C: PASS secret
+S: +OK logged in
+C: STAT
+S: +OK 2 3200
+C: LIST
+S: +OK 2 messages
+S: 1 1800
+S: 2 1400
+S: .
+C: RETR 1
+S: +OK 1800 octets
+S: [message content]
+S: .
+C: DELE 1
+S: +OK deleted
+C: QUIT
+S: +OK bye
+```
+
+### Slide 17: Limitări POP3
+- Un singur folder (inbox)
+- Download = remove from server (default)
+- Nu sincronizează starea între dispozitive
+- Fără căutare server-side
+- Adecvat pentru: un singur device, stocare locală
+
+---
+## SECTION 4: IMAP
+---
+### Slide 18: IMAP — Introducere
+- **Internet Message Access Protocol** (RFC 3501)
+- Port 143 (sau 993 cu TLS)
+- Model: server-side storage
+- Stare persistentă, foldere, flags
+
+### Slide 19: IMAP vs POP3
+| Aspect | POP3 | IMAP |
+|--------|------|------|
+| Stocare | Locală | Server |
+| Foldere | Nu | Da, ierarhie |
+| Sincronizare | Nu | Da, all devices |
+| Căutare | Locală | Server-side |
+| Stare mesaje | Nu | Flags (seen, deleted) |
+| Complexitate | Simplă | Complexă |
+| Bandwith | Descarcă tot | Descarcă headers |
+
+### Slide 20: Comenzile IMAP (Selecție)
+| Comandă | Descriere |
+|---------|-----------|
+| LOGIN | Autentificare |
+| SELECT | Deschide folder |
+| EXAMINE | Deschide folder read-only |
+| FETCH | Descarcă mesaj/părți |
+| SEARCH | Caută mesaje |
+| STORE | Modifică flags |
+| CREATE/DELETE | Gestionare foldere |
+| LOGOUT | Deconectare |
+
+### Slide 21: Flags IMAP
+- \Seen — mesaj citit
+- \Answered — s-a răspuns
+- \Flagged — marcat important
+- \Deleted — marcat pentru ștergere
+- \Draft — draft
+- \Recent — mesaj nou (setat de server)
+- EXPUNGE — aplică ștergeri fizice
+
+---
+## SECTION 5: MIME
+---
+### Slide 22: MIME — Motivație
+- Email original: doar ASCII 7-bit
+- MIME (RFC 2045-2049) extinde pentru:
+  - Caractere non-ASCII (UTF-8)
+  - Attachments binare
+  - Multiple părți (text + HTML + filee)
+- Header-ul `Content-Type` specifică formatul
+
+### Slide 23: Content-Type și Multipart
+- `Content-Type: text/plain; charset=UTF-8`
+- `Content-Type: text/html`
+- `Content-Type: multipart/mixed; boundary="----=_"`
+- `Content-Type: application/pdf`
+- Transfer encoding: base64, quoted-printable
+
+### Slide 24: Structură Multipart
+```
+Content-Type: multipart/mixed; boundary="BOUNDARY"
+
+--BOUNDARY
+Content-Type: text/plain
+
+Hello, see attached.
+
+--BOUNDARY
+Content-Type: application/pdf
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="doc.pdf"
+
+JVBERi0xLjQKJ... [base64 data]
+
+--BOUNDARY--
+```
+
+---
+## SECTION 6: SECURITATE
+---
+### Slide 25: Probleme de Securitate Email
+- **Spoofing**: From header fals
+- **Phishing**: email-uri false de la entități legitime
+- **Interceptare**: trafic necriptat
+- **Spam**: mesaje nesolicitate
+- Soluții: SPF, DKIM, DMARC, TLS
+
+### Slide 26: SPF (Sender Policy Framework)
+- DNS TXT record: ce IP-uri pot trimite pentru domeniu
+- Exemplu: `v=spf1 ip4:192.0.2.0/24 include:_spf.google.com -all`
+- Server receptor check IP expeditor vs SPF record
+- Resulte: pass, fail, softfail, neutral
+
+### Slide 27: DKIM (DomainKeys Identified Mail)
+- Semnătură criptografică în header email
+- Cheia publică în DNS TXT record
+- Check: mesajul nu a fost modificat în tranzit
+- Header: `DKIM-Signature: v=1; d=example.com; s=selector; ...`
+
+### Slide 28: DMARC
+- **Domain-based Message Authentication, Reporting & Conformance**
+- Combină SPF + DKIM
+- Politică: none, quarantine, reject
+- Reporting: feedback despre email-uri failed
+- DNS: `_dmarc.example.com TXT "v=DMARC1; p=reject; rua=mailto:..."`
+
+---
+## SECTION 7: MODERN EMAIL
+---
+### Slide 29: WebMail și API-uri
+- WebMail: Gmail, Outlook.com, Yahoo Mail
+- API-uri REST: Gmail API, Microsoft Graph
+- OAuth2 pentru autorizare
+- Push notifications vs polling
+
+### Slide 30: Tendințe
+- End-to-end encryption (PGP, S/MIME)
+- AI pentru spam detection
+- AMP for Email (interactive)
+- BIMI (Brand Indicators for Message Identification)
+- MTA-STS (Strict Transport Security)
+
+---
+## SECTION 8: ÎNCHEIERE
+---
+### Slide 31: Recapitulare
+- MUA → MTA → MDA → Mailbox
+- SMTP: transfer, port 25/587
+- POP3: download local, port 110/995
+- IMAP: server-side, port 143/993
+- MIME: attachments, multipart
+- SPF/DKIM/DMARC: anti-spoofing
+
+### Slide 32: Ce Am Învățat
+- Componentele și fluxul unui sistem de email
+- Diferențele practice POP3 vs IMAP
+- Message format și MIME
+- Mecanismele de autentificare și securitate
+- Cum să debugging-uim probleme email
+
+### Slide 33: Unde Se Folosește
+- Automation: trimitere notificări, rapoarte
+- DevOps: alerting, monitoring
+- Marketing: newsletter, campaigns
+- Enterprise: comunicare internă securizată
+- Testing: mock SMTP servers (MailHog, etc.)
+
+### Slide 34: Întrebări de Verification
+1. Ce diferență există între envelope și headers?
+2. De ce IMAP este preferat pentru multi-device?
+3. Cum check SPF autenticitatea expeditorului?
+4. Ce rol are DKIM în securitatea email?
+5. Când folosim port 25 vs 587?
+
+### Slide 35: Bibliografie
+- RFC 5321 (SMTP), RFC 1939 (POP3), RFC 3501 (IMAP)
+- Kurose & Ross: "Computer Networking", Ch. 2.4
+- Rhodes & Goetzen: "Foundations of Python Network Programming"
+
+### Slide 36: Următoarea Săptămână
+- **Lecture 13**: IoT și Securitate în Rețele
+- **Seminar 13**: Scanare porturi, testare vulnerabilități
+- **Preparation**: Revizuire concepte securitate
+
+---
+# =============================================================================
+# Note pentru prezentator:
+# - Slide-urile 11, 16 necesită demo live sau animație
+# - Slide-urile 22-24 beneficiază de exemple reale decodate
+# - Slide 26-28 necesită diagrame cu flux verification
+# - Total estimat: 80-90 minute cu întrebări
+# =============================================================================
+# Revolvix&Hypotheticalandrei
+# =============================================================================

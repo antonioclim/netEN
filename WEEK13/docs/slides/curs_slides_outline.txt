@@ -1,0 +1,85 @@
+CURS 13 — IoT and Security in Computer Networks
+Outline for PowerPoint/reveal.js (27 slide-uri)
+
+SLIDE 1: Title page
+- Titlu: IoT and Security in Computer Networks
+- Lecture 13, Academic Year 2025-2026
+- ASE Bucharest - CSIE
+
+SLIDE 2: Agenda
+- 6 main sections with durations
+
+SLIDE 3: Learning Objectives
+- 6 competencies measurable
+
+SLIDE 4: What is IoT?
+- Definition, statistics, domains
+
+SLIDE 5: Arhitectura IoT - 5 straturi
+- Pyramidal diagram
+
+SLIDE 6: The MQTT Protocol - Introduction
+- Caracteristici, ports, model pub/sub
+
+SLIDE 7: MQTT - QoS Levels
+- Tabel comparativ QoS 0/1/2
+
+SLIDE 8: MQTT - Topics and Wildcards
+- Hierarchical structure, examples
+
+SLIDE 9: OWASP IoT Top 10 - Part 1
+- Vulnerabilities 1-5
+
+SLIDE 10: OWASP IoT Top 10 - Part 2
+- Vulnerabilities 6-10
+
+SLIDE 11: Cyber Kill Chain
+- Cele 7 faze with explanations
+
+SLIDE 12: Defense in Depth
+- Straturile of protection
+
+SLIDE 13: Security Principles
+- CIA Triad, Least Privilege, Zero Trust
+
+SLIDE 14: Segmentarea Networksi
+- VLAN-uri, zone of security
+
+SLIDE 15: TLS for MQTT
+- Configuration, certificateses
+
+SLIDE 16: ACL-uri MQTT
+- Examples of control acces
+
+SLIDE 17: Monitoring and Logging
+- IDS/IPS, SIEM
+
+SLIDE 18: Scanninga Portslor
+- Tehnici, instrumente
+
+SLIDE 19: Banner Grabbing
+- Identification services
+
+SLIDE 20: Vulnerability Assessment
+- CVE, CVSS, NVD
+
+SLIDE 21: Studiu of caz: Mirai
+- Context, vector, impact
+
+SLIDE 22: Lessons from Mirai
+- Credentials, segmentare, monitoring
+
+SLIDE 23: Hardening Checklist
+- 10 essential steps
+
+SLIDE 24: Demo Live
+- Port scanning + MQTT
+
+SLIDE 25: Recapitulare
+- Concepte key
+
+SLIDE 26: Preparation Examen
+- Teme of studiu
+
+SLIDE 27: Q&A
+- Intrebari and answers

@@ -1,0 +1,17 @@
+FROM ubuntu:20.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y \
+    vsftpd \
+    netcat \
+    && rm -rf /var/lib/apt/lists/*
+
+# Note: This is a SIMULATED vulnerable configuration for educational purposes
+# Real CVE-2011-2523 requires specific vsftpd version 2.3.4
+
+COPY vsftpd.conf /etc/vsftpd.conf
+
+EXPOSE 21 6200
+
+CMD ["/usr/sbin/vsftpd", "/etc/vsftpd.conf"]

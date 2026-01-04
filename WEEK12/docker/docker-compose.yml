@@ -1,0 +1,28 @@
+# =============================================================================
+# docker-compose.yml — Week 12: Email and RPC
+# =============================================================================
+# Goal: provide a reproducible, minimal runtime for the Week 12 demos.
+#
+# Notes:
+# - Artefacts are written to the host via ./artifacts (bind mount).
+# - Ports are non-privileged by default.
+#
+# Usage:
+#   docker compose -f docker/docker-compose.yml up --build --abort-on-container-exit
+#   docker compose -f docker/docker-compose.yml down -v
+# =============================================================================
+
+services:
+  lab:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    working_dir: /app
+    volumes:
+      - ..:/app:rw
+      - ../artifacts:/app/artifacts:rw
+    ports:
+      - "1025:1025"   # SMTP demo server (non-privileged)
+      - "8080:8080"   # JSON-RPC demo (HTTP)
+      - "8000:8000"   # XML-RPC demo (HTTP)
+    command: ["bash", "-lc", "./scripts/run_all.sh"]

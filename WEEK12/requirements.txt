@@ -1,0 +1,20 @@
+# Week 12 starter kit requirements
+#
+# Notes:
+# - Most exercises rely on the Python standard library (smtplib, email, xmlrpc, json and http.server).
+# - Only list third-party packages that are imported or used by optional tooling.
+
+# DNS resolution for MX lookups (optional exercise support)
+dnspython>=2.4.0
+
+# Optional gRPC / Protobuf tooling (used for proto compilation if you run proto-gen)
+grpcio>=1.50.0
+grpcio-tools>=1.50.0
+protobuf>=4.21.0
+
+# Test tooling (used by local checks, not required for the core demos)
+pytest>=7.0.0
+pytest-timeout>=2.0.0
+
+# CLI output colouring (used by helper utilities)
+colorama>=0.4.6

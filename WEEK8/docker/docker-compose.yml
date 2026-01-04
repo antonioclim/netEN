@@ -11,8 +11,6 @@
 #   docker-compose down           # Stop and cleanup
 # =============================================================================
 
-version: '3.8'
-
 services:
   # =========================================================================
   # NGINX Reverse Proxy cu Load Balancing
@@ -27,6 +25,8 @@ services:
       - ../nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ../nginx/conf.d:/etc/nginx/conf.d:ro
       - ./certs:/etc/nginx/certs:ro
+    # Run as host user to preserve file ownership
+    user: "${UID:-1000}:${GID:-1000}"
     depends_on:
       - backend1
       - backend2

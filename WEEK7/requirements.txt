@@ -1,0 +1,5 @@
+# Week 7 requirements
+# Keep this minimal. The core demos use the Python standard library.
+# Optional tooling:
+PyYAML==6.0.2
+python-docx==1.1.2

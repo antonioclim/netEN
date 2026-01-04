@@ -1,0 +1,50 @@
+services:
+  tcp_server:
+    image: python:3.11-slim
+    working_dir: /work
+    # Run as host user to preserve file ownership
+    user: "${UID:-1000}:${GID:-1000}"
+    volumes:
+      - ../python:/work/python:ro
+      - ../artifacts:/work/artifacts
+    command: ["python3", "python/apps/tcp_server.py", "--host", "0.0.0.0", "--port", "9090", "--log", "artifacts/docker_tcp_server.log", "--once"]
+    networks:
+      - week7net
+
+  tcp_client:
+    image: python:3.11-slim
+    working_dir: /work
+    depends_on:
+      - tcp_server
+    volumes:
+      - ../python:/work/python:ro
+      - ../artifacts:/work/artifacts
+    command: ["bash", "-lc", "sleep 0.4 && python3 python/apps/tcp_client.py --host tcp_server --port 9090 --message hello_from_docker --timeout 2 --log artifacts/docker_tcp_client.log"]
+    networks:
+      - week7net
+
+  udp_receiver:
+    image: python:3.11-slim
+    working_dir: /work
+    volumes:
+      - ../python:/work/python:ro
+      - ../artifacts:/work/artifacts
+    command: ["python3", "python/apps/udp_receiver.py", "--host", "0.0.0.0", "--port", "9091", "--count", "1", "--timeout", "6", "--log", "artifacts/docker_udp_receiver.log"]
+    networks:
+      - week7net
+
+  udp_sender:
+    image: python:3.11-slim
+    working_dir: /work
+    depends_on:
+      - udp_receiver
+    volumes:
+      - ../python:/work/python:ro
+      - ../artifacts:/work/artifacts
+    command: ["bash", "-lc", "sleep 0.4 && python3 python/apps/udp_sender.py --host udp_receiver --port 9091 --message hello_udp_from_docker --count 1 --log artifacts/docker_udp_sender.log"]
+    networks:
+      - week7net
+
+networks:
+  week7net:
+    driver: bridge

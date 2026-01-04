@@ -4,6 +4,68 @@
 
 ---
 
+
+## 🚀 Quick Clone & Setup
+
+To clone **only this week's content** directly into `~/WEEK8` and make all scripts executable, run the following commands:
+
+### Option A: One-liner (recommended)
+
+```bash
+cd ~ && git clone --filter=blob:none --sparse https://github.com/antonioclim/netEN.git WEEK8 && cd WEEK8 && git sparse-checkout set WEEK8 && shopt -s dotglob && mv WEEK8/* . && rmdir WEEK8 && find . -type f \( -name "*.sh" -o -name "*.py" \) -exec chmod +x {} \;
+```
+
+### Option B: Step-by-step (for understanding)
+
+```bash
+# 1. Navigate to home directory
+cd ~
+
+# 2. Clone repository with sparse checkout (downloads only metadata initially)
+git clone --filter=blob:none --sparse https://github.com/antonioclim/netEN.git WEEK8
+
+# 3. Enter the cloned directory
+cd WEEK8
+
+# 4. Configure sparse checkout to fetch only WEEK8
+git sparse-checkout set WEEK8
+
+# 5. Move contents up one level (flatten structure)
+shopt -s dotglob
+mv WEEK8/* .
+rmdir WEEK8
+
+# 6. Make all shell scripts and Python files executable
+find . -type f -name "*.sh" -exec chmod +x {} \;
+find . -type f -name "*.py" -exec chmod +x {} \;
+
+# 7. Verify the setup
+ls -la
+ls -la scripts/
+```
+
+### Option C: Without Git history (lightweight)
+
+If you don't need Git history and want the smallest possible download:
+
+```bash
+cd ~ && mkdir -p WEEK8 && cd WEEK8 && curl -L https://github.com/antonioclim/netEN/archive/refs/heads/main.tar.gz | tar -xz --strip-components=2 netEN-main/WEEK8 && find . -type f \( -name "*.sh" -o -name "*.py" \) -exec chmod +x {} \;
+```
+
+### Verify Installation
+
+After cloning, verify that scripts are executable:
+
+```bash
+cd ~/WEEK8
+ls -la scripts/*.sh      # Should show 'x' permission
+file scripts/*.sh        # Should show "shell script"
+./scripts/setup.sh --help 2>/dev/null || head -5 scripts/setup.sh
+```
+
+---
+
+
 ## 📋 Contents
 
 - [What we will learn](#-what-we-will-learn)
@@ -16,6 +78,7 @@
 - [Troubleshooting](#-troubleshooting)
 
 ---
+
 
 ## 📚 What we will learn
 
@@ -35,6 +98,7 @@
 
 ---
 
+
 ## 💡 Why it matters
 
 As a programmer, you will constantly interact with networks:
@@ -47,6 +111,7 @@ As a programmer, you will constantly interact with networks:
 This week builds the foundation for all of these.
 
 ---
+
 
 ## 📋 Prerequisites
 
@@ -63,6 +128,7 @@ This week builds the foundation for all of these.
 - Python programming basics
 
 ---
+
 
 ## 🚀 Quick start
 
@@ -84,6 +150,7 @@ make help
 ```
 
 ---
+
 
 ## 📁 Kit structure
 
@@ -140,6 +207,7 @@ starterkit_s8/
 ```
 
 ---
+
 
 ## 🎮 Demos
 
@@ -198,6 +266,7 @@ make capture-handshake
 
 ---
 
+
 ## 🔬 Laboratory
 
 ### Exercise 1: Complete HTTP Server
@@ -227,6 +296,7 @@ Open `python/exercises/ex_02_reverse_proxy.py`:
 Test: `make test-ex2`
 
 ---
+
 
 ## 🔧 Troubleshooting
 
@@ -270,6 +340,7 @@ netstat -tlnp | grep 8080
 
 ---
 
+
 ## 📖 Bibliography
 
 | Reference | Description |
@@ -282,6 +353,7 @@ netstat -tlnp | grep 8080
 | Kurose & Ross | Computer Networking: A Top-Down Approach |
 
 ---
+
 
 ## 📝 Note for students
 
@@ -297,6 +369,7 @@ Recommended approach:
 4. Experiment with your own variations
 
 ---
+
 
 *Computer Networks - ASE Bucharest - CSIE*  
 *Revolvix&Hypotheticalandrei*

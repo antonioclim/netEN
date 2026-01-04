@@ -1,8 +1,0 @@
-Week 1 seminar slides outline
-
-1. Workflow: inspect, test, capture, validate
-2. Quick tour of the kit structure
-3. TCP mini demo: server and client
-4. UDP mini demo: datagrams and no connection state
-5. Capture and inspection: tcpdump then tshark
-6. Automated validation: smoke_test.sh and expected outputs

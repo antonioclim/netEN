@@ -1,0 +1,45 @@
+@startuml
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+
+title OSI vs TCP/IP Equivalences
+
+package "OSI" {
+  rectangle "7 Application" as O7
+  rectangle "6 Presentation" as O6
+  rectangle "5 Session" as O5
+  rectangle "4 Transport" as O4
+  rectangle "3 Network" as O3
+  rectangle "2 Data Link" as O2
+  rectangle "1 Physical" as O1
+
+  O7 -down-> O6
+  O6 -down-> O5
+  O5 -down-> O4
+  O4 -down-> O3
+  O3 -down-> O2
+  O2 -down-> O1
+}
+
+package "TCP/IP" {
+  rectangle "Application" as TApp
+  rectangle "Transport" as TTr
+  rectangle "Internet" as TInt
+  rectangle "Network Access" as TNet
+
+  TApp -down-> TTr
+  TTr -down-> TInt
+  TInt -down-> TNet
+}
+
+O7 <.right.> TApp
+O6 <.right.> TApp
+O5 <.right.> TApp
+O4 <.right.> TTr
+O3 <.right.> TInt
+O2 <.right.> TNet
+O1 <.right.> TNet
+@enduml

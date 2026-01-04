@@ -9,6 +9,70 @@ This kit supports Week 3 of the Networks of Computers course (Year 3, Semester 2
 - Implement a simple TCP tunnel (port forwarding) and observe traffic on the wire
 - Capture and inspect packets using tcpdump or tshark
 
+
+---
+
+
+## 🚀 Quick Clone & Setup
+
+To clone **only this week's content** directly into `~/WEEK3` and make all scripts executable, run the following commands:
+
+### Option A: One-liner (recommended)
+
+```bash
+cd ~ && git clone --filter=blob:none --sparse https://github.com/antonioclim/netEN.git WEEK3 && cd WEEK3 && git sparse-checkout set WEEK3 && shopt -s dotglob && mv WEEK3/* . && rmdir WEEK3 && find . -type f \( -name "*.sh" -o -name "*.py" \) -exec chmod +x {} \;
+```
+
+### Option B: Step-by-step (for understanding)
+
+```bash
+# 1. Navigate to home directory
+cd ~
+
+# 2. Clone repository with sparse checkout (downloads only metadata initially)
+git clone --filter=blob:none --sparse https://github.com/antonioclim/netEN.git WEEK3
+
+# 3. Enter the cloned directory
+cd WEEK3
+
+# 4. Configure sparse checkout to fetch only WEEK3
+git sparse-checkout set WEEK3
+
+# 5. Move contents up one level (flatten structure)
+shopt -s dotglob
+mv WEEK3/* .
+rmdir WEEK3
+
+# 6. Make all shell scripts and Python files executable
+find . -type f -name "*.sh" -exec chmod +x {} \;
+find . -type f -name "*.py" -exec chmod +x {} \;
+
+# 7. Verify the setup
+ls -la
+ls -la scripts/
+```
+
+### Option C: Without Git history (lightweight)
+
+If you don't need Git history and want the smallest possible download:
+
+```bash
+cd ~ && mkdir -p WEEK3 && cd WEEK3 && curl -L https://github.com/antonioclim/netEN/archive/refs/heads/main.tar.gz | tar -xz --strip-components=2 netEN-main/WEEK3 && find . -type f \( -name "*.sh" -o -name "*.py" \) -exec chmod +x {} \;
+```
+
+### Verify Installation
+
+After cloning, verify that scripts are executable:
+
+```bash
+cd ~/WEEK3
+ls -la scripts/*.sh      # Should show 'x' permission
+file scripts/*.sh        # Should show "shell script"
+./scripts/setup.sh --help 2>/dev/null || head -5 scripts/setup.sh
+```
+
+---
+
 ## IP and port plan
 - **Mininet subnet (Week 3):** `10.0.3.0/24` (router/gateway: `10.0.3.1`)
 - **Example ports used by the demos:** `5300–5399` (derived from the Week number)

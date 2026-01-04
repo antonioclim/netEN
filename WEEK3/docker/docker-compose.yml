@@ -12,8 +12,6 @@
 #   client ↔ router ↔ server
 # ============================================================================
 
-version: '3.8'
-
 services:
   # ─── SERVER ─────────────────────────────────────────────────────────────
   # Server echo TCP on port 8080
@@ -31,6 +29,8 @@ services:
       - "8080:8080"
     volumes:
       - ../python:/app/python:ro
+    # Run as host user to preserve file ownership
+    user: "${UID:-1000}:${GID:-1000}"
     command: >
       bash -c "
         echo '[SERVER] Pornesc echo server pe :8080...';

@@ -1,0 +1,82 @@
+# docker-compose.yml — Starterkit Week 5
+# =============================================
+# Container orchestration for network demonstrations
+#
+# Usage:
+#   docker-compose up -d              # Start services
+#   docker-compose exec python bash   # Shell in container
+#   docker-compose down               # Stop services
+#
+# NOTE: This is a simplified setup for Python exercises.
+#       For complete Mininet, use a Linux VM.
+
+services:
+  # Main container for Python exercises
+  python:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: starterkit-s5-python
+    hostname: python-node
+    stdin_open: true
+    tty: true
+    volumes:
+      - ../python:/app/python:ro
+      - ../docs:/app/docs:ro
+      - ../pcap:/app/pcap
+    # Run as host user to preserve file ownership
+    user: "${UID:-1000}:${GID:-1000}"
+    networks:
+      labnet:
+        ipv4_address: 10.5.0.10
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    command: bash
+
+  # UDP Echo server for demo
+  udp-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: starterkit-s5-udp-server
+    hostname: udp-server
+    volumes:
+      - ../python:/app/python:ro
+    networks:
+      labnet:
+        ipv4_address: 10.5.0.20
+    ports:
+      - "9999:9999/udp"
+    command: python3 /app/python/apps/udp_echo.py server --port 9999 --verbose
+
+  # UDP Echo client for demo
+  udp-client:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: starterkit-s5-udp-client
+    hostname: udp-client
+    volumes:
+      - ../python:/app/python:ro
+    networks:
+      labnet:
+        ipv4_address: 10.5.0.30
+    depends_on:
+      - udp-server
+    # Send 5 messages to server
+    command: >
+      bash -c "sleep 2 && python3 /app/python/apps/udp_echo.py client 
+        --host 10.5.0.20 --port 9999 --count 5 --message 'Hello from Docker!'"
+
+# Custom network for demonstrations
+networks:
+  labnet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/24
+          gateway: 10.5.0.1
+
+# Note: For pcap captures from containers
+# docker-compose exec python tcpdump -i eth0 -w /app/pcap/capture.pcap

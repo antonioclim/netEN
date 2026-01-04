@@ -1,0 +1,20 @@
+# ============================================================
+# docker-compose.yml - Starterkit Week 2
+# Computer Networks - ASE Bucharest, CSIE
+# ============================================================
+# Reproducible demo runner for a minimal VM with Docker installed.
+# It executes the same demo and smoke test as the host workflow and writes
+# artefacts into ../artifacts on the host.
+# ============================================================
+
+services:
+  demo:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: week2_demo
+    working_dir: /kit
+    volumes:
+      - ../artifacts:/kit/artifacts
+    command: >
+      bash -lc "./scripts/run_all.sh && ./tests/smoke_test.sh"

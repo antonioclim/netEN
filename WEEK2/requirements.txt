@@ -1,0 +1,7 @@
+# requirements.txt - Starterkit Week 2
+#
+# This week uses Python standard library modules for the socket exercises.
+# There are no mandatory pip dependencies for the core workflow.
+#
+# Optional: if you want coloured logs in your own extensions, you may add
+# a logging helper package, but it is not required by the kit.

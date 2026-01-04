@@ -10,6 +10,68 @@
 
 ---
 
+
+## 🚀 Quick Clone & Setup
+
+To clone **only this week's content** directly into `~/WEEK9` and make all scripts executable, run the following commands:
+
+### Option A: One-liner (recommended)
+
+```bash
+cd ~ && git clone --filter=blob:none --sparse https://github.com/antonioclim/netEN.git WEEK9 && cd WEEK9 && git sparse-checkout set WEEK9 && shopt -s dotglob && mv WEEK9/* . && rmdir WEEK9 && find . -type f \( -name "*.sh" -o -name "*.py" \) -exec chmod +x {} \;
+```
+
+### Option B: Step-by-step (for understanding)
+
+```bash
+# 1. Navigate to home directory
+cd ~
+
+# 2. Clone repository with sparse checkout (downloads only metadata initially)
+git clone --filter=blob:none --sparse https://github.com/antonioclim/netEN.git WEEK9
+
+# 3. Enter the cloned directory
+cd WEEK9
+
+# 4. Configure sparse checkout to fetch only WEEK9
+git sparse-checkout set WEEK9
+
+# 5. Move contents up one level (flatten structure)
+shopt -s dotglob
+mv WEEK9/* .
+rmdir WEEK9
+
+# 6. Make all shell scripts and Python files executable
+find . -type f -name "*.sh" -exec chmod +x {} \;
+find . -type f -name "*.py" -exec chmod +x {} \;
+
+# 7. Verify the setup
+ls -la
+ls -la scripts/
+```
+
+### Option C: Without Git history (lightweight)
+
+If you don't need Git history and want the smallest possible download:
+
+```bash
+cd ~ && mkdir -p WEEK9 && cd WEEK9 && curl -L https://github.com/antonioclim/netEN/archive/refs/heads/main.tar.gz | tar -xz --strip-components=2 netEN-main/WEEK9 && find . -type f \( -name "*.sh" -o -name "*.py" \) -exec chmod +x {} \;
+```
+
+### Verify Installation
+
+After cloning, verify that scripts are executable:
+
+```bash
+cd ~/WEEK9
+ls -la scripts/*.sh      # Should show 'x' permission
+file scripts/*.sh        # Should show "shell script"
+./scripts/setup.sh --help 2>/dev/null || head -5 scripts/setup.sh
+```
+
+---
+
+
 ## What We Will Learn
 
 This week explores two conceptual layers from the OSI model that no longer appear as distinct protocols on the Internet, but whose functions remain essential in any distributed system.
@@ -31,6 +93,7 @@ This week explores two conceptual layers from the OSI model that no longer appea
 
 ---
 
+
 ## Why It Matters
 
 In the era of microservices and APIs, the conceptual understanding of session and presentation layers becomes critical for proper system design:
@@ -43,6 +106,7 @@ In the era of microservices and APIs, the conceptual understanding of session an
 A programmer who does not understand these concepts will write code that works, but that does not scale and cannot be maintained.
 
 ---
+
 
 ## Kit Structure
 
@@ -117,6 +181,7 @@ starterkit_s9_final/
 
 ---
 
+
 ## Requirements and Installation
 
 ### Minimum Requirements
@@ -148,6 +213,7 @@ sudo apt install -y mininet openvswitch-switch
 ```
 
 ---
+
 
 ## Quick Start
 
@@ -188,6 +254,7 @@ make capture
 
 ---
 
+
 ## Recommended Workflow
 
 ### For Lecture (90 minutes):
@@ -212,6 +279,7 @@ sudo make mininet-test
 ```
 
 ---
+
 
 ## Detailed Content
 
@@ -273,6 +341,7 @@ client ←──data (port 20/*)──→ server   (actual file transfer)
 
 ---
 
+
 ## Available Automations
 
 ### Main Makefile targets:
@@ -311,6 +380,7 @@ make test           # Run all tests
 
 ---
 
+
 ## Troubleshooting
 
 ### Common Problems:
@@ -347,6 +417,7 @@ sudo mn -c
 
 ---
 
+
 ## Deliverables for Evaluation
 
 1. **Traffic capture** (mandatory): A `.pcap` file demonstrating control/data separation
@@ -354,6 +425,7 @@ sudo mn -c
 3. **Reflective note** (10-15 lines): "Where did I implement L5? Where did I implement L6?"
 
 ---
+
 
 ## Bibliography
 
@@ -368,6 +440,7 @@ sudo mn -c
 - RFC 6455 – WebSocket Protocol
 
 ---
+
 
 *Revolvix&Hypotheticalandrei*  
 *Last updated: December 2025*

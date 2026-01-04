@@ -70,6 +70,8 @@ services:
       - "2222:22"
     volumes:
       - ssh_data:/home/labuser/storage
+    # Run as host user to preserve file ownership
+    user: "${UID:-1000}:${GID:-1000}"
     healthcheck:
       test: ["CMD", "pgrep", "sshd"]
       interval: 10s

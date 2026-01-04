@@ -21,14 +21,14 @@
 #
 # =============================================================================
 
-version: '3.8'
-
 services:
   # Server FTP (pyftpdlib)
   ftp-server:
     image: python:3.11-slim
     container_name: s9_ftp_server
     working_dir: /app
+    # Run as host user to preserve file ownership
+    user: "${UID:-1000}:${GID:-1000}"
     volumes:
       - ./server-files:/app/server-files
       - ../python/exercises:/app/exercises:ro

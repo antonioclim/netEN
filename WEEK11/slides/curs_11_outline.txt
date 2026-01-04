@@ -1,0 +1,242 @@
+================================================================================
+LECTURE 11 – APPLICATION LAYER: FTP, DNS, SSH
+Outline for PowerPoint/reveal.js presentation
+================================================================================
+
+SLIDE 1: TITLE
+- Lecture 11 – Application Layer: FTP, DNS, SSH
+- Computer Networks (Year 3, Sem. 2)
+- ASE Bucharest – CSIE
+
+SLIDE 2: AGENDA
+- FTP – File Transfer Protocol
+- DNS – Domain Name System
+- SSH – Secure Shell
+- Practical scenarios and demos
+
+SLIDE 3: LEARNING OBJECTIVES
+- Explain the difference between file-oriented, name-oriented and control protocols
+- Describe FTP operation (control vs data, active vs passive)
+- Understand the role of DNS and the resolution process
+- Use SSH for remote execution and tunnelling
+
+================================================================================
+SECTION 1: FTP – FILE TRANSFER PROTOCOL (7 slides)
+================================================================================
+
+SLIDE 4: WHAT IS FTP
+- Application layer protocol for file transfer
+- RFC 959 (1985) – one of the oldest protocols
+- Operates over TCP
+- Distinctive feature: control/data separation
+
+SLIDE 5: FTP – DUAL ARCHITECTURE (DIAGRAM)
+[Diagram: Client ↔ Server]
+- CONTROL connection: port 21, persistent, text commands
+- DATA connection: port 20 or dynamic, actual transfer
+
+SLIDE 6: CONTROL CONNECTION
+- Standard port: TCP 21
+- ASCII text commands (USER, PASS, LIST, RETR, STOR)
+- Responses with numeric code (220, 331, 230, 550)
+- Persistent for session duration
+
+SLIDE 7: DATA CONNECTION
+- Separate from control
+- Opens/closes for each transfer
+- Active mode: server → client
+- Passive mode: client → server
+
+SLIDE 8: ACTIVE MODE vs PASSIVE MODE (DIAGRAM)
+[Comparative diagram]
+- Active: SERVER initiates data connection (port 20 → client)
+- Passive: CLIENT initiates data connection (client → dynamic server port)
+- NAT/firewall problem in active mode
+
+SLIDE 9: FTP IN PRACTICE
+- Limitations: NAT traversal, firewall, multiple ports
+- Modern variants:
+  - FTPS (FTP over TLS) – port 990
+  - SFTP (SSH File Transfer) – port 22
+- Educational relevance: control/data separation
+
+SLIDE 10: FTP QUESTIONS
+- Why does FTP use two connections?
+- Which mode works better through firewall?
+- Which modern protocol replaces FTP?
+
+================================================================================
+SECTION 2: DNS – DOMAIN NAME SYSTEM (10 slides)
+================================================================================
+
+SLIDE 11: THE ROLE OF DNS
+- Translation of symbolic names → IP addresses
+- Distributed and hierarchical system
+- Essential for Internet operation
+- Most applications implicitly depend on DNS
+
+SLIDE 12: DNS ARCHITECTURE (DIAGRAM)
+[Hierarchical diagram]
+- Root servers (.)
+- TLD servers (.com, .ro, .org)
+- Authoritative servers (example.com)
+- Recursive resolvers (ISP, 8.8.8.8)
+
+SLIDE 13: DNS ACTORS
+- Stub resolver: in OS/browser, simple queries
+- Recursive resolver: resolves completely, caches
+- Authoritative server: holds zone, final answer
+- Root/TLD: hierarchical directing
+
+SLIDE 14: RESOLUTION PROCESS (DIAGRAM)
+[Flow diagram]
+1. Client → Recursive resolver
+2. Resolver → Root server ("Who knows .com?")
+3. Resolver → TLD server ("Who knows example.com?")
+4. Resolver → Authoritative ("What is the IP for www?")
+5. Response back to client
+
+SLIDE 15: DNS RECORD TYPES
+| Type | Purpose | Example |
+|------|---------|---------|
+| A | IPv4 | www → 93.184.216.34 |
+| AAAA | IPv6 | www → 2606:2800:... |
+| MX | Mail | @ → mail.example.com |
+| CNAME | Alias | blog → www |
+| NS | Nameserver | @ → ns1.example.com |
+| TXT | Text/SPF | @ → "v=spf1 ..." |
+
+SLIDE 16: DNS PACKET STRUCTURE (DIAGRAM)
+[RFC 1035 diagram]
+- Header (12 bytes): ID, Flags, Counts
+- Question: QNAME, QTYPE, QCLASS
+- Answer: NAME, TYPE, CLASS, TTL, RDATA
+
+SLIDE 17: TTL AND CACHING
+- TTL (Time To Live): cache duration
+- Low TTL (60s): flexibility, high traffic
+- High TTL (86400s): performance, slow propagation
+- Trade-off: speed vs freshness
+
+SLIDE 18: DNS SECURITY
+- Classic DNS: plaintext, vulnerable to spoofing
+- DNSSEC: digital signatures, chain of trust
+- DoH (DNS over HTTPS): port 443
+- DoT (DNS over TLS): port 853
+
+SLIDE 19: DNSSEC – CHAIN OF TRUST (DIAGRAM)
+[Chain of trust diagram]
+- Root Key → TLD Key → Zone Key
+- DNSKEY, RRSIG, DS records
+- End-to-end cryptographic verification
+
+SLIDE 20: DNS QUESTIONS
+- What is the difference between recursive resolver and authoritative?
+- What happens when TTL expires?
+- Why is DNSSEC not universally used?
+
+================================================================================
+SECTION 3: SSH – SECURE SHELL (8 slides)
+================================================================================
+
+SLIDE 21: WHAT IS SSH
+- Secure protocol for remote access
+- Standard port: TCP 22
+- Replaces: telnet, rsh, insecure ftp
+- Provides: authentication, encryption, integrity
+
+SLIDE 22: SSH ARCHITECTURE (DIAGRAM)
+[Layer diagram]
+- Transport Layer: negotiation, encryption, MAC
+- User Authentication: password, publickey, keyboard-interactive
+- Connection Layer: channel multiplexing
+
+SLIDE 23: AUTHENTICATION METHODS
+1. Password: simple, less secure
+2. Public Key: most secure, ~/.ssh/authorized_keys
+3. Certificate: for large organisations
+4. Keyboard-interactive: 2FA, TOTP
+
+SLIDE 24: SSH CHANNELS AND MULTIPLEXING (DIAGRAM)
+[Channel diagram]
+- One TCP connection, multiple logical channels
+- Interactive shell (pty)
+- Exec (single command)
+- SFTP/SCP (file transfer)
+- Port forwarding (tunnelling)
+
+SLIDE 25: PORT FORWARDING – LOCAL
+[Local Forwarding diagram]
+- ssh -L 8080:target:80 gateway
+- Access localhost:8080 → reaches target:80
+- Useful for: internal databases, protected services
+
+SLIDE 26: PORT FORWARDING – REMOTE
+[Remote Forwarding diagram]
+- ssh -R 8080:localhost:80 server
+- Server:8080 → reaches localhost:80
+- Useful for: exposing local services (ngrok-style)
+
+SLIDE 27: PORT FORWARDING – DYNAMIC (SOCKS)
+[Dynamic Forwarding diagram]
+- ssh -D 1080 server
+- Local SOCKS5 proxy → all traffic through server
+- Useful for: anonymous browsing, access to restricted networks
+
+SLIDE 28: SSH AS INFRASTRUCTURE
+- Ansible: orchestration via SSH
+- Fabric/Paramiko: Python automation
+- Git over SSH: secure repository access
+- Bastion hosts: secure entry point
+
+================================================================================
+SECTION 4: PRACTICAL SCENARIOS (4 slides)
+================================================================================
+
+SLIDE 29: SCENARIO 1 – FTP CONTROL VS DATA
+- FTP server (pyftpdlib) + Python client
+- Observe two connections in Wireshark
+- Compare active vs passive mode
+- Demo: docker/ftp_demo/
+
+SLIDE 30: SCENARIO 2 – DNS RESOLUTION
+- Authoritative DNS + Recursive resolver
+- Modify zone, observe TTL propagation
+- Python client for queries
+- Demo: docker/dns_demo/
+
+SLIDE 31: SCENARIO 3 – SSH PROVISIONING
+- Infrastructure description in JSON
+- Remote command execution with Paramiko
+- SFTP file transfer
+- Demo: docker/ssh_demo/
+
+SLIDE 32: SCENARIO 4 – MININET + LOAD BALANCING
+- Topology with 3 backends and 1 LB
+- Test round-robin, least_conn, ip_hash
+- Traffic capture and analysis
+- Demo: mininet/topo_11_base.py
+
+================================================================================
+RECAP AND CLOSING (3 slides)
+================================================================================
+
+SLIDE 33: RECAP
+- FTP: control/data separation, active vs passive, NAT limitations
+- DNS: distributed hierarchical system, TTL, DNSSEC
+- SSH: secure protocol, multiplexing, tunnelling
+
+SLIDE 34: KEY TAKEAWAYS
+- Classic protocols are the foundation of modern systems
+- Understanding mechanisms helps with debugging
+- Security is added post-factum (FTPS, DNSSEC, SSH)
+
+SLIDE 35: QUESTIONS & RESOURCES
+- RFC 959 (FTP), RFC 1035 (DNS), RFC 4251-4254 (SSH)
+- Kurose & Ross, Ch. 2 (Application Layer)
+- Laboratory: starterkit_week_11/
+
+================================================================================
+TOTAL: ~35 slides
+ESTIMATED TIME: 80-90 minutes (with breaks)
+================================================================================

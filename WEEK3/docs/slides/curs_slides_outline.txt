@@ -1,7 +1,0 @@
-Week 3 lecture slides outline
-- UDP vs TCP: what is guaranteed and what is not
-- UDP broadcast: addressing and scope
-- UDP multicast: group addressing and membership (IGMP)
-- TCP tunnelling: forwarding pattern and common use cases
-- Packet capture: tcpdump, tshark and Wireshark workflow
-- Pitfalls: interface binding, routing and firewall rules

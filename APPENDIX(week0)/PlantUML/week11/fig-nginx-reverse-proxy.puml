@@ -1,0 +1,59 @@
+@startuml fig-nginx-reverse-proxy
+'A4 Landscape
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+
+title Nginx Reverse Proxy Architecture
+
+rectangle "Clients" as clients #FFF3E0 {
+    rectangle "Client 1" as c1 #FFE0B2
+    rectangle "Client 2" as c2 #FFE0B2
+    rectangle "Client N" as cn #FFE0B2
+}
+
+rectangle "Nginx\nReverse Proxy\n:80/:443" as nginx #E3F2FD
+
+rectangle "Backend Servers" as backend #E8F5E9 {
+    rectangle "App 1\n:8080" as app1 #C8E6C9
+    rectangle "App 2\n:8080" as app2 #C8E6C9
+    rectangle "App 3\n:8080" as app3 #C8E6C9
+}
+
+c1 -[#1565C0]-> nginx
+c2 -[#1565C0]-> nginx
+cn -[#1565C0]-> nginx
+
+nginx -[#43A047]-> app1
+nginx -[#43A047]-> app2
+nginx -[#43A047]-> app3
+
+note bottom of nginx
+    nginx.conf:
+    
+    upstream backend {
+        server app1:8080;
+        server app2:8080;
+        server app3:8080;
+    }
+    
+    server {
+        listen 80;
+        location / {
+            proxy_pass http://backend;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+        }
+    }
+end note
+
+note right of nginx
+    Benefits:
+    * SSL termination
+    * Load balancing
+    * Caching
+    * Compression
+    * Security
+end note
+

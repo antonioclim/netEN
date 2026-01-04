@@ -1,0 +1,44 @@
+@startuml fig-tcp-header
+'A4 Landscape
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+
+title TCP Header Structure (20-60 bytes)
+
+rectangle "TCP Header" as hdr #F5F5F5 {
+    rectangle "Source Port (16)" as sp #BBDEFB
+    rectangle "Dest Port (16)" as dp #BBDEFB
+    rectangle "Sequence Number (32)" as seq #C8E6C9
+    rectangle "Acknowledgment Number (32)" as ack #C8E6C9
+    rectangle "Data Offset (4)" as doff #FFE0B2
+    rectangle "Reserved (3)" as res #ECEFF1
+    rectangle "Flags (9)" as flags #FFF9C4 {
+        note as fl
+            NS ECE CWR
+            URG ACK PSH
+            RST SYN FIN
+        end note
+    }
+    rectangle "Window Size (16)" as win #FFE0B2
+    rectangle "Checksum (16)" as csum #FFCDD2
+    rectangle "Urgent Pointer (16)" as urg #ECEFF1
+    rectangle "Options (0-40 bytes)" as opt #ECEFF1
+}
+
+note bottom of hdr
+    Key Fields:
+    * Sequence: byte position in stream
+    * Acknowledgment: next expected byte
+    * Window: receive buffer space
+    * Flags: control bits (SYN, ACK, FIN, RST)
+    
+    Common Flag Combinations:
+    SYN = new connection
+    SYN-ACK = connection accepted
+    ACK = acknowledgment
+    FIN = close connection
+    RST = abort connection
+end note
+

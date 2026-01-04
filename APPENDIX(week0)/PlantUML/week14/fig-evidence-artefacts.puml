@@ -1,0 +1,54 @@
+@startuml fig-evidence-artefacts
+'A4 Landscape
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+
+title Project Evidence and Artefacts
+
+rectangle "Required Artefacts" as req #F5F5F5 {
+    rectangle "Logs" as logs #E3F2FD {
+        note as logs_n
+            artifacts/demo.log
+            artifacts/server.log
+            artifacts/client.log
+        end note
+    }
+    
+    rectangle "Captures" as caps #E8F5E9 {
+        note as caps_n
+            artifacts/demo.pcap
+            artifacts/handshake.pcap
+        end note
+    }
+    
+    rectangle "Validation" as valid #FFF3E0 {
+        note as valid_n
+            artifacts/validation.txt
+            tests/smoke_test_output.txt
+        end note
+    }
+}
+
+rectangle "Documentation" as docs #FCE4EC {
+    note as docs_n
+        README.md
+        * Description
+        * Prerequisites  
+        * Installation
+        * Quick start
+        * Configuration
+        * Troubleshooting
+    end note
+}
+
+note bottom of req
+    Generation Commands:
+    
+    make demo > artifacts/demo.log 2>&1
+    tcpdump -i any port 8080 -w artifacts/demo.pcap &
+    ./tests/smoke_test.sh | tee artifacts/validation.txt
+    sha256sum artifacts/* > artifacts/checksums.txt
+end note
+

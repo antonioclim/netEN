@@ -1,0 +1,46 @@
+@startuml fig-ipv4-structure
+'A4 Landscape
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+
+title IPv4 Address Structure\n32-bit addressing
+
+rectangle "IPv4 Address: 192.168.1.100" as addr #F5F5F5 {
+    rectangle "Octet 1\n192\n11000000" as o1 #BBDEFB
+    rectangle "Octet 2\n168\n10101000" as o2 #BBDEFB
+    rectangle "Octet 3\n1\n00000001" as o3 #C8E6C9
+    rectangle "Octet 4\n100\n01100100" as o4 #C8E6C9
+    
+    o1 -right[hidden]-> o2
+    o2 -right[hidden]-> o3
+    o3 -right[hidden]-> o4
+}
+
+rectangle "With Subnet Mask /24 (255.255.255.0)" as mask #FFF3E0 {
+    rectangle "Network Portion\n192.168.1" as net #FFE0B2
+    rectangle "Host Portion\n.100" as host #FFCDD2
+}
+
+note bottom of addr
+    Dotted Decimal Notation
+    Each octet: 0-255 (8 bits)
+    Total: 32 bits = 4 bytes
+end note
+
+note bottom of mask
+    CIDR Notation: 192.168.1.100/24
+    Network: 192.168.1.0
+    Broadcast: 192.168.1.255
+    Usable hosts: .1 to .254 (254 hosts)
+end note
+
+note as N1
+    Address Classes (historical):
+    | Class | First Octet | Default Mask |
+    | A | 1-126 | /8 |
+    | B | 128-191 | /16 |
+    | C | 192-223 | /24 |
+end note
+

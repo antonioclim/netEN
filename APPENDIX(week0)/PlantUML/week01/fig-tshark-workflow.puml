@@ -1,0 +1,68 @@
+@startuml fig-tshark-workflow
+'A4 Portrait - Activity workflow
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+skinparam roundCorner 5
+
+title Traffic Capture and Analysis Workflow
+
+start
+
+partition "1. CAPTURE" #E3F2FD {
+    :Start capture with filter
+    ----
+    tshark -i lo -f "port 9999" -w capture.pcap
+    
+    -i : interface (lo, eth0)
+    -f : BPF capture filter
+    -w : write to file;
+    
+    :Generate test traffic
+    ----
+    Terminal 2: nc -l -p 9999
+    Terminal 3: echo "Test" | nc localhost 9999;
+    
+    :Stop capture
+    ----
+    Press Ctrl+C;
+}
+
+partition "2. ANALYSIS" #E8F5E9 {
+    :Read capture file
+    ----
+    tshark -r capture.pcap;
+    
+    :Apply display filter
+    ----
+    tshark -r capture.pcap -Y "tcp.flags.syn==1"
+    
+    Display filters are more
+    expressive than BPF;
+    
+    :Extract specific fields
+    ----
+    tshark -r capture.pcap -T fields
+      -e frame.number
+      -e ip.src
+      -e tcp.srcport
+      -e tcp.flags.str;
+}
+
+partition "3. EXPORT" #FFF3E0 {
+    :Export to CSV
+    ----
+    tshark -r capture.pcap -T fields
+      -E header=y -E separator=,
+      > analysis.csv;
+    
+    :Generate statistics
+    ----
+    tshark -r capture.pcap -q -z conv,tcp
+    tshark -r capture.pcap -q -z io,stat,1;
+}
+
+stop
+
+@enduml

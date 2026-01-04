@@ -1,0 +1,50 @@
+@startuml fig-tcp-termination
+'A4 Portrait
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+
+title TCP Connection Termination\nFour-way handshake
+
+participant "Client\n(Active Close)" as C
+participant "Server\n(Passive Close)" as S
+
+== Normal Termination ==
+
+C -> S : FIN, Seq=100
+note right: Client initiates close
+
+S --> C : ACK, Ack=101
+note left: Server acknowledges
+
+note over S
+    Server may continue
+    sending data...
+end note
+
+S --> C : FIN, Seq=300
+note left: Server ready to close
+
+C -> S : ACK, Ack=301
+note right: Client confirms
+
+note over C #FFF9C4
+    TIME_WAIT state
+    (2xMSL = 60-120 sec)
+end note
+
+== Why TIME_WAIT? ==
+
+note over C, S
+    1. Ensures final ACK is received
+       (can retransmit if lost)
+    
+    2. Prevents old duplicate packets
+       from confusing new connections
+       on same port
+    
+    Verification:
+    ss -tnp | grep TIME_WAIT
+end note
+

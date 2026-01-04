@@ -1,0 +1,54 @@
+@startuml fig-smtp-session
+'A4 Portrait
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+
+title SMTP Session Flow
+
+participant "Client" as C
+participant "Server\nPort 25/587" as S
+
+== Connection ==
+
+C -> S : TCP Connect
+S --> C : 220 smtp.example.com ESMTP
+
+C -> S : EHLO client.domain.com
+S --> C : 250-Hello\n250-STARTTLS\n250-AUTH LOGIN\n250 OK
+
+== TLS (Optional) ==
+
+C -> S : STARTTLS
+S --> C : 220 Ready for TLS
+note over C, S : TLS Handshake
+
+== Authentication ==
+
+C -> S : AUTH LOGIN
+S --> C : 334 Username:
+C -> S : (base64 username)
+S --> C : 334 Password:
+C -> S : (base64 password)
+S --> C : 235 Authenticated
+
+== Mail Transaction ==
+
+C -> S : MAIL FROM:<alice@sender.com>
+S --> C : 250 OK
+
+C -> S : RCPT TO:<bob@receiver.com>
+S --> C : 250 OK
+
+C -> S : DATA
+S --> C : 354 Start input
+
+C -> S : Subject: Test\nFrom: alice\n\nHello!\n.
+S --> C : 250 Message accepted
+
+== Disconnect ==
+
+C -> S : QUIT
+S --> C : 221 Bye
+

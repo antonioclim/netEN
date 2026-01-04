@@ -1,0 +1,55 @@
+@startuml fig-sticky-sessions
+'A4 Landscape
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+
+title Session Persistence (Sticky Sessions)
+
+rectangle "Client A" as ca #FFE0B2
+rectangle "Client B" as cb #FFE0B2
+
+rectangle "Load Balancer" as lb #E3F2FD
+
+rectangle "Server 1\n(has A's session)" as s1 #C8E6C9
+rectangle "Server 2\n(has B's session)" as s2 #C8E6C9
+
+ca -[#1565C0,thickness=2]-> lb : All requests
+lb -[#43A047,thickness=2]-> s1 : Always to S1
+
+cb -[#1565C0,thickness=2]-> lb : All requests
+lb -[#43A047,thickness=2]-> s2 : Always to S2
+
+note bottom of lb
+    Sticky Session Methods:
+    
+    1. Cookie-based:
+       Set-Cookie: SERVERID=s1
+       
+    2. IP Hash:
+       hash(client_ip) % servers
+       
+    3. URL parameter:
+       /app?server=s1
+end note
+
+note as N1
+    Nginx ip_hash:
+    
+    upstream backend {
+        ip_hash;
+        server s1:8080;
+        server s2:8080;
+    }
+    
+    Nginx sticky cookie:
+    (requires nginx-plus or module)
+    
+    upstream backend {
+        sticky cookie srv_id;
+        server s1:8080;
+        server s2:8080;
+    }
+end note
+

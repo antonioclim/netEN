@@ -1,0 +1,42 @@
+@startuml fig-evaluation-rubric
+'A4 Landscape
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+
+title Project Evaluation Rubric (100 points)
+
+rectangle "Complexity (40%)" as comp #E3F2FD {
+    rectangle "36-40: Excellent" as ce #81C784
+    rectangle "28-35: Good" as cg #C8E6C9
+    rectangle "20-27: Sufficient" as cs #FFF9C4
+    rectangle "<20: Insufficient" as ci #FFCDD2
+}
+
+rectangle "Functionality (30%)" as func #E8F5E9 {
+    rectangle "27-30: Excellent" as fe #81C784
+    rectangle "21-26: Good" as fg #C8E6C9
+    rectangle "15-20: Sufficient" as fs #FFF9C4
+    rectangle "<15: Insufficient" as fi #FFCDD2
+}
+
+rectangle "Presentation (20%)" as pres #FFF3E0 {
+    rectangle "18-20: Excellent" as pe #81C784
+    rectangle "14-17: Good" as pg #C8E6C9
+    rectangle "10-13: Sufficient" as ps #FFF9C4
+    rectangle "<10: Insufficient" as pi #FFCDD2
+}
+
+rectangle "Documentation (10%)" as doc #FCE4EC {
+    rectangle "9-10: Excellent" as de #81C784
+    rectangle "7-8: Good" as dg #C8E6C9
+    rectangle "5-6: Sufficient" as ds #FFF9C4
+    rectangle "<5: Insufficient" as di #FFCDD2
+}
+
+note bottom of comp : Multi-component, protocols, error handling
+note bottom of func : Works correctly, reproducible, handles errors
+note bottom of pres : Clear explanations, answers questions
+note bottom of doc : README complete, code comments
+

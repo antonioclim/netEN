@@ -1,0 +1,55 @@
+@startuml fig-netcat-architecture
+'A4 Landscape - Component layout
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+skinparam roundCorner 5
+skinparam padding 15
+
+title Netcat Client-Server Architecture\nBasic TCP communication setup
+
+left to right direction
+
+package "Terminal 1: SERVER" as srv #E3F2FD {
+    rectangle "nc -l -p 9999" as server #BBDEFB
+    note bottom of server
+        Server Mode (-l)
+        * Binds to port 9999
+        * Waits for connections
+        * State: LISTEN
+    end note
+}
+
+package "Terminal 2: CLIENT" as cli #E8F5E9 {
+    rectangle "nc localhost 9999" as client #C8E6C9
+    note bottom of client
+        Client Mode
+        * Connects to server
+        * Ephemeral port assigned
+        * State: ESTABLISHED
+    end note
+}
+
+package "Terminal 3: MONITOR" as mon #FFF3E0 {
+    rectangle "ss -tnp | grep 9999" as monitor #FFE0B2
+    note bottom of monitor
+        Socket Statistics
+        Shows connections
+        with PID and state
+    end note
+}
+
+server <-[#1565C0,thickness=3]-> client : Bidirectional\nData Flow
+
+note as N1
+    Example Session:
+    Server: nc -l -p 9999
+    Client: nc localhost 9999
+    
+    ss output:
+    ESTAB 127.0.0.1:9999 127.0.0.1:54321
+    ESTAB 127.0.0.1:54321 127.0.0.1:9999
+end note
+
+@enduml

@@ -1,0 +1,54 @@
+@startuml fig-blooms-taxonomy
+'A4 Portrait
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+
+title Defence Questions by Cognitive Level\nBased on Bloom's Taxonomy
+
+rectangle "Level 1: Remember" as l1 #E3F2FD {
+    note as l1n
+        * What port does the server use?
+        * What protocol did you choose?
+        * Name the TCP flags
+    end note
+}
+
+rectangle "Level 2: Understand" as l2 #C8E6C9 {
+    note as l2n
+        * Explain the request flow
+        * Why TCP over UDP?
+        * What happens on accept()?
+    end note
+}
+
+rectangle "Level 3: Apply" as l3 #FFF9C4 {
+    note as l3n
+        * Modify the timeout
+        * Add a new endpoint
+        * Show a packet capture
+    end note
+}
+
+rectangle "Level 4: Analyse" as l4 #FFE0B2 {
+    note as l4n
+        * Why is recv() blocking?
+        * What do retransmissions mean?
+        * Find the bottleneck
+    end note
+}
+
+rectangle "Level 5: Evaluate" as l5 #F8BBD9 {
+    note as l5n
+        * Is this vulnerable to DoS?
+        * How would you scale?
+        * What would you change?
+    end note
+}
+
+l1 -down-> l2
+l2 -down-> l3
+l3 -down-> l4
+l4 -down-> l5
+

@@ -1,0 +1,41 @@
+@startuml fig-nat-pat-operation
+'A4 Landscape
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+
+title NAT/PAT Operation\nNetwork Address Translation
+
+rectangle "Private Network\n192.168.1.0/24" as priv #E8F5E9 {
+    rectangle "PC1\n192.168.1.10:5000" as pc1 #C8E6C9
+    rectangle "PC2\n192.168.1.11:5000" as pc2 #C8E6C9
+}
+
+rectangle "NAT Router" as nat #FFF3E0 {
+    rectangle "NAT Table" as table #FFE0B2 {
+        note as ntable
+            | Inside | Outside |
+            | 192.168.1.10:5000 | 203.0.113.1:10001 |
+            | 192.168.1.11:5000 | 203.0.113.1:10002 |
+        end note
+    }
+}
+
+rectangle "Internet" as inet #E3F2FD {
+    rectangle "Web Server\n8.8.8.8:80" as web #BBDEFB
+}
+
+pc1 -[#43A047]-> nat : Src: 192.168.1.10:5000\nDst: 8.8.8.8:80
+pc2 -[#43A047]-> nat : Src: 192.168.1.11:5000\nDst: 8.8.8.8:80
+
+nat -[#1565C0]-> web : Src: 203.0.113.1:10001\nDst: 8.8.8.8:80
+nat -[#1565C0]-> web : Src: 203.0.113.1:10002\nDst: 8.8.8.8:80
+
+note bottom of nat
+    PAT (Port Address Translation):
+    * Multiple private IPs share one public IP
+    * Uses port numbers to track sessions
+    * Also called NAPT, NAT Overload
+end note
+

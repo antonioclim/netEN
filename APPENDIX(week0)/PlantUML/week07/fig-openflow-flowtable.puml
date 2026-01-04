@@ -1,0 +1,53 @@
+@startuml fig-openflow-flowtable
+'A4 Landscape
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+
+title OpenFlow Flow Table Structure
+
+rectangle "OpenFlow Switch" as sw #F5F5F5 {
+    rectangle "Flow Table" as ft #E3F2FD {
+        rectangle "Entry 1 (Priority 100)" as e1 #BBDEFB {
+            note as n1
+                Match: src_ip=10.0.0.1, dst_port=80
+                Action: output:port2
+                Counters: packets=1523, bytes=2.1MB
+            end note
+        }
+        rectangle "Entry 2 (Priority 50)" as e2 #BBDEFB {
+            note as n2
+                Match: dst_ip=10.0.0.0/24
+                Action: output:port1
+                Counters: packets=8234, bytes=5.6MB
+            end note
+        }
+        rectangle "Entry 3 (Priority 0)" as e3 #FFCDD2 {
+            note as n3
+                Match: * (wildcard)
+                Action: drop
+                Counters: packets=45, bytes=3KB
+            end note
+        }
+    }
+}
+
+rectangle "Controller" as ctrl #E8F5E9
+
+ctrl -down-> sw : OpenFlow Protocol\nFlow modifications\nStatistics queries
+
+note bottom of ft
+    Flow Entry Components:
+    * Match fields (L2-L4 headers)
+    * Priority (higher = first)
+    * Actions (forward, drop, modify)
+    * Counters (stats)
+    * Timeouts (idle, hard)
+    
+    Packet processing:
+    1. Match highest priority entry
+    2. Execute actions
+    3. Update counters
+end note
+

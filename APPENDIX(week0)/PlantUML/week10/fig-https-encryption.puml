@@ -1,0 +1,54 @@
+@startuml fig-https-encryption
+'A4 Portrait
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+
+title HTTPS Encryption Layers
+
+rectangle "Application Data" as app #FFF9C4 {
+    rectangle "HTTP Request/Response" as http
+}
+
+rectangle "TLS Layer" as tls #E3F2FD {
+    rectangle "Encryption (AES-256-GCM)" as enc #BBDEFB
+    rectangle "Authentication (Certificates)" as auth #BBDEFB
+    rectangle "Integrity (HMAC)" as integ #BBDEFB
+}
+
+rectangle "TCP Layer" as tcp #E8F5E9 {
+    rectangle "Reliable Transport" as rel #C8E6C9
+}
+
+rectangle "IP Layer" as ip #ECEFF1
+
+app -down-> tls
+tls -down-> tcp
+tcp -down-> ip
+
+note right of tls
+    TLS Provides:
+    * Confidentiality (encryption)
+    * Authentication (certificates)
+    * Integrity (MAC)
+    
+    Port 443 (HTTPS)
+    vs Port 80 (HTTP)
+end note
+
+note bottom of ip
+    What attacker sees:
+    * Source/Dest IP
+    * Port numbers
+    * Packet sizes
+    * Timing
+    
+    Cannot see:
+    * URL path
+    * Headers
+    * Body content
+    
+    (SNI reveals hostname)
+end note
+

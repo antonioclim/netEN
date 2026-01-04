@@ -1,0 +1,61 @@
+@startuml fig-udp-multicast
+'A4 Landscape - Network diagram
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+skinparam roundCorner 5
+
+title UDP Multicast with IGMP\nOne-to-many with group membership
+
+rectangle "Multicast Network" as net #F5F5F5 {
+    
+    node "Multicast Router\n(IGMP Querier)" as router #90CAF9
+    
+    rectangle "Sender\n192.168.1.10\n(no join required)" as sender #FFE0B2
+    
+    rectangle "Receiver 1\njoined 239.0.0.1" as r1 #C8E6C9
+    rectangle "Receiver 2\njoined 239.0.0.1" as r2 #C8E6C9
+    rectangle "Host 3\nnot joined" as r3 #ECEFF1
+    
+    sender -- router
+    r1 -- router
+    r2 -- router
+    r3 -- router
+}
+
+sender .[#43A047,thickness=2].> router : UDP to 239.0.0.1:9999
+router .[#43A047,thickness=2].> r1 : forwarded
+router .[#43A047,thickness=2].> r2 : forwarded
+router .[#E53935,dashed].> r3 : NOT forwarded
+
+note right of sender
+    Sender Code:
+    sock = socket(AF_INET, SOCK_DGRAM)
+    sock.setsockopt(IPPROTO_IP,
+                    IP_MULTICAST_TTL, 2)
+    sock.sendto(data, ('239.0.0.1', 9999))
+end note
+
+note right of r1
+    Receiver Code (must join):
+    sock = socket(AF_INET, SOCK_DGRAM)
+    sock.bind(('', 9999))
+    
+    mreq = struct.pack('4sl',
+        inet_aton('239.0.0.1'),
+        INADDR_ANY)
+    sock.setsockopt(IPPROTO_IP,
+        IP_ADD_MEMBERSHIP, mreq)
+end note
+
+note as N1
+    IGMP Messages (tcpdump igmp):
+    * Query (0x11) - Router asks members
+    * Report (0x16) - Host joins group
+    * Leave (0x17) - Host leaves group
+    
+    Multicast Range: 224.0.0.0 - 239.255.255.255
+end note
+
+@enduml

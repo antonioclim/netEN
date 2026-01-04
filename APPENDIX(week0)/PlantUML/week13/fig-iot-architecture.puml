@@ -1,0 +1,49 @@
+@startuml fig-iot-architecture
+'A4 Portrait
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+
+title IoT Network Architecture
+
+rectangle "Cloud Services" as cloud #E3F2FD {
+    rectangle "IoT Platform\n(AWS IoT, Azure)" as platform #BBDEFB
+    rectangle "Data Storage" as storage #BBDEFB
+    rectangle "Analytics/ML" as analytics #BBDEFB
+}
+
+rectangle "Edge/Gateway" as edge #FFF3E0 {
+    rectangle "IoT Gateway\nProtocol translation\nLocal processing" as gateway #FFE0B2
+}
+
+rectangle "Device Layer" as devices #E8F5E9 {
+    rectangle "Sensors\nTemp, Motion" as sensors #C8E6C9
+    rectangle "Actuators\nLights, Locks" as actuators #C8E6C9
+    rectangle "Cameras" as cameras #C8E6C9
+}
+
+rectangle "User Interface" as ui #FCE4EC {
+    rectangle "Mobile App" as app #F8BBD9
+    rectangle "Web Dashboard" as web #F8BBD9
+}
+
+sensors -up-> gateway : MQTT/Zigbee
+actuators -up-> gateway
+cameras -up-> gateway : RTSP
+
+gateway -up-> platform : MQTT/HTTPS\nTLS encrypted
+
+platform --> storage
+platform --> analytics
+platform --> app
+platform --> web
+
+note right of gateway
+    Gateway Functions:
+    * Protocol bridge
+    * Local automation
+    * Offline operation
+    * Security filtering
+end note
+

@@ -1,0 +1,65 @@
+@startuml fig-broadcast-vs-multicast
+'A4 Landscape - Comparison
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+skinparam roundCorner 5
+
+title Unicast vs Broadcast vs Multicast
+
+rectangle "UNICAST\nOne-to-One" as unicast #E3F2FD {
+    rectangle "Sender" as us #FFE0B2
+    rectangle "Target" as ut #C8E6C9
+    rectangle "Other" as uo1 #ECEFF1
+    rectangle "Other" as uo2 #ECEFF1
+    
+    us -[#43A047,thickness=2]-> ut
+}
+
+rectangle "BROADCAST\nOne-to-All" as broadcast #FFF3E0 {
+    rectangle "Sender" as bs #FFE0B2
+    rectangle "All 1" as bt1 #C8E6C9
+    rectangle "All 2" as bt2 #C8E6C9
+    rectangle "All 3" as bt3 #C8E6C9
+    
+    bs -[#FF9800,thickness=2]-> bt1
+    bs -[#FF9800,thickness=2]-> bt2
+    bs -[#FF9800,thickness=2]-> bt3
+}
+
+rectangle "MULTICAST\nOne-to-Many" as multicast #E8F5E9 {
+    rectangle "Sender" as ms #FFE0B2
+    rectangle "Joined" as mt1 #C8E6C9
+    rectangle "Joined" as mt2 #C8E6C9
+    rectangle "Not joined" as mt3 #ECEFF1
+    
+    ms -[#43A047,thickness=2]-> mt1
+    ms -[#43A047,thickness=2]-> mt2
+}
+
+note bottom of unicast
+    * Single destination
+    * Most efficient for P2P
+    * Standard TCP/UDP
+    
+    Example: HTTP, SSH
+end note
+
+note bottom of broadcast
+    * All hosts receive
+    * L2 segment only
+    * High network load
+    
+    Example: ARP, DHCP
+end note
+
+note bottom of multicast
+    * Only interested receive
+    * Crosses routers (IGMP)
+    * Efficient streaming
+    
+    Example: IPTV, Stocks
+end note
+
+@enduml

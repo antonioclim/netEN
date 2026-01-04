@@ -1,0 +1,49 @@
+@startuml fig-diagnostic-workflow
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+
+title Network Diagnostic Workflow
+
+start
+
+:Check interface: ip addr show;
+if (Interface UP?) then (yes)
+else (no)
+    :ip link set eth0 up;
+    stop
+endif
+
+:Test loopback: ping 127.0.0.1;
+if (OK?) then (yes)
+else (no)
+    :TCP/IP stack error;
+    stop
+endif
+
+:Test gateway: ping GATEWAY;
+if (OK?) then (yes)
+else (no)
+    :Check cable/DHCP;
+    stop
+endif
+
+:Test Internet: ping 8.8.8.8;
+if (OK?) then (yes)
+else (no)
+    :Check router/firewall;
+    stop
+endif
+
+:Test DNS: ping google.com;
+if (OK?) then (yes)
+    #C8E6C9:Full connectivity OK;
+else (no)
+    :Fix /etc/resolv.conf;
+    stop
+endif
+
+stop
+
+@enduml

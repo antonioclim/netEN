@@ -1,0 +1,45 @@
+@startuml fig-quic-vs-tcp
+'A4 Landscape
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+
+title QUIC vs TCP+TLS Comparison
+
+rectangle "TCP + TLS" as tcptls #E3F2FD {
+    rectangle "TCP Handshake\n(1 RTT)" as tcp_hs #BBDEFB
+    rectangle "TLS Handshake\n(1-2 RTT)" as tls_hs #BBDEFB
+    rectangle "Total: 2-3 RTT\nbefore data" as tcp_total #FFCDD2
+    
+    note bottom
+        * Separate layers
+        * Head-of-line blocking
+        * Connection tied to IP
+        * Kernel implementation
+    end note
+}
+
+rectangle "QUIC (HTTP/3)" as quic #E8F5E9 {
+    rectangle "QUIC Handshake\n(1 RTT, 0-RTT resume)" as quic_hs #C8E6C9
+    rectangle "Total: 1 RTT\nor 0-RTT" as quic_total #C8E6C9
+    
+    note bottom
+        * Built-in encryption
+        * No HOL blocking
+        * Connection migration
+        * Userspace (UDP based)
+    end note
+}
+
+note as N1
+    Key QUIC Features:
+    * Multiplexed streams (no HOL blocking)
+    * Connection ID (survives IP change)
+    * 0-RTT connection resumption
+    * Improved loss recovery
+    * Always encrypted
+    
+    Used by: HTTP/3, Google services
+end note
+

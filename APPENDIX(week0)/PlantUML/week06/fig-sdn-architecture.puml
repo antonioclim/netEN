@@ -1,0 +1,47 @@
+@startuml fig-sdn-architecture
+'A4 Portrait
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+
+title SDN Architecture\nSoftware Defined Networking
+
+rectangle "Application Layer" as app #E1BEE7 {
+    rectangle "Network Apps\nLoad Balancer\nFirewall\nQoS" as apps #CE93D8
+}
+
+rectangle "Control Layer" as ctrl #E3F2FD {
+    rectangle "SDN Controller\n(OpenDaylight, ONOS, Ryu)" as controller #BBDEFB
+    note right
+        Centralized control
+        Global network view
+        Programmable via API
+    end note
+}
+
+rectangle "Data Layer" as data #E8F5E9 {
+    rectangle "Switch 1" as s1 #C8E6C9
+    rectangle "Switch 2" as s2 #C8E6C9
+    rectangle "Switch 3" as s3 #C8E6C9
+    
+    s1 -- s2
+    s2 -- s3
+}
+
+apps -down-> controller : Northbound API\n(REST, Python)
+controller -down-> s1 : Southbound API\n(OpenFlow)
+controller -down-> s2
+controller -down-> s3
+
+note bottom of data
+    Data plane: packet forwarding only
+    Control plane: centralized in controller
+    
+    Benefits:
+    * Programmable networks
+    * Centralized management
+    * Dynamic reconfiguration
+    * Vendor-neutral
+end note
+

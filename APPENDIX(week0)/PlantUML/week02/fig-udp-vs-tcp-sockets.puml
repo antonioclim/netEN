@@ -1,0 +1,77 @@
+@startuml fig-udp-vs-tcp-sockets
+'A4 Landscape - Comparison layout
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+skinparam roundCorner 5
+
+title UDP vs TCP Socket API Comparison
+
+rectangle "TCP (SOCK_STREAM)" as tcp #E3F2FD {
+    
+    rectangle "Server" as tcps #BBDEFB {
+        card "socket()" as ts1
+        card "bind()" as ts2
+        card "listen()" as ts3
+        card "accept()" as ts4 #FFF9C4
+        card "recv()/send()" as ts5
+        card "close()" as ts6
+        
+        ts1 -down-> ts2
+        ts2 -down-> ts3
+        ts3 -down-> ts4
+        ts4 -down-> ts5
+        ts5 -down-> ts6
+    }
+    
+    rectangle "Client" as tcpc #BBDEFB {
+        card "socket()" as tc1
+        card "connect()" as tc2 #FFF9C4
+        card "send()/recv()" as tc3
+        card "close()" as tc4
+        
+        tc1 -down-> tc2
+        tc2 -down-> tc3
+        tc3 -down-> tc4
+    }
+}
+
+rectangle "UDP (SOCK_DGRAM)" as udp #FFF3E0 {
+    
+    rectangle "Server" as udps #FFE0B2 {
+        card "socket()" as us1
+        card "bind()" as us2
+        card "recvfrom()" as us3 #C8E6C9
+        card "sendto()" as us4
+        
+        us1 -down-> us2
+        us2 -down-> us3
+        us3 -down-> us4
+    }
+    
+    rectangle "Client" as udpc #FFE0B2 {
+        card "socket()" as uc1
+        card "sendto()" as uc2 #C8E6C9
+        card "recvfrom()" as uc3
+        
+        uc1 -down-> uc2
+        uc2 -down-> uc3
+    }
+}
+
+note bottom of tcp
+    Connection-oriented
+    Reliable, ordered
+    Stream-based (no boundaries)
+    Requires accept() per client
+end note
+
+note bottom of udp
+    Connectionless
+    Unreliable, unordered
+    Message-based (boundaries kept)
+    No accept() needed
+end note
+
+@enduml

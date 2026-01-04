@@ -1,0 +1,59 @@
+@startuml fig-threaded-server
+'A4 Landscape - Component diagram
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+skinparam roundCorner 5
+
+title Concurrent TCP Server - Threaded Model
+
+rectangle "Main Thread" as main #E3F2FD {
+    rectangle "Server Socket\nLISTEN on :9090\n\nwhile True:\n  conn, addr = accept()\n  Thread(target=handle,\n         args=(conn,)).start()" as ssock #BBDEFB
+}
+
+rectangle "Worker Threads" as workers #FFF3E0 {
+    rectangle "Thread 1\nClient 10.0.0.2:45678" as t1 #FFE0B2
+    rectangle "Thread 2\nClient 10.0.0.3:52341" as t2 #FFE0B2
+    rectangle "Thread N\n..." as tn #FFE0B2
+}
+
+rectangle "Clients" as clients #E8F5E9 {
+    rectangle "h2\n10.0.0.2:45678" as c1 #C8E6C9
+    rectangle "h3\n10.0.0.3:52341" as c2 #C8E6C9
+}
+
+ssock -down-> t1 : accept()\nnew socket
+ssock -down-> t2 : accept()\nnew socket
+ssock -down[dashed]-> tn
+
+c1 <--> t1 : recv()/send()
+c2 <--> t2 : recv()/send()
+
+note right of main
+    Main Thread:
+    * Never blocks on I/O
+    * Only accepts connections
+    * Spawns handler thread
+    * Returns to accept()
+end note
+
+note right of workers
+    Handler Function:
+    def handle(conn):
+        data = conn.recv(1024)
+        response = process(data)
+        conn.send(response)
+        conn.close()
+end note
+
+note bottom of clients
+    Advantages             Disadvantages
+    * Multiple clients     * Thread overhead
+    * Simple code          * Memory per thread
+    * Isolated failures    * Scaling limits
+    
+    Alternatives: select(), asyncio, ThreadPool
+end note
+
+@enduml

@@ -1,0 +1,81 @@
+@startuml fig-capture-correlation
+'A4 Portrait - Sequence diagram
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+
+skinparam sequence {
+    ArrowThickness 2
+    ArrowColor #1565C0
+    LifeLineBorderColor #1565C0
+    LifeLineBackgroundColor #E3F2FD
+    ParticipantBorderColor #1565C0
+    ParticipantBackgroundColor #BBDEFB
+}
+
+title Correlating Application Logs with Packet Capture
+
+box "Host h2 (Client)" #E8F5E9
+    participant "Python\nClient" as PC
+    participant "tcpdump" as TD
+end box
+
+box "Host h1 (Server)" #E3F2FD
+    participant "Python\nServer" as PS
+end box
+
+note over TD
+    tcpdump -i h2-eth0
+    -w tcp_demo.pcap
+    'tcp port 9090'
+end note
+
+== TCP Handshake ==
+
+PC -> PS : SYN [Seq=1000]
+note right of TD : Packet #1
+
+PS --> PC : SYN-ACK [Seq=5000, Ack=1001]
+note right of TD : Packet #2
+
+PC -> PS : ACK [Seq=1001, Ack=5001]
+note right of TD : Packet #3
+
+note over PC #C8E6C9
+    App Log:
+    [14:32:15.123] Connected
+end note
+
+== Data Transfer ==
+
+PC -> PS : PSH-ACK "Hello from h2"
+note right of TD : Packet #4
+
+note over PS #C8E6C9
+    App Log:
+    [14:32:15.125] RX: "Hello from h2"
+end note
+
+PS --> PC : PSH-ACK "OK: HELLO FROM H2"
+note right of TD : Packet #5
+
+note over PC #C8E6C9
+    App Log:
+    [14:32:15.127] RX 17B in 2.3ms
+end note
+
+== Analysis ==
+
+note over PC, PS
+    tshark -r tcp_demo.pcap -Y "tcp.port==9090"
+      -T fields -e frame.number
+      -e tcp.flags.str -e tcp.payload
+    
+    Correlation Checklist:
+    * Timestamp alignment
+    * Sequence number matching
+    * Payload verification
+end note
+
+@enduml

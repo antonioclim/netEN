@@ -1,0 +1,45 @@
+@startuml fig-email-architecture
+'A4 Landscape
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+
+title Email System Architecture\nEnd-to-end message flow
+
+rectangle "Sender" as sender #E8F5E9 {
+    rectangle "MUA\n(Thunderbird)" as mua1 #C8E6C9
+    rectangle "MSA\nPort 587" as msa #81C784
+}
+
+rectangle "Transport" as transport #FFF3E0 {
+    rectangle "MTA\nsmtp.sender.com" as mta1 #FFE0B2
+    rectangle "MTA\nmx.receiver.com" as mta2 #FFE0B2
+}
+
+rectangle "Receiver" as receiver #E3F2FD {
+    rectangle "MDA\n(delivers)" as mda #BBDEFB
+    rectangle "MUA\n(Gmail)" as mua2 #90CAF9
+}
+
+mua1 -[#43A047,thickness=2]-> msa : SMTP\n:587
+msa -[#43A047]-> mta1
+mta1 -[#FF9800,thickness=2]-> mta2 : SMTP\n:25
+mta2 -[#43A047]-> mda
+mda -[#1565C0,thickness=2]-> mua2 : IMAP :993\nor POP3 :995
+
+note bottom of mua1
+    MUA: Mail User Agent
+    (email client)
+end note
+
+note bottom of mta1
+    DNS MX Lookup:
+    dig MX receiver.com
+end note
+
+note bottom of mda
+    MDA: Mail Delivery Agent
+    Stores in mailbox
+end note
+

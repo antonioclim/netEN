@@ -1,0 +1,40 @@
+@startuml fig-http-request-response
+'A4 Portrait
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+
+title HTTP Request-Response Structure
+
+rectangle "HTTP Request" as req #E3F2FD {
+    rectangle "Request Line\nGET /api/users HTTP/1.1" as reqline #BBDEFB
+    rectangle "Headers\nHost: api.example.com\nContent-Type: application/json\nAuthorization: Bearer token" as reqhdr #BBDEFB
+    rectangle "Empty Line" as reqempty #ECEFF1
+    rectangle "Body (optional)\n{\"name\": \"John\"}" as reqbody #FFF9C4
+}
+
+rectangle "HTTP Response" as res #E8F5E9 {
+    rectangle "Status Line\nHTTP/1.1 200 OK" as resline #C8E6C9
+    rectangle "Headers\nContent-Type: application/json\nContent-Length: 42\nCache-Control: no-cache" as reshdr #C8E6C9
+    rectangle "Empty Line" as resempty #ECEFF1
+    rectangle "Body\n{\"id\": 1, \"name\": \"John\"}" as resbody #FFF9C4
+}
+
+note bottom of req
+    Methods: GET, POST, PUT, DELETE, PATCH
+    Common headers:
+    * Host (required in HTTP/1.1)
+    * Content-Type
+    * Accept
+    * Authorization
+end note
+
+note bottom of res
+    Status Codes:
+    * 2xx Success (200 OK, 201 Created)
+    * 3xx Redirect (301, 302, 304)
+    * 4xx Client Error (400, 401, 404)
+    * 5xx Server Error (500, 503)
+end note
+

@@ -1,0 +1,41 @@
+@startuml fig-mime-structure
+'A4 Portrait
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+
+title MIME Message Structure\nMultipurpose Internet Mail Extensions
+
+rectangle "Email Message" as email #F5F5F5 {
+    rectangle "Headers" as headers #E3F2FD {
+        note as hdr_n
+            From: alice@example.com
+            To: bob@example.com
+            Subject: Meeting Notes
+            MIME-Version: 1.0
+            Content-Type: multipart/mixed;
+                boundary="----=_Part_123"
+        end note
+    }
+    
+    rectangle "Body (Multipart)" as body #FFF3E0 {
+        rectangle "Part 1: Text\nContent-Type: text/plain" as p1 #E8F5E9
+        rectangle "Part 2: HTML\nContent-Type: text/html" as p2 #E8F5E9
+        rectangle "Part 3: Attachment\nContent-Type: application/pdf\nContent-Disposition: attachment" as p3 #FFE0B2
+    }
+}
+
+note bottom of email
+    Common Content-Types:
+    text/plain, text/html
+    image/jpeg, image/png
+    application/pdf, application/json
+    multipart/mixed, multipart/alternative
+    
+    Transfer Encodings:
+    7bit, base64, quoted-printable
+    
+    Boundary separates parts
+end note
+

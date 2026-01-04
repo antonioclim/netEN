@@ -1,0 +1,53 @@
+@startuml fig-docker-testing
+'A4 Landscape
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+
+title Docker Multi-Client Testing Setup
+
+rectangle "Docker Network: test_net" as net #F5F5F5 {
+    rectangle "Server Container\nserver:8080" as server #E3F2FD
+    
+    rectangle "Client 1\nclient_1" as c1 #C8E6C9
+    rectangle "Client 2\nclient_2" as c2 #C8E6C9
+    rectangle "Client N\n..." as cn #C8E6C9
+    
+    c1 -[#1565C0]-> server
+    c2 -[#1565C0]-> server
+    cn -[#1565C0,dashed]-> server
+}
+
+note right of net
+    docker-compose.yml:
+    
+    services:
+      server:
+        build: ./server
+        ports:
+          - "8080:8080"
+        networks:
+          - test_net
+    
+      client:
+        build: ./client
+        depends_on:
+          - server
+        networks:
+          - test_net
+        deploy:
+          replicas: 3
+    
+    networks:
+      test_net:
+end note
+
+note bottom of net
+    Commands:
+    docker-compose up -d --scale client=5
+    docker-compose logs -f server
+    docker exec -it client_1 sh
+    docker-compose down
+end note
+

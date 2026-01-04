@@ -1,0 +1,53 @@
+@startuml fig-tls-handshake
+'A4 Portrait
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+
+title TLS 1.3 Handshake\n1-RTT connection establishment
+
+participant "Client" as C
+participant "Server" as S
+
+== TCP Handshake (assumed complete) ==
+
+== TLS Handshake ==
+
+C -> S : ClientHello\n+ Supported cipher suites\n+ Key share (ECDHE)
+note right
+    Client sends
+    supported options
+    and key material
+end note
+
+S --> C : ServerHello\n+ Selected cipher\n+ Key share\n+ Certificate\n+ CertificateVerify\n+ Finished
+note left
+    Server sends
+    everything in
+    one message
+    (encrypted after
+    key share)
+end note
+
+C -> S : Finished
+note right
+    Client confirms
+    handshake complete
+end note
+
+== Application Data (encrypted) ==
+
+C <-> S : HTTP/2, HTTP/3, etc.
+
+note over C, S
+    TLS 1.3 Improvements:
+    * 1-RTT handshake (vs 2-RTT in TLS 1.2)
+    * 0-RTT resumption (with PSK)
+    * Removed weak ciphers
+    * Forward secrecy required
+    
+    Common cipher:
+    TLS_AES_256_GCM_SHA384
+end note
+

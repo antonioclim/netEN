@@ -1,0 +1,58 @@
+@startuml fig-health-checks
+'A4 Portrait
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+
+title Health Checks and Failover
+
+rectangle "Load Balancer" as lb #E3F2FD
+
+rectangle "Server 1\nHEALTHY" as s1 #C8E6C9
+rectangle "Server 2\nHEALTHY" as s2 #C8E6C9
+rectangle "Server 3\nUNHEALTHY" as s3 #FFCDD2
+
+lb -[#43A047,thickness=2]-> s1 : Active
+lb -[#43A047,thickness=2]-> s2 : Active
+lb -[#E53935,dashed]-> s3 : Removed
+
+note right of lb
+    Health Check Types:
+    
+    TCP Check:
+    - Can connect to port?
+    
+    HTTP Check:
+    - GET /health returns 200?
+    
+    Custom Check:
+    - App-specific validation
+end note
+
+note bottom of s3
+    Nginx health config:
+    
+    upstream backend {
+        server s1:8080;
+        server s2:8080;
+        server s3:8080;
+    }
+    
+    # Passive health checks
+    # After 3 failures in 30s
+    # mark as down for 30s
+    
+    server s1:8080 max_fails=3
+                   fail_timeout=30s;
+end note
+
+note as N1
+    Failover Process:
+    1. Health check fails
+    2. Server marked DOWN
+    3. Traffic redirected
+    4. Periodic retry
+    5. Server marked UP when healthy
+end note
+

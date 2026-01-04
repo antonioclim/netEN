@@ -1,0 +1,63 @@
+@startuml fig-switch-mac-learning
+'A4 Portrait - Sequence diagram
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+
+skinparam sequence {
+    ArrowThickness 2
+    ArrowColor #1565C0
+    ParticipantBorderColor #1565C0
+    ParticipantBackgroundColor #BBDEFB
+}
+
+title Switch MAC Address Learning\nCAM table population process
+
+participant "Host A\nMAC: AA:AA\nPort 1" as A
+participant "Switch\nCAM Table" as S
+participant "Host B\nMAC: BB:BB\nPort 2" as B
+participant "Host C\nMAC: CC:CC\nPort 3" as C
+
+note over S #FFF9C4
+    Initial CAM Table: EMPTY
+    | MAC | Port | TTL |
+end note
+
+== Step 1: A sends to B (Unknown) ==
+
+A -[#43A047]> S : Frame: AA:AA -> BB:BB
+note over S #C8E6C9
+    LEARN: AA:AA on Port 1
+    | MAC | Port | TTL |
+    | AA:AA | 1 | 300s |
+end note
+
+S -[#FF9800,dashed]> B : FLOOD (unknown dest)
+S -[#FF9800,dashed]> C : FLOOD (unknown dest)
+
+== Step 2: B replies to A ==
+
+B -[#43A047]> S : Frame: BB:BB -> AA:AA
+note over S #C8E6C9
+    LEARN: BB:BB on Port 2
+    | MAC | Port | TTL |
+    | AA:AA | 1 | 300s |
+    | BB:BB | 2 | 300s |
+end note
+
+S -[#43A047]> A : FORWARD to Port 1
+
+== Step 3: A sends to B again ==
+
+A -[#43A047]> S : Frame: AA:AA -> BB:BB
+S -[#43A047]> B : FORWARD to Port 2
+
+note over A, C
+    CAM Table Behaviour:
+    * Unknown unicast -> Flood all except source
+    * Known unicast -> Forward to specific port
+    * Broadcast -> Always flood
+    * TTL expires -> Entry removed (aging)
+end note
+

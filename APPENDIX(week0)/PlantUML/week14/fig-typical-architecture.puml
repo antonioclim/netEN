@@ -1,0 +1,40 @@
+@startuml fig-typical-architecture
+'A4 Landscape
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+
+title Typical Network Project Architecture
+
+rectangle "Client Layer" as client #E3F2FD {
+    rectangle "CLI Client\n(argparse)" as cli #BBDEFB
+    rectangle "Test Scripts\n(pytest)" as test #BBDEFB
+}
+
+rectangle "Network Layer" as network #FFF3E0 {
+    rectangle "Socket Handler\nTCP/UDP" as sock #FFE0B2
+    rectangle "Protocol Logic\nSerialize/Parse" as proto #FFE0B2
+    rectangle "TLS Wrapper\n(optional)" as tls #FFE0B2
+}
+
+rectangle "Server Layer" as server #C8E6C9 {
+    rectangle "Listener\naccept()" as listen #E8F5E9
+    rectangle "Request Handler" as handler #E8F5E9
+    rectangle "Response Builder" as response #E8F5E9
+}
+
+rectangle "Data Layer" as data #FCE4EC {
+    rectangle "File Storage" as fs #F8BBD9
+    rectangle "State Manager" as state #F8BBD9
+}
+
+client -down-> network
+network -down-> server
+server -down-> data
+
+note right of client : User interface, validation
+note right of network : Connection, encoding
+note right of server : Business logic
+note right of data : Persistence
+

@@ -1,0 +1,44 @@
+@startuml fig-ftp-architecture
+'A4 Landscape
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+
+title FTP Protocol Architecture\nDual connection model
+
+rectangle "FTP Client" as client #E8F5E9 {
+    rectangle "Control\nProcess" as cp_c #C8E6C9
+    rectangle "Data Transfer\nProcess" as dp_c #C8E6C9
+}
+
+rectangle "FTP Server" as server #E3F2FD {
+    rectangle "Control\nProcess\nPort 21" as cp_s #BBDEFB
+    rectangle "Data Transfer\nProcess\nPort 20/*" as dp_s #BBDEFB
+}
+
+cp_c <-[#1565C0,thickness=2]-> cp_s : Control Connection\nPort 21\n(commands, responses)
+
+dp_c <-[#43A047,thickness=2]-> dp_s : Data Connection\nPort 20 or dynamic\n(file transfer)
+
+note bottom of client
+    Active Mode:
+    Client: PORT command
+    Server connects TO client
+    
+    Passive Mode (PASV):
+    Server: enters passive
+    Client connects TO server
+    (firewall friendly)
+end note
+
+note bottom of server
+    Common Commands:
+    USER, PASS - authentication
+    LIST - directory listing
+    RETR - download file
+    STOR - upload file
+    PASV - passive mode
+    QUIT - disconnect
+end note
+

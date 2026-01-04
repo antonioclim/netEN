@@ -1,0 +1,56 @@
+@startuml fig-rest-maturity
+'A4 Portrait
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+
+title REST API Maturity Model\nRichardson Maturity Model
+
+rectangle "Level 3: Hypermedia (HATEOAS)" as l3 #C8E6C9 {
+    note as n3
+        Response includes links
+        to related resources
+        
+        {"id": 1,
+         "links": [
+           {"rel": "self", "href": "/users/1"},
+           {"rel": "orders", "href": "/users/1/orders"}
+         ]}
+    end note
+}
+
+rectangle "Level 2: HTTP Verbs" as l2 #BBDEFB {
+    note as n2
+        Correct use of HTTP methods
+        GET = read
+        POST = create
+        PUT = update
+        DELETE = remove
+        
+        Proper status codes
+    end note
+}
+
+rectangle "Level 1: Resources" as l1 #FFE0B2 {
+    note as n1
+        Individual URIs per resource
+        /users/1
+        /users/1/orders
+        
+        Instead of single endpoint
+    end note
+}
+
+rectangle "Level 0: POX (Plain Old XML)" as l0 #FFCDD2 {
+    note as n0
+        Single URI, POST only
+        RPC style
+        /api?action=getUser&id=1
+    end note
+}
+
+l3 -down-> l2
+l2 -down-> l1
+l1 -down-> l0
+

@@ -1,0 +1,5 @@
+Week 6 Seminar slides outline
+- Automated demo walkthrough
+- Where to find artefacts
+- Packet capture hints
+- Smoke test and success criteria

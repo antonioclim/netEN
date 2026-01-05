@@ -1,0 +1,313 @@
+# ============================================================================
+# Makefile – Week 6: Computer Networks
+# NAT/PAT · ARP · DHCP · NDP · ICMP · SDN/OpenFlow
+# ASE-CSIE, Business Informatics
+# ============================================================================
+
+.PHONY: all setup check clean help \
+        nat-demo sdn-demo routing-demo run-all \
+        controller-start controller-stop controller-status \
+        smoke-test docker-build docker-run slides \
+        install-deps verify-tools capture verify reset
+
+# Colours for terminal output
+GREEN  := \033[0;32m
+YELLOW := \033[0;33m
+RED    := \033[0;31m
+CYAN   := \033[0;36m
+BOLD   := \033[1m
+RESET  := \033[0m
+
+# Privilege escalation helper
+ifeq ($(shell id -u),0)
+SUDO :=
+else
+SUDO := sudo
+endif
+
+
+# Paths
+SCRIPTS_DIR    := scripts
+TOPO_DIR       := mininet/topologies
+CONTROLLER_DIR := seminar/python/controllers
+APPS_DIR       := seminar/python/apps
+SLIDES_DIR     := slides
+TESTS_DIR      := tests
+PCAP_DIR       := pcap
+
+# Controller settings
+CONTROLLER_PY  := $(CONTROLLER_DIR)/sdn_policy_controller.py
+CONTROLLER_PID := /tmp/osken_controller.pid
+OFP_PORT       := 6633
+
+# ============================================================================
+# DEFAULT & HELP
+# ============================================================================
+
+all: help
+
+help:
+	@echo ""
+	@echo "$(BOLD)═══════════════════════════════════════════════════════════════$(RESET)"
+	@echo "$(CYAN)  Starterkit S6 – NAT/PAT, SDN, Traffic Analysis$(RESET)"
+	@echo "$(BOLD)═══════════════════════════════════════════════════════════════$(RESET)"
+	@echo ""
+	@echo "$(BOLD)Installation & Verification:$(RESET)"
+	@echo "  $(GREEN)make setup$(RESET)        – Install all dependencies"
+	@echo "  $(GREEN)make check$(RESET)        – Verify available tools"
+	@echo "  $(GREEN)make verify-tools$(RESET) – Verify detailed tool versions"
+	@echo ""
+	@echo "$(BOLD)Interactive Demos:$(RESET)"
+	@echo "  $(GREEN)make nat-demo$(RESET)     – Start NAT topology with PAT"
+	@echo "  $(GREEN)make sdn-demo$(RESET)     – Start SDN topology (OVS flows)"
+	@echo "  $(GREEN)make routing-demo$(RESET) – Triangle topology for routing"
+	@echo "  $(GREEN)make run-all$(RESET)      – Automated demo (artifacts/)"
+	@echo ""
+	@echo "$(BOLD)SDN Controller:$(RESET)"
+	@echo "  $(GREEN)make controller-start$(RESET)  – Start OS-Ken controller (legacy, optional)"
+	@echo "  $(GREEN)make controller-stop$(RESET)   – Stop controller"
+	@echo "  $(GREEN)make controller-status$(RESET) – Check controller status"
+	@echo ""
+	@echo "$(BOLD)Capture & Verification:$(RESET)"
+	@echo "  $(GREEN)make capture$(RESET)      – Start packet capture"
+	@echo "  $(GREEN)make verify$(RESET)       – Verify that demos function"
+	@echo ""
+	@echo "$(BOLD)Tests & Validation:$(RESET)"
+	@echo "  $(GREEN)make smoke-test$(RESET)   – Run validation tests"
+	@echo ""
+	@echo "$(BOLD)Docker (complete isolation):$(RESET)"
+	@echo "  $(GREEN)make docker-build$(RESET) – Build Docker image"
+	@echo "  $(GREEN)make docker-run$(RESET)   – Run interactive container"
+	@echo ""
+	@echo "$(BOLD)Presentation & Cleanup:$(RESET)"
+	@echo "  $(GREEN)make slides$(RESET)       – Open interactive presentation"
+	@echo "  $(GREEN)make clean$(RESET)        – Clean Mininet/OVS artefacts"
+	@echo "  $(GREEN)make reset$(RESET)        – Complete reset (clean + kill processes)"
+	@echo ""
+	@echo "$(BOLD)═══════════════════════════════════════════════════════════════$(RESET)"
+	@echo ""
+
+# ============================================================================
+# SETUP & DEPENDENCIES
+# ============================================================================
+
+setup:
+	@echo "$(CYAN)>>> Installing system dependencies...$(RESET)"
+	@chmod +x $(SCRIPTS_DIR)/setup.sh 2>/dev/null || true
+	@if [ -f $(SCRIPTS_DIR)/setup.sh ]; then \
+		sudo $(SCRIPTS_DIR)/setup.sh; \
+	else \
+		echo "$(YELLOW)setup.sh does not exist, manual installation:$(RESET)"; \
+		sudo apt-get update; \
+		sudo apt-get install -y python3 python3-pip mininet openvswitch-switch tcpdump tshark iptables; \
+		pip3 install --break-system-packages os-ken scapy; \
+	fi
+	@echo "$(GREEN)✓ Setup complete!$(RESET)"
+
+install-deps:
+	@echo "$(CYAN)>>> Installing Python packages...$(RESET)"
+	@pip3 install --break-system-packages os-ken scapy
+	@echo "$(GREEN)✓ Python packages installed.$(RESET)"
+
+check:
+	@echo ""
+	@echo "$(BOLD)Verifying required tools:$(RESET)"
+	@echo ""
+	@command -v python3 >/dev/null && echo "  $(GREEN)✓$(RESET) python3" || echo "  $(RED)✗$(RESET) python3"
+	@command -v mn >/dev/null && echo "  $(GREEN)✓$(RESET) mininet (mn)" || echo "  $(RED)✗$(RESET) mininet (mn)"
+	@command -v ovs-vsctl >/dev/null && echo "  $(GREEN)✓$(RESET) openvswitch" || echo "  $(RED)✗$(RESET) openvswitch"
+	@command -v ovs-ofctl >/dev/null && echo "  $(GREEN)✓$(RESET) ovs-ofctl" || echo "  $(RED)✗$(RESET) ovs-ofctl"
+	@command -v tcpdump >/dev/null && echo "  $(GREEN)✓$(RESET) tcpdump" || echo "  $(RED)✗$(RESET) tcpdump"
+	@command -v tshark >/dev/null && echo "  $(GREEN)✓$(RESET) tshark" || echo "  $(RED)✗$(RESET) tshark"
+	@command -v iptables >/dev/null && echo "  $(GREEN)✓$(RESET) iptables" || echo "  $(RED)✗$(RESET) iptables"
+	@command -v conntrack >/dev/null && echo "  $(GREEN)✓$(RESET) conntrack" || echo "  $(YELLOW)!$(RESET) conntrack (optional, recommended)"
+	@echo ""
+	@python3 -c "import os_ken" 2>/dev/null && echo "  $(GREEN)✓$(RESET) os_ken (Python)" || echo "  $(RED)✗$(RESET) os_ken (Python) — run: pip3 install --break-system-packages os-ken"
+	@python3 -c "import scapy" 2>/dev/null && echo "  $(GREEN)✓$(RESET) scapy (Python)" || echo "  $(RED)✗$(RESET) scapy (Python) — run: pip3 install --break-system-packages scapy"
+	@if command -v osken-manager >/dev/null 2>&1; then \
+		echo "  $(GREEN)✓$(RESET) osken-manager (legacy CLI)"; \
+	else \
+		echo "  $(YELLOW)!$(RESET) osken-manager (not in PATH, expected with os-ken >= 4.0.0)"; \
+	fi
+	@echo ""
+
+verify-tools:
+	@echo "$(BOLD)Tool versions:$(RESET)"
+	@echo ""
+	@python3 --version 2>/dev/null || echo "python3: not found"
+	@mn --version 2>/dev/null || echo "mininet: not found"
+	@ovs-vsctl --version 2>/dev/null | head -1 || echo "ovs: not found"
+	@tcpdump --version 2>/dev/null | head -1 || echo "tcpdump: not found"
+	@tshark --version 2>/dev/null | head -1 || echo "tshark: not found"
+	@pip3 show os-ken 2>/dev/null | grep -E "^(Name|Version)" || echo "os-ken: not installed"
+	@echo ""
+
+# ============================================================================
+# NAT/PAT DEMO
+# ============================================================================
+
+nat-demo: clean
+	@echo ""
+	@echo "$(BOLD)═══════════════════════════════════════════════════════════════$(RESET)"
+	@echo "$(CYAN)  NAT/PAT Demo – Observing address translation$(RESET)"
+	@echo "$(BOLD)═══════════════════════════════════════════════════════════════$(RESET)"
+	@echo ""
+	@$(SUDO) python3 $(TOPO_DIR)/topo_nat.py --cli
+
+sdn-demo: clean
+	@echo ""
+	@echo "$(BOLD)═══════════════════════════════════════════════════════════════$(RESET)"
+	@echo "$(CYAN)  SDN/OpenFlow Demo – Policy via OVS flows (no controller)$(RESET)"
+	@echo "$(BOLD)═══════════════════════════════════════════════════════════════$(RESET)"
+	@echo ""
+	@$(SUDO) python3 $(TOPO_DIR)/topo_sdn.py --mode ovs --cli
+
+run-all:
+	@echo "$(CYAN)>>> Automated demo (produces artifacts/)...$(RESET)"
+	@chmod +x $(SCRIPTS_DIR)/run_all.sh 2>/dev/null || true
+	@sudo $(SCRIPTS_DIR)/run_all.sh
+
+# ============================================================================
+# CONTROLLER SDN
+# ============================================================================
+
+controller-start:
+	@echo "$(CYAN)>>> Controller mode is optional and legacy$(RESET)"
+	@echo "$(YELLOW)OS-Ken 4.x removed osken-manager and os_ken.cmd.*$(RESET)"
+	@echo "$(YELLOW)This kit runs SDN in OVS-flow mode by default (no controller required).$(RESET)"
+	@echo "$(YELLOW)If you explicitly need a controller, pin: pip install 'os-ken<4.0.0'.$(RESET)"
+
+controller-stop:
+	@if [ -f $(CONTROLLER_PID) ]; then \
+		echo "$(CYAN)>>> Stopping controller (PID: $$(cat $(CONTROLLER_PID)))...$(RESET)"; \
+		$(SUDO) kill $$(cat $(CONTROLLER_PID)) 2>/dev/null || true; \
+		rm -f $(CONTROLLER_PID); \
+		echo "$(GREEN)✓ Controller stopped.$(RESET)"; \
+	fi
+
+controller-status:
+	@if [ -f $(CONTROLLER_PID) ] && kill -0 $$(cat $(CONTROLLER_PID)) 2>/dev/null; then \
+		echo "$(GREEN)✓ Controller active (PID: $$(cat $(CONTROLLER_PID)))$(RESET)"; \
+		echo "  Log: /tmp/osken.log"; \
+	else \
+		echo "$(YELLOW)✗ Controller inactive (expected in OVS-flow mode)$(RESET)"; \
+	fi
+
+routing-demo: clean
+	@echo ""
+	@echo "$(BOLD)═══════════════════════════════════════════════════════════════$(RESET)"
+	@echo "$(CYAN)  Routing Demo – Triangle topology$(RESET)"
+	@echo "$(BOLD)═══════════════════════════════════════════════════════════════$(RESET)"
+	@echo ""
+	@echo "$(YELLOW)Topology:$(RESET)"
+	@echo "          r1 (10.0.1.1)"
+	@echo "         /  \\"
+	@echo "        /    \\"
+	@echo "    r2 ────── r3"
+	@echo "  (10.0.2.1)  (10.0.3.1)"
+	@echo ""
+	@echo "$(YELLOW)Suggested exercises:$(RESET)"
+	@echo "  1. $(BOLD)r1 ip route$(RESET) – verify configured routes"
+	@echo "  2. $(BOLD)r1 traceroute -n 10.0.3.1$(RESET) – path towards r3"
+	@echo "  3. Disable r1-r3: $(BOLD)r1 ip link set r1-eth1 down$(RESET)"
+	@echo "  4. Rerun traceroute – observe alternative route"
+	@echo ""
+	@echo "$(GREEN)>>> Starting topology...$(RESET)"
+	@echo ""
+	@sudo python3 $(TOPO_DIR)/topo_triangle.py --cli 2>/dev/null || \
+		echo "$(YELLOW)topo_triangle.py does not exist in this kit$(RESET)"
+
+# ============================================================================
+# CAPTURE & VERIFY
+# ============================================================================
+
+capture:
+	@mkdir -p $(PCAP_DIR)
+	@echo "$(CYAN)>>> Directory pcap/ prepared for captures$(RESET)"
+	@echo "Use: tcpdump -w $(PCAP_DIR)/capture.pcap -i <interface>"
+
+verify:
+	@echo "$(CYAN)>>> Verifying functionality...$(RESET)"
+	@echo "Run: make smoke-test"
+
+# ============================================================================
+# TESTING
+# ============================================================================
+
+smoke-test:
+	@echo "$(CYAN)>>> Running validation tests...$(RESET)"
+	@if [ -f $(TESTS_DIR)/smoke_test.sh ]; then \
+		chmod +x $(TESTS_DIR)/smoke_test.sh; \
+		$(TESTS_DIR)/smoke_test.sh; \
+	else \
+		echo "$(YELLOW)smoke_test.sh does not exist, running inline test:$(RESET)"; \
+		echo "Testing NAT topology..."; \
+		sudo python3 $(TOPO_DIR)/topo_nat.py --test || true; \
+	fi
+
+# ============================================================================
+# DOCKER
+# ============================================================================
+
+docker-build:
+	@echo "$(CYAN)>>> Building Docker image...$(RESET)"
+	@if [ -f docker/Dockerfile ]; then \
+		docker build -t netlab-s6:latest -f docker/Dockerfile .; \
+		echo "$(GREEN)✓ Image built: netlab-s6:latest$(RESET)"; \
+	else \
+		echo "$(YELLOW)Dockerfile does not exist$(RESET)"; \
+	fi
+
+docker-run:
+	@echo "$(CYAN)>>> Starting Docker container interactively...$(RESET)"
+	@docker run -it --rm --privileged \
+		--name netlab-s6 \
+		-v $(PWD):/workspace \
+		-w /workspace \
+		-p 6633:6633 \
+		-p 6653:6653 \
+		netlab-s6:latest \
+		/bin/bash || echo "$(YELLOW)Docker image does not exist. Run: make docker-build$(RESET)"
+
+docker-clean:
+	@echo "$(CYAN)>>> Cleaning containers and images...$(RESET)"
+	@docker rm -f netlab-s6 2>/dev/null || true
+	@docker rmi netlab-s6:latest 2>/dev/null || true
+	@echo "$(GREEN)✓ Docker cleanup complete.$(RESET)"
+
+# ============================================================================
+# SLIDES
+# ============================================================================
+
+slides:
+	@echo "$(CYAN)>>> Opening interactive presentation...$(RESET)"
+	@if command -v xdg-open >/dev/null; then \
+		xdg-open $(SLIDES_DIR)/theory.html 2>/dev/null || \
+		echo "$(YELLOW)Open manually: $(SLIDES_DIR)/theory.html$(RESET)"; \
+	elif command -v open >/dev/null; then \
+		open $(SLIDES_DIR)/theory.html; \
+	else \
+		echo "$(YELLOW)Open manually: $(SLIDES_DIR)/theory.html$(RESET)"; \
+	fi
+
+# ============================================================================
+# CLEANUP
+# ============================================================================
+
+clean: controller-stop
+	@echo "$(CYAN)>>> Cleaning Mininet/OVS artefacts...$(RESET)"
+	@timeout 15s $(SUDO) mn -c 2>/dev/null || true
+	@timeout 10s $(SUDO) ovs-vsctl --if-exists del-br s1 2>/dev/null || true
+	@timeout 10s $(SUDO) ovs-vsctl --if-exists del-br s2 2>/dev/null || true
+	@rm -f $(CONTROLLER_PID)
+	@echo "$(GREEN)✓ Cleanup complete.$(RESET)"
+
+reset: clean docker-clean
+	@echo "$(CYAN)>>> Complete reset (including Docker)...$(RESET)"
+	@rm -rf /tmp/osken.log /tmp/*.pcap
+	@sudo systemctl restart openvswitch-switch 2>/dev/null || true
+	@echo "$(GREEN)✓ Complete reset.$(RESET)"
+
+deep-clean: reset
+	@rm -rf $(PCAP_DIR)/*.pcap
+	@echo "$(GREEN)✓ Deep cleanup complete.$(RESET)"

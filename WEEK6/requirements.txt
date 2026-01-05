@@ -1,0 +1,16 @@
+# Week 6 starter kit – Python requirements
+#
+# Notes:
+#   - Mininet and Open vSwitch are installed via apt, not via pip.
+#   - This file is intended for the Python-only dependencies used by the lab
+#     scripts and optional controller experiments.
+#
+# Install (system Python on Ubuntu 24.04):
+#   pip3 install --break-system-packages -r requirements.txt
+
+os-ken>=4.0.0
+scapy>=2.5.0
+
+# Optional (development tooling)
+# black>=24.0.0
+# flake8>=6.0.0

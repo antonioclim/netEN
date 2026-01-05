@@ -1,0 +1,218 @@
+[2026-01-05 19:36:56] Demo start
+
+[1;33m[1/6] Environment setup...[0m
+[0;32m✓ Python3 available[0m
+
+[1;33m[2/6] L6 Exercise - Endianness and Framing...[0m
+══════════════════════════════════════════════════
+  SELF-TEST: Implementation verification
+══════════════════════════════════════════════════
+
+▶ Test 1: Simple payload...
+   ✓ OK
+▶ Test 2: Empty payload...
+   ✓ OK
+▶ Test 3: Large payload (64KB)...
+   ✓ OK
+▶ Test 4: All flags (0xFF)...
+   ✓ OK
+▶ Test 5: Message types (0-255)...
+   ✓ OK
+▶ Test 6: UTF-8 payload (Romanian characters)...
+   ✓ OK
+
+══════════════════════════════════════════════════
+  [OK] All tests passed!
+══════════════════════════════════════════════════
+
+[0;32m✓ L6 exercise complete[0m
+
+[1;33m[3/6] Checking common utilities (net_utils.py)...[0m
+══════════════════════════════════════════════════
+  net_utils.py - Self-test
+══════════════════════════════════════════════════
+
+▶ Test pack_data / unpack_data...
+   ✓ pack/unpack OK
+▶ Test without compression...
+   ✓ OK
+▶ Test SHA256...
+   ✓ OK
+▶ Test endianness helpers...
+   ✓ OK
+
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+═
+  All tests passed!
+══════════════════════════════════════════════════
+[0;32m✓ net_utils.py OK[0m
+
+[1;33m[4/6] Starting traffic capture on port 5900...[0m
+[1;33m⚠ tcpdump not installed, creating empty pcap[0m
+
+[1;33m[5/6] Testing Pseudo-FTP (server + client)...[0m
+[19:36:57] Starting server on port 5900...
+[0;32m✓ Server started (PID: 1848)[0m
+[19:36:58] Client: LIST...
+usage: ex_9_02_pseudo_ftp.py [-h] {server,client} ...
+
+Pseudo-FTP Server/Client (Demo L5/L6)
+
+positional arguments:
+  {server,client}  Operating mode
+    server         Start the server
+    client         Start the client
+
+options:
+  -h, --help       show this help message and exit
+
+Examples:
+  # Server
+  ex_9_02_pseudo_ftp.py server --host 127.0.0.1 --port 3333 --root ./server-files
+  
+  # Client - commands
+  ex_9_02_pseudo_ftp.py client --host 127.0.0.1 --port 3333 --user test --password 12345 list
+  ex_9_02_pseudo_ftp.py client ... get hello.txt
+  ex_9_02_pseudo_ftp.py client ... --mode active get hello.txt
+  
+  # Client - interactive
+  ex_9_02_pseudo_ftp.py client ... --interactive
+        
+[19:36:58] Client: GET hello.txt (passive)...
+usage: ex_9_02_pseudo_ftp.py [-h] {server,client} ...
+
+Pseudo-FTP Server/Client (Demo L5/L6)
+
+positional arguments:
+  {server,client}  Operating mode
+    server         Start the server
+    client         Start the client
+
+options:
+  -h, --help       show this help message and exit
+
+Examples:
+  # Server
+  ex_9_02_pseudo_ftp.py server --host 127.0.0.1 --port 3333 --root ./server-files
+  
+  # Client - commands
+  ex_9_02_pseudo_ftp.py client --host 127.0.0.1 --port 3333 --user test --password 12345 list
+  ex_9_02_pseudo_ftp.py client ... get hello.txt
+  ex_9_02_pseudo_ftp.py client ... --mode active get hello.txt
+  
+  # Client - interactive
+  ex_9_02_pseudo_ftp.py client ... --interactive
+        
+[1;33m⚠ File was not downloaded[0m
+[19:36:59] Client: GET utf8_test.txt (passive + gzip)...
+usage: ex_9_02_pseudo_ftp.py [-h] {server,client} ...
+
+Pseudo-FTP Server/Client (Demo L5/L6)
+
+positional arguments:
+  {server,client}  Operating mode
+    server         Start the server
+    client         Start the client
+
+options:
+  -h, --help       show this help message and exit
+
+Examples:
+  # Server
+  ex_9_02_pseudo_ftp.py server --host 127.0.0.1 --port 3333 --root ./server-files
+  
+  # Client - commands
+  ex_9_02_pseudo_ftp.py client --host 127.0.0.1 --port 3333 --user test --password 12345 list
+  ex_9_02_pseudo_ftp.py client ... get hello.txt
+  ex_9_02_pseudo_ftp.py client ... --mode active get hello.txt
+  
+  # Client - interactive
+  ex_9_02_pseudo_ftp.py client ... --interactive
+        
+[19:36:59] Stopping server...
+[0;32m✓ Pseudo-FTP test complete[0m
+
+[1;33m[6/6] Validating results...[0m
+═══════════════════════════════════════════════════════════════
+  STARTERKIT S9 VALIDATION – 2026-01-05 19:36:59
+═══════════════════════════════════════════════════════════════
+
+▶ Test 1: L6 Exercise (endianness)
+   [PASS] L6 Exercise OK
+
+▶ Test 2: Common utilities (net_utils.py)
+   [PASS] net_utils.py OK
+
+▶ Test 3: Import ex_9_02_pseudo_ftp.py
+   [PASS] Import OK
+
+▶ Test 4: File transfer
+   [FAIL] hello.txt was NOT downloaded
+
+▶ Test 5: Generated artefacts
+   [PASS] demo.log present
+   [PASS] demo.pcap present
+
+═══════════════════════════════════════════════════════════════
+  VALIDATION COMPLETE
+═══════════════════════════════════════════════════════════════
+
+[0;32m╔══════════════════════════════════════════════════════════════════╗[0m
+[0;32m║  Demo complete!                                                   ║[0m
+[0;32m║                                                                   ║[0m
+[0;32m║  Generated artefacts:                                             ║[0m
+[0;32m║    - artifacts/demo.log                                           ║[0m
+[0;32m║    - artifacts/demo.pcap                                          ║[0m
+[0;32m║    - artifacts/validation.txt                                     ║[0m
+[0;32m╚══════════════════════════════════════════════════════════════════╝[0m
+[2026-01-05 19:37:00] Demo end
+
+[1;33m[CLEANUP] Stopping processes...[0m

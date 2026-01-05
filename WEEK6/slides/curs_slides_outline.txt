@@ -1,6 +1,0 @@
-Week 6 Course slides outline
-- NAT and PAT
-- ARP
-- DHCP
-- NDP and ICMP
-- SDN overview

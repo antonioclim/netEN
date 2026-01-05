@@ -1,5 +1,0 @@
-# Python Dependencies for Starter Kit S9
-# Installation: pip install --break-system-packages -r requirements.txt
-
-pyftpdlib>=1.5.0    # FTP Server for demo
-

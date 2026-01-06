@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Revolvix">
+    <meta name="description" content="Week 2 - OSI and TCP/IP Architectural Models">
+    <title>Week 2: Network Architectural Models – OSI &amp; TCP/IP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Source+Serif+4:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0f172a;
+            --primary-light: #1e293b;
+            --secondary: #0ea5e9;
+            --secondary-dark: #0284c7;
+            --accent: #f59e0b;
+            --accent-warm: #ea580c;
+            --success: #10b981;
+            --success-dark: #059669;
+            --danger: #ef4444;
+            --purple: #8b5cf6;
+            --purple-dark: #7c3aed;
+            --bg-light: #f8fafc;
+            --bg-cool: #f0f9ff;
+            --bg-warm: #fffbeb;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-light); color: var(--text-dark); overflow: hidden; height: 100vh; line-height: 1.6; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; color: var(--primary); }
+        code, pre, .code-block { font-family: 'JetBrains Mono', 'Consolas', monospace; }
+        .presentation { height: 100vh; display: flex; flex-direction: column; }
+        .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 4px; background: var(--border); z-index: 1000; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--secondary), var(--success)); transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); width: 0%; }
+        .header-bar { position: fixed; top: 4px; left: 0; right: 0; padding: 0.75rem 2rem; display: flex; justify-content: space-between; align-items: center; background: rgba(248, 250, 252, 0.95); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); z-index: 999; }
+        .logo { font-family: 'Source Serif 4', serif; font-weight: 700; font-size: 1.25rem; color: var(--primary); }
+        .logo span { color: var(--text-muted); font-weight: 400; font-size: 0.95rem; }
+        .slide-counter { font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--text-muted); background: var(--bg-cool); padding: 0.35rem 0.75rem; border-radius: 8px; }
+        .slides-wrapper { flex: 1; position: relative; overflow: hidden; margin-top: 60px; }
+        .slide { position: absolute; inset: 0; padding: 2.5rem 4rem 5rem; display: none; flex-direction: column; overflow-y: auto; background: var(--bg-light); }
+        .slide.active { display: flex; animation: slideIn 0.45s cubic-bezier(0.4, 0, 0.2, 1); }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-up { animation: fadeUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards; opacity: 0; }
+        .delay-1 { animation-delay: 0.1s; } .delay-2 { animation-delay: 0.2s; } .delay-3 { animation-delay: 0.3s; } .delay-4 { animation-delay: 0.4s; }
+        .slide-title { font-size: 2.5rem; font-weight: 700; color: var(--primary); margin-bottom: 0.5rem; line-height: 1.2; }
+        .slide-subtitle { font-size: 1.15rem; color: var(--text-muted); margin-bottom: 2rem; font-weight: 400; }
+        .slide-content { flex: 1; }
+        h3 { font-size: 1.35rem; color: var(--secondary-dark); margin: 1.5rem 0 0.75rem; }
+        h4 { font-size: 1.15rem; color: var(--primary); margin: 1rem 0 0.5rem; }
+        p { margin-bottom: 1rem; font-size: 1.1rem; line-height: 1.8; }
+        ul, ol { margin-left: 1.5rem; margin-bottom: 1rem; }
+        li { margin-bottom: 0.6rem; line-height: 1.7; font-size: 1.05rem; }
+        strong { color: var(--primary); font-weight: 600; }
+        code { background: var(--primary); color: var(--accent); padding: 0.2rem 0.5rem; border-radius: 6px; font-size: 0.95em; }
+        .highlight-box { background: linear-gradient(135deg, rgba(14, 165, 233, 0.15) 0%, rgba(16, 185, 129, 0.1) 100%); border-left: 4px solid var(--secondary); padding: 1.25rem 1.5rem; border-radius: 0 16px 16px 0; margin: 1rem 0; }
+        .highlight-box p { margin-bottom: 0.5rem; } .highlight-box p:last-child { margin-bottom: 0; }
+        .definition-box { background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(16, 185, 129, 0.05) 100%); border-left: 4px solid var(--success); padding: 1.25rem 1.5rem; border-radius: 0 16px 16px 0; margin: 1rem 0; }
+        .definition-box::before { content: "📖 Definition"; display: block; font-weight: 700; color: var(--success-dark); margin-bottom: 0.5rem; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .story-box { background: linear-gradient(135deg, rgba(139, 92, 246, 0.12) 0%, rgba(139, 92, 246, 0.05) 100%); border-left: 4px solid var(--purple); padding: 1.25rem 1.5rem; border-radius: 0 16px 16px 0; margin: 1rem 0; }
+        .story-box::before { content: "📚 Historical Context"; display: block; font-weight: 700; color: var(--purple-dark); margin-bottom: 0.5rem; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .warning-box { background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(245, 158, 11, 0.05) 100%); border-left: 4px solid var(--accent); padding: 1.25rem 1.5rem; border-radius: 0 16px 16px 0; margin: 1rem 0; }
+        .warning-box::before { content: "⚠️ Important"; display: block; font-weight: 700; color: var(--accent-warm); margin-bottom: 0.5rem; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .insight-box { background: linear-gradient(135deg, rgba(239, 68, 68, 0.12) 0%, rgba(239, 68, 68, 0.05) 100%); border-left: 4px solid var(--danger); padding: 1.25rem 1.5rem; border-radius: 0 16px 16px 0; margin: 1rem 0; }
+        .insight-box::before { content: "💡 Key Insight"; display: block; font-weight: 700; color: var(--danger); margin-bottom: 0.5rem; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .card { background: white; border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; margin-bottom: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 4px 12px rgba(0,0,0,0.03); transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card:hover { transform: translateY(-4px); box-shadow: 0 4px 12px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.05); }
+        .card-accent { border-left: 4px solid var(--accent); } .card-success { border-left: 4px solid var(--success); } .card-secondary { border-left: 4px solid var(--secondary); } .card-danger { border-left: 4px solid var(--danger); } .card-purple { border-left: 4px solid var(--purple); }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+        @media (max-width: 1200px) { .grid-3 { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 768px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } .slide { padding: 1.5rem 2rem 5rem; } }
+        .table-container { overflow-x: auto; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin: 1rem 0; }
+        table { width: 100%; border-collapse: collapse; font-size: 1rem; }
+        th { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); color: white; padding: 1rem 1.25rem; text-align: left; font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; }
+        th:first-child { border-radius: 16px 0 0 0; } th:last-child { border-radius: 0 16px 0 0; }
+        td { padding: 0.875rem 1.25rem; border-bottom: 1px solid var(--border); background: white; }
+        tr:hover td { background: var(--bg-cool); }
+        tr:last-child td:first-child { border-radius: 0 0 0 16px; } tr:last-child td:last-child { border-radius: 0 0 16px 0; }
+        .code-block { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); border-radius: 16px; padding: 1.5rem; margin: 1rem 0; position: relative; overflow-x: auto; }
+        .code-block::before { content: attr(data-lang); position: absolute; top: 0.75rem; right: 1rem; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; background: rgba(255,255,255,0.1); padding: 0.25rem 0.5rem; border-radius: 4px; }
+        .code-block pre { color: #e2e8f0; font-size: 1rem; line-height: 1.7; margin: 0; white-space: pre-wrap; word-wrap: break-word; }
+        .code-block .comment { color: #6b7280; font-style: italic; } .code-block .keyword { color: #c084fc; } .code-block .string { color: #4ade80; } .code-block .number { color: #fbbf24; } .code-block .function { color: #60a5fa; } .code-block .builtin { color: #f472b6; }
+        .osi-stack { display: flex; flex-direction: column; gap: 0.4rem; }
+        .osi-layer { display: flex; align-items: center; padding: 0.85rem 1.25rem; border-radius: 12px; cursor: pointer; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); border: 2px solid transparent; }
+        .osi-layer:hover { transform: translateX(8px); box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+        .osi-layer .num { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; margin-right: 1rem; color: white; font-size: 1.1rem; flex-shrink: 0; }
+        .osi-layer .layer-info { flex: 1; } .osi-layer .layer-name { font-weight: 600; font-size: 1.05rem; } .osi-layer .layer-examples { font-size: 0.9rem; color: var(--text-muted); margin-top: 0.15rem; }
+        .osi-layer.l7 { background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.3); } .osi-layer.l7 .num { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .osi-layer.l6 { background: rgba(236, 72, 153, 0.15); border-color: rgba(236, 72, 153, 0.3); } .osi-layer.l6 .num { background: linear-gradient(135deg, #ec4899, #db2777); }
+        .osi-layer.l5 { background: rgba(139, 92, 246, 0.15); border-color: rgba(139, 92, 246, 0.3); } .osi-layer.l5 .num { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+        .osi-layer.l4 { background: rgba(59, 130, 246, 0.15); border-color: rgba(59, 130, 246, 0.3); } .osi-layer.l4 .num { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+        .osi-layer.l3 { background: rgba(34, 197, 94, 0.15); border-color: rgba(34, 197, 94, 0.3); } .osi-layer.l3 .num { background: linear-gradient(135deg, #22c55e, #16a34a); }
+        .osi-layer.l2 { background: rgba(6, 182, 212, 0.15); border-color: rgba(6, 182, 212, 0.3); } .osi-layer.l2 .num { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+        .osi-layer.l1 { background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3); } .osi-layer.l1 .num { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .tcpip-stack { display: flex; flex-direction: column; gap: 0.5rem; }
+        .tcpip-layer { padding: 1rem 1.25rem; border-radius: 12px; border-left: 5px solid; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .tcpip-layer.app { border-color: var(--accent); background: var(--bg-warm); }
+        .tcpip-layer.transport { border-color: var(--secondary); background: var(--bg-cool); }
+        .tcpip-layer.internet { border-color: var(--success); background: rgba(16, 185, 129, 0.08); }
+        .tcpip-layer.link { border-color: var(--danger); background: rgba(239, 68, 68, 0.08); }
+        .quiz-container { margin: 1.5rem 0; }
+        .quiz-question { font-size: 1.15rem; margin-bottom: 1rem; color: var(--text-dark); font-weight: 500; }
+        .quiz-option { display: block; width: 100%; padding: 1rem 1.25rem; margin: 0.5rem 0; text-align: left; background: white; border: 2px solid var(--border); border-radius: 12px; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); color: var(--text-dark); font-size: 1rem; font-family: 'Inter', sans-serif; }
+        .quiz-option:hover { border-color: var(--secondary); background: var(--bg-cool); transform: translateX(4px); }
+        .quiz-option.correct { background: rgba(16, 185, 129, 0.15); border-color: var(--success); color: var(--success-dark); }
+        .quiz-option.wrong { background: rgba(239, 68, 68, 0.15); border-color: var(--danger); }
+        .quiz-option:disabled { cursor: not-allowed; }
+        .quiz-feedback { padding: 1rem 1.25rem; border-radius: 12px; margin-top: 1rem; display: none; }
+        .quiz-feedback.show { display: block; animation: fadeUp 0.3s ease; }
+        .quiz-feedback.correct { background: rgba(16, 185, 129, 0.15); border: 1px solid var(--success); }
+        .quiz-feedback.wrong { background: rgba(239, 68, 68, 0.15); border: 1px solid var(--danger); }
+        .diagram-container { background: white; border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; margin: 1rem 0; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .diagram-container svg { max-width: 100%; height: auto; }
+        .nav-controls { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); display: flex; gap: 0.75rem; z-index: 1000; background: white; padding: 0.5rem; border-radius: 50px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); border: 1px solid var(--border); }
+        .nav-btn { width: 48px; height: 48px; border-radius: 50%; border: none; background: var(--bg-light); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; color: var(--primary); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .nav-btn:hover { background: var(--secondary); color: white; transform: scale(1.1); }
+        .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+        .nav-btn.toc-btn { font-size: 0.9rem; width: auto; padding: 0 1rem; border-radius: 24px; }
+        .toc-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 2000; }
+        .toc-modal.show { display: flex; }
+        .toc-content { background: white; border-radius: 20px; padding: 2rem; max-width: 600px; max-height: 80vh; overflow-y: auto; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+        .toc-content h2 { margin-bottom: 1.5rem; color: var(--primary); }
+        .toc-section { margin-bottom: 1.5rem; }
+        .toc-section-title { font-weight: 600; color: var(--secondary-dark); margin-bottom: 0.5rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .toc-item { padding: 0.5rem 1rem; cursor: pointer; border-radius: 8px; transition: all 0.2s; font-size: 0.95rem; }
+        .toc-item:hover { background: var(--bg-cool); color: var(--secondary-dark); }
+        .footer-attribution { position: fixed; bottom: 0.75rem; left: 1.5rem; font-size: 0.75rem; color: var(--text-muted); z-index: 100; }
+        .title-slide { background: linear-gradient(135deg, var(--primary) 0%, #1e3a5f 50%, var(--primary-light) 100%); color: white; text-align: center; justify-content: center; align-items: center; }
+        .title-slide .slide-title { font-size: 3.5rem; color: white; margin-bottom: 1rem; }
+        .title-slide .slide-subtitle { font-size: 1.5rem; color: rgba(255,255,255,0.85); margin-bottom: 2rem; }
+        .title-slide .meta-info { color: var(--secondary); font-size: 1.1rem; margin-bottom: 3rem; }
+        .title-slide kbd { background: rgba(255,255,255,0.15); padding: 0.3rem 0.6rem; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; border: 1px solid rgba(255,255,255,0.2); }
+        .protocol-header { display: flex; flex-wrap: wrap; border: 2px solid var(--primary); border-radius: 12px; overflow: hidden; margin: 1rem 0; }
+        .header-field { flex: 1; min-width: 60px; padding: 0.75rem; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); text-align: center; background: white; }
+        .header-field:last-child { border-right: none; }
+        .header-field.span-2 { flex: 2; } .header-field.span-4 { flex: 4; } .header-field.span-8 { flex: 8; }
+        .field-name { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .field-value { font-weight: 600; font-size: 0.95rem; color: var(--primary); margin: 0.25rem 0; }
+        .field-bits { font-size: 0.65rem; color: var(--secondary); font-family: 'JetBrains Mono', monospace; }
+        .interactive-panel { background: white; border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; margin: 1rem 0; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .interactive-panel input[type="range"] { width: 100%; margin: 0.5rem 0; }
+        .result-display { background: var(--primary); color: var(--accent); padding: 1rem; border-radius: 10px; font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; margin-top: 1rem; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="presentation">
+        <div class="progress-container"><div class="progress-fill" id="progress"></div></div>
+        <div class="header-bar">
+            <div class="logo">ASE-CSIE <span>| Computer Networks – Week 2</span></div>
+            <div class="slide-counter"><span id="current">1</span> / <span id="total">30</span></div>
+        </div>
+        <div class="slides-wrapper" id="slides">
+            <!-- SLIDE 1: Title -->
+            <section class="slide title-slide active" data-slide="1">
+                <h1 class="slide-title">Network Architectural Models</h1>
+                <p class="slide-subtitle">OSI &amp; TCP/IP – From Theory to Practice</p>
+                <p class="meta-info">Week 2 • Computer Networks • 90 minutes</p>
+                <div style="color:rgba(255,255,255,0.6);font-size:0.9rem;margin-top:2rem;">Navigate with <kbd>←</kbd> <kbd>→</kbd> or <kbd>Space</kbd> • Press <kbd>T</kbd> for contents • <kbd>F</kbd> for fullscreen</div>
+                <p style="margin-top:2rem;color:rgba(255,255,255,0.5);font-size:0.85rem;">BSc Economic Informatics, Year 3, Semester 2</p>
+            </section>
+
+            <!-- SLIDE 2: Learning Objectives -->
+            <section class="slide" data-slide="2">
+                <h2 class="slide-title">Learning Objectives</h2>
+                <p class="slide-subtitle">What you will be able to do after this lecture</p>
+                <div class="slide-content">
+                    <div class="grid-2">
+                        <div class="card card-secondary fade-up">
+                            <h4>🎯 Knowledge &amp; Understanding</h4>
+                            <ul>
+                                <li><strong>Explain</strong> why architectural models exist in networking</li>
+                                <li><strong>Describe</strong> the function of each OSI layer</li>
+                                <li><strong>Compare</strong> OSI with TCP/IP and justify their differences</li>
+                                <li><strong>Define</strong> key terminology: PDU, encapsulation, protocol stack</li>
+                            </ul>
+                        </div>
+                        <div class="card card-success fade-up delay-2">
+                            <h4>⚡ Practical Application</h4>
+                            <ul>
+                                <li><strong>Identify</strong> at which layer a network problem occurs</li>
+                                <li><strong>Calculate</strong> protocol overhead for different scenarios</li>
+                                <li><strong>Utilise</strong> layered thinking for systematic debugging</li>
+                                <li><strong>Prepare</strong> for socket programming in upcoming weeks</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="highlight-box fade-up delay-4">
+                        <p><strong>Forward Reference:</strong> These concepts form the foundation for Weeks 3–8 where we examine each layer in detail.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 3: Why This Matters -->
+            <section class="slide" data-slide="3">
+                <h2 class="slide-title">Why This Matters for Programmers</h2>
+                <p class="slide-subtitle">Practical motivation for understanding network architecture</p>
+                <div class="slide-content">
+                    <div class="highlight-box">
+                        <p><strong>Real Scenario:</strong> Your microservice suddenly stops communicating with the database. Where is the problem?</p>
+                    </div>
+                    <div class="grid-3" style="margin-top:1.5rem;">
+                        <div class="card card-danger fade-up"><div style="font-size:2rem;margin-bottom:0.5rem;">🔌</div><strong>Physical Layer?</strong><p style="font-size:0.95rem;color:var(--text-muted);margin-top:0.5rem;">Disconnected cable, faulty NIC</p></div>
+                        <div class="card card-success fade-up delay-2"><div style="font-size:2rem;margin-bottom:0.5rem;">🌐</div><strong>Network Layer?</strong><p style="font-size:0.95rem;color:var(--text-muted);margin-top:0.5rem;">Wrong route, firewall blocking</p></div>
+                        <div class="card card-accent fade-up delay-4"><div style="font-size:2rem;margin-bottom:0.5rem;">📦</div><strong>Application Layer?</strong><p style="font-size:0.95rem;color:var(--text-muted);margin-top:0.5rem;">Bug in code, timeout</p></div>
+                    </div>
+                    <p style="margin-top:1.5rem;text-align:center;font-size:1.1rem;">Architectural models provide a <strong>mental framework</strong> for systematic troubleshooting.</p>
+                </div>
+            </section>
+
+            <!-- SLIDE 4: Protocol Wars -->
+            <section class="slide" data-slide="4">
+                <h2 class="slide-title">The Protocol Wars: A Cautionary Tale</h2>
+                <p class="slide-subtitle">How pragmatism defeated bureaucracy</p>
+                <div class="slide-content">
+                    <div class="story-box">
+                        <p>In the 1980s, the <strong>telecommunications industry</strong> backed the OSI model—committee-designed with volumes of documentation. Meanwhile, the <strong>academic community</strong> championed TCP/IP with "rough consensus and running code."</p>
+                        <p style="margin-top:1rem;">OSI collapsed under its complexity. TCP/IP, bundled with BSD UNIX from 1983, triumphed. Universities initially planned to use "TCP/IP until OSI becomes available"—then quietly dropped OSI altogether.</p>
+                    </div>
+                    <div class="grid-2" style="margin-top:1rem;">
+                        <div class="card card-danger"><h4>OSI's Downfall</h4><ul><li>Seven years from design to first implementation</li><li>Specification documents measured in kilograms</li><li>Design by committee, not engineers</li></ul></div>
+                        <div class="card card-success"><h4>TCP/IP's Victory</h4><ul><li>Free reference implementation in BSD UNIX</li><li>Tested at scale before standardisation</li><li>"The code is the specification"</li></ul></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 5: Problem of Complexity -->
+            <section class="slide" data-slide="5">
+                <h2 class="slide-title">The Problem of Complexity</h2>
+                <p class="slide-subtitle">Why we need architectural models in networking</p>
+                <div class="slide-content">
+                    <div class="warning-box">
+                        <p><strong>The Challenge:</strong> Diverse hardware, varied software, multiple protocols—all needing to cooperate globally, manufactured by different vendors, decades apart.</p>
+                    </div>
+                    <div class="grid-2" style="margin-top:1rem;">
+                        <div><h4>Without Layering</h4><ul><li>Every application must understand every network technology</li><li>Changing hardware means rewriting software</li><li>No interoperability between vendors</li></ul><p style="margin-top:1rem;color:var(--danger);"><strong>Result:</strong> Chaos. Proprietary islands.</p></div>
+                        <div><h4>With Layering</h4><ul><li>Each layer has focused responsibilities</li><li>Layers interact through well-defined interfaces</li><li>Components can be swapped without affecting others</li></ul><p style="margin-top:1rem;color:var(--success);"><strong>Result:</strong> The global Internet. Trillions of devices.</p></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 6: Building Analogy -->
+            <section class="slide" data-slide="6">
+                <h2 class="slide-title">The Building Analogy</h2>
+                <p class="slide-subtitle">Understanding layered architecture through construction</p>
+                <div class="slide-content">
+                    <div class="grid-2">
+                        <div class="diagram-container">
+                            <svg viewBox="0 0 300 320" style="max-width:100%;">
+                                <rect x="50" y="20" width="200" height="40" fill="#f59e0b" rx="4"/><text x="150" y="45" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Interior Design</text>
+                                <rect x="50" y="70" width="200" height="40" fill="#8b5cf6" rx="4"/><text x="150" y="95" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Electrical &amp; HVAC</text>
+                                <rect x="50" y="120" width="200" height="40" fill="#3b82f6" rx="4"/><text x="150" y="145" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Plumbing</text>
+                                <rect x="50" y="170" width="200" height="40" fill="#22c55e" rx="4"/><text x="150" y="195" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Structural Frame</text>
+                                <rect x="50" y="220" width="200" height="40" fill="#06b6d4" rx="4"/><text x="150" y="245" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Foundation</text>
+                                <rect x="50" y="270" width="200" height="40" fill="#ef4444" rx="4"/><text x="150" y="295" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Ground/Site</text>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="definition-box"><p><strong>Separation of Concerns:</strong> The electrician doesn't modify the foundation. The interior designer doesn't rewire the building.</p></div>
+                            <ul style="margin-top:1rem;"><li>Each specialist works at their <strong>own layer</strong></li><li>Upper layers <strong>rely on</strong> services from lower layers</li><li>Changes in one layer don't require rebuilding others</li></ul>
+                            <div class="highlight-box" style="margin-top:1rem;"><p>In networking: The web developer writes HTTP without understanding fibre optics.</p></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 7: Layer Concept -->
+            <section class="slide" data-slide="7">
+                <h2 class="slide-title">The Layer Concept</h2>
+                <p class="slide-subtitle">How layers communicate with each other</p>
+                <div class="slide-content">
+                    <div class="grid-2">
+                        <div>
+                            <h4>Fundamental Principles</h4>
+                            <ul><li>A layer <strong>provides services</strong> to the layer above</li><li>A layer <strong>uses services</strong> from the layer below</li><li>Each layer only "sees" <strong>adjacent</strong> layers</li><li>Horizontal communication is <strong>virtual</strong>—data flows vertically</li></ul>
+                            <div class="definition-box" style="margin-top:1rem;"><p><strong>Service Access Point (SAP):</strong> The interface through which a layer provides services to the layer above.</p></div>
+                        </div>
+                        <div class="card">
+                            <h4>Key Terminology</h4>
+                            <div class="table-container">
+                                <table><tr><th>Term</th><th>Meaning</th></tr>
+                                <tr><td><code>PDU</code></td><td>Protocol Data Unit – data at any given layer</td></tr>
+                                <tr><td><code>SDU</code></td><td>Service Data Unit – payload from layer above</td></tr>
+                                <tr><td><code>Header</code></td><td>Control information added by each layer</td></tr>
+                                <tr><td><code>Trailer</code></td><td>Control info at end (typically L2)</td></tr></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 8: OSI Introduction -->
+            <section class="slide" data-slide="8">
+                <h2 class="slide-title">The OSI Reference Model</h2>
+                <p class="slide-subtitle">Open Systems Interconnection – The theoretical framework</p>
+                <div class="slide-content">
+                    <div class="grid-2">
+                        <div>
+                            <div class="definition-box"><p><strong>OSI</strong> = Open Systems Interconnection</p><p>Standardised by ISO in 1984 (ISO 7498)</p></div>
+                            <h4 style="margin-top:1rem;">Characteristics</h4>
+                            <ul><li><strong>Theoretical</strong> reference model</li><li><strong>Seven distinct layers</strong></li><li>Developed as response to proprietary systems</li><li>Implementation-independent specification</li></ul>
+                        </div>
+                        <div class="card">
+                            <h4>Practical Purpose Today</h4>
+                            <p>OSI provides a <strong>common vocabulary</strong> for discussing networks. Even though TCP/IP is used in practice, we describe problems using OSI terminology.</p>
+                            <div class="warning-box" style="margin-top:1rem;"><p>OSI is a <em>reference</em> model. TCP/IP is the <em>implementation</em> model.</p></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 9: OSI 7 Layers -->
+            <section class="slide" data-slide="9">
+                <h2 class="slide-title">The Seven Layers of OSI</h2>
+                <p class="slide-subtitle">From physical transmission to user applications</p>
+                <div class="slide-content">
+                    <div class="grid-2">
+                        <div class="osi-stack">
+                            <div class="osi-layer l7"><span class="num">7</span><div class="layer-info"><div class="layer-name">Application</div><div class="layer-examples">HTTP, FTP, SMTP, DNS, SSH</div></div></div>
+                            <div class="osi-layer l6"><span class="num">6</span><div class="layer-info"><div class="layer-name">Presentation</div><div class="layer-examples">TLS/SSL, JPEG, MPEG, UTF-8</div></div></div>
+                            <div class="osi-layer l5"><span class="num">5</span><div class="layer-info"><div class="layer-name">Session</div><div class="layer-examples">NetBIOS, RPC, session management</div></div></div>
+                            <div class="osi-layer l4"><span class="num">4</span><div class="layer-info"><div class="layer-name">Transport</div><div class="layer-examples">TCP, UDP, SCTP, QUIC</div></div></div>
+                            <div class="osi-layer l3"><span class="num">3</span><div class="layer-info"><div class="layer-name">Network</div><div class="layer-examples">IP (v4/v6), ICMP, OSPF, BGP</div></div></div>
+                            <div class="osi-layer l2"><span class="num">2</span><div class="layer-info"><div class="layer-name">Data Link</div><div class="layer-examples">Ethernet, Wi-Fi (802.11), PPP</div></div></div>
+                            <div class="osi-layer l1"><span class="num">1</span><div class="layer-info"><div class="layer-name">Physical</div><div class="layer-examples">Cables, fibre, radio waves</div></div></div>
+                        </div>
+                        <div>
+                            <div class="card card-purple"><h4>Classic Mnemonic</h4><p style="font-family:'JetBrains Mono',monospace;font-size:1.05rem;color:var(--purple);"><strong>A</strong>ll <strong>P</strong>eople <strong>S</strong>eem <strong>T</strong>o <strong>N</strong>eed <strong>D</strong>ata <strong>P</strong>rocessing</p><p style="margin-top:0.5rem;color:var(--text-muted);font-size:0.9rem;">(Application → Physical, top to bottom)</p></div>
+                            <div class="card" style="margin-top:1rem;"><h4>PDUs at Each Layer</h4><ul style="font-size:0.95rem;"><li>L7-L5: <strong>Data</strong></li><li>L4: <strong>Segment</strong> (TCP) / <strong>Datagram</strong> (UDP)</li><li>L3: <strong>Packet</strong></li><li>L2: <strong>Frame</strong></li><li>L1: <strong>Bit</strong></li></ul></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 10: Layer 1-2 -->
+            <section class="slide" data-slide="10">
+                <h2 class="slide-title">Layers 1 &amp; 2 – Physical and Data Link</h2>
+                <p class="slide-subtitle">The foundation of network communication</p>
+                <div class="slide-content">
+                    <div class="grid-2">
+                        <div class="card card-danger"><h4>Layer 1 – Physical</h4>
+                            <ul><li><strong>Function:</strong> Transmit raw bits over physical medium</li><li><strong>PDU:</strong> Bit (or symbol)</li><li><strong>Concerns:</strong> Voltage levels, timing, connectors</li><li><strong>Examples:</strong> Ethernet cables, fibre optics, Wi-Fi radio</li></ul>
+                            <div class="highlight-box" style="margin-top:1rem;"><p><strong>Key standard:</strong> IEEE 802.3 (Ethernet physical layer)</p></div>
+                        </div>
+                        <div class="card card-secondary"><h4>Layer 2 – Data Link</h4>
+                            <ul><li><strong>Function:</strong> Node-to-node delivery, error detection</li><li><strong>PDU:</strong> Frame</li><li><strong>Addressing:</strong> MAC addresses (48-bit)</li><li><strong>Examples:</strong> Ethernet, Wi-Fi, PPP</li></ul>
+                            <div class="highlight-box" style="margin-top:1rem;"><p><strong>MAC Address:</strong> <code>00:1A:2B:3C:4D:5E</code> – hardware identifier</p></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 11: Layer 3 -->
+            <section class="slide" data-slide="11">
+                <h2 class="slide-title">Layer 3 – Network</h2>
+                <p class="slide-subtitle">Logical addressing and routing between networks</p>
+                <div class="slide-content">
+                    <div class="grid-2">
+                        <div>
+                            <div class="table-container">
+                                <table><tr><th>Aspect</th><th>Details</th></tr>
+                                <tr><td><strong>Function</strong></td><td>Route packets between networks</td></tr>
+                                <tr><td><strong>PDU</strong></td><td>Packet</td></tr>
+                                <tr><td><strong>Addressing</strong></td><td>IP addresses (32-bit v4, 128-bit v6)</td></tr>
+                                <tr><td><strong>Protocols</strong></td><td>IP, ICMP, ARP, routing protocols</td></tr></table>
+                            </div>
+                            <h4 style="margin-top:1rem;">Core Responsibilities</h4>
+                            <ul><li><strong>Logical addressing:</strong> IP addresses identify hosts globally</li><li><strong>Routing:</strong> Determining path across networks</li><li><strong>Fragmentation:</strong> Breaking packets for smaller MTUs</li></ul>
+                        </div>
+                        <div class="card card-success">
+                            <h4>MAC vs IP: Critical Difference</h4>
+                            <div class="table-container"><table style="font-size:0.9rem;"><tr><th>MAC (Layer 2)</th><th>IP (Layer 3)</th></tr>
+                            <tr><td>Physical (hardware)</td><td>Logical (configurable)</td></tr>
+                            <tr><td>Local scope (same LAN)</td><td>Global scope (routable)</td></tr>
+                            <tr><td>Changes at each hop</td><td>Remains constant end-to-end</td></tr></table></div>
+                            <div class="insight-box" style="margin-top:1rem;"><p>At each router hop, MAC addresses change, but IP addresses remain the same!</p></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 12: Layer 4 -->
+            <section class="slide" data-slide="12">
+                <h2 class="slide-title">Layer 4 – Transport</h2>
+                <p class="slide-subtitle">End-to-end communication between processes</p>
+                <div class="slide-content">
+                    <div class="grid-2">
+                        <div class="card card-secondary"><h4>TCP – Transmission Control Protocol</h4>
+                            <ul><li><strong>Connection-oriented:</strong> 3-way handshake</li><li><strong>Reliable:</strong> Acknowledgements, retransmissions</li><li><strong>Ordered:</strong> Data delivered in sequence</li><li><strong>Flow &amp; congestion control:</strong> Built-in</li></ul>
+                            <p style="margin-top:1rem;color:var(--secondary);font-weight:500;">Use when: Every byte matters (HTTP, SSH, email)</p></div>
+                        <div class="card card-accent"><h4>UDP – User Datagram Protocol</h4>
+                            <ul><li><strong>Connectionless:</strong> No handshake, no state</li><li><strong>Unreliable:</strong> No guarantees</li><li><strong>Unordered:</strong> Packets may arrive out of sequence</li><li><strong>Minimal overhead:</strong> 8-byte header</li></ul>
+                            <p style="margin-top:1rem;color:var(--accent);font-weight:500;">Use when: Speed matters (DNS, VoIP, gaming)</p></div>
+                    </div>
+                    <div class="definition-box" style="margin-top:1rem;"><p><strong>Socket:</strong> The combination (IP address, Port number) uniquely identifies an endpoint. Port numbers range 0–65535.</p></div>
+                </div>
+            </section>
+
+            <!-- SLIDE 13: Upper Layers -->
+            <section class="slide" data-slide="13">
+                <h2 class="slide-title">Upper Layers (5-6-7)</h2>
+                <p class="slide-subtitle">Session, Presentation, and Application</p>
+                <div class="slide-content">
+                    <div class="grid-3">
+                        <div class="card card-purple"><h4>Layer 5 – Session</h4><p>Manages dialogue between applications: establishment, maintenance, termination.</p><p style="color:var(--text-muted);font-size:0.9rem;margin-top:0.5rem;">Examples: NetBIOS, RPC</p></div>
+                        <div class="card card-accent"><h4>Layer 6 – Presentation</h4><p>Data translation, encryption, compression for uniform interpretation.</p><p style="color:var(--text-muted);font-size:0.9rem;margin-top:0.5rem;">Examples: TLS/SSL, JPEG, UTF-8</p></div>
+                        <div class="card card-success"><h4>Layer 7 – Application</h4><p>User-facing protocols and services. The interface humans interact with.</p><p style="color:var(--text-muted);font-size:0.9rem;margin-top:0.5rem;">Examples: HTTP, FTP, SMTP, DNS</p></div>
+                    </div>
+                    <div class="warning-box" style="margin-top:1.5rem;"><p>In TCP/IP, layers 5–7 are combined into a single "Application" layer. Most modern protocols handle these concerns internally.</p></div>
+                </div>
+            </section>
+
+            <!-- SLIDE 14: Quiz OSI -->
+            <section class="slide" data-slide="14">
+                <h2 class="slide-title">Knowledge Check</h2>
+                <p class="slide-subtitle">Test your understanding of OSI layers</p>
+                <div class="slide-content">
+                    <div class="quiz-container">
+                        <p class="quiz-question"><strong>Question:</strong> What type of addressing does Layer 2 (Data Link) use?</p>
+                        <button class="quiz-option" onclick="checkQuiz(this, false)">A) IP addresses (32 or 128 bits)</button>
+                        <button class="quiz-option" onclick="checkQuiz(this, true)">B) MAC addresses (48 bits)</button>
+                        <button class="quiz-option" onclick="checkQuiz(this, false)">C) Port numbers (16 bits)</button>
+                        <button class="quiz-option" onclick="checkQuiz(this, false)">D) URLs and domain names</button>
+                        <div class="quiz-feedback"><p><strong>Correct!</strong> MAC (Media Access Control) addresses are 48-bit hardware identifiers used at Layer 2 for local network communication. IP addresses operate at Layer 3, port numbers at Layer 4.</p></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 15: Encapsulation -->
+            <section class="slide" data-slide="15">
+                <h2 class="slide-title">Encapsulation</h2>
+                <p class="slide-subtitle">How data is wrapped at each layer</p>
+                <div class="slide-content">
+                    <div class="definition-box"><p><strong>Encapsulation:</strong> The process of wrapping data with protocol headers (and sometimes trailers) as it passes down through the network stack.</p></div>
+                    <div class="diagram-container" style="margin-top:1.5rem;">
+                        <svg viewBox="0 0 700 220" style="max-width:100%;">
+                            <rect x="250" y="10" width="200" height="30" fill="#f59e0b" rx="4"/><text x="350" y="30" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Application Data</text><text x="580" y="30" fill="#64748b" font-size="10">L7: Data</text>
+                            <rect x="200" y="50" width="50" height="30" fill="#3b82f6" rx="4"/><text x="225" y="70" text-anchor="middle" fill="white" font-size="9">TCP</text>
+                            <rect x="250" y="50" width="200" height="30" fill="#f59e0b" rx="4"/><text x="350" y="70" text-anchor="middle" fill="white" font-size="11">Data</text><text x="580" y="70" fill="#64748b" font-size="10">L4: Segment</text>
+                            <rect x="150" y="90" width="50" height="30" fill="#22c55e" rx="4"/><text x="175" y="110" text-anchor="middle" fill="white" font-size="9">IP</text>
+                            <rect x="200" y="90" width="50" height="30" fill="#3b82f6" rx="4"/><text x="225" y="110" text-anchor="middle" fill="white" font-size="9">TCP</text>
+                            <rect x="250" y="90" width="200" height="30" fill="#f59e0b" rx="4"/><text x="350" y="110" text-anchor="middle" fill="white" font-size="11">Data</text><text x="580" y="110" fill="#64748b" font-size="10">L3: Packet</text>
+                            <rect x="100" y="130" width="50" height="30" fill="#06b6d4" rx="4"/><text x="125" y="150" text-anchor="middle" fill="white" font-size="8">ETH</text>
+                            <rect x="150" y="130" width="50" height="30" fill="#22c55e" rx="4"/><text x="175" y="150" text-anchor="middle" fill="white" font-size="9">IP</text>
+                            <rect x="200" y="130" width="50" height="30" fill="#3b82f6" rx="4"/><text x="225" y="150" text-anchor="middle" fill="white" font-size="9">TCP</text>
+                            <rect x="250" y="130" width="200" height="30" fill="#f59e0b" rx="4"/><text x="350" y="150" text-anchor="middle" fill="white" font-size="11">Data</text>
+                            <rect x="450" y="130" width="35" height="30" fill="#06b6d4" rx="4"/><text x="467" y="150" text-anchor="middle" fill="white" font-size="8">FCS</text><text x="580" y="150" fill="#64748b" font-size="10">L2: Frame</text>
+                            <rect x="100" y="170" width="385" height="25" fill="#ef4444" rx="4"/><text x="292" y="187" text-anchor="middle" fill="white" font-size="10">01101001 01010110 11001010 ...</text><text x="580" y="187" fill="#64748b" font-size="10">L1: Bits</text>
+                        </svg>
+                    </div>
+                    <div class="highlight-box"><p><strong>Each layer's header contains:</strong> Control information for that layer's protocol. The payload from above becomes opaque data.</p></div>
+                </div>
+            </section>
+
+            <!-- SLIDE 16: TCP/IP Model -->
+            <section class="slide" data-slide="16">
+                <h2 class="slide-title">The TCP/IP Model</h2>
+                <p class="slide-subtitle">The practical implementation model</p>
+                <div class="slide-content">
+                    <div class="grid-2">
+                        <div class="tcpip-stack">
+                            <div class="tcpip-layer app"><h4 style="margin:0;color:var(--accent);">Application Layer</h4><p style="margin:0.5rem 0 0;font-size:0.95rem;">HTTP, FTP, SMTP, DNS, SSH, DHCP</p><p style="margin:0.25rem 0 0;font-size:0.85rem;color:var(--text-muted);">Combines OSI L5-6-7</p></div>
+                            <div class="tcpip-layer transport"><h4 style="margin:0;color:var(--secondary);">Transport Layer</h4><p style="margin:0.5rem 0 0;font-size:0.95rem;">TCP, UDP, SCTP</p><p style="margin:0.25rem 0 0;font-size:0.85rem;color:var(--text-muted);">= OSI L4</p></div>
+                            <div class="tcpip-layer internet"><h4 style="margin:0;color:var(--success);">Internet Layer</h4><p style="margin:0.5rem 0 0;font-size:0.95rem;">IP (v4/v6), ICMP</p><p style="margin:0.25rem 0 0;font-size:0.85rem;color:var(--text-muted);">= OSI L3</p></div>
+                            <div class="tcpip-layer link"><h4 style="margin:0;color:var(--danger);">Network Access Layer</h4><p style="margin:0.5rem 0 0;font-size:0.95rem;">Ethernet, Wi-Fi, PPP</p><p style="margin:0.25rem 0 0;font-size:0.85rem;color:var(--text-muted);">Combines OSI L1-2</p></div>
+                        </div>
+                        <div>
+                            <div class="definition-box"><p><strong>TCP/IP</strong> = Transmission Control Protocol / Internet Protocol</p><p>Developed by DARPA (1970s), standardised through RFCs</p></div>
+                            <div class="card" style="margin-top:1rem;"><h4>Why TCP/IP Won</h4><ul><li>Working code before complete specification</li><li>Free reference implementation in BSD UNIX</li><li>Tested at scale on ARPANET</li><li>"Rough consensus and running code"</li></ul></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 17: OSI vs TCP/IP -->
+            <section class="slide" data-slide="17">
+                <h2 class="slide-title">OSI vs TCP/IP Comparison</h2>
+                <p class="slide-subtitle">Key differences between the models</p>
+                <div class="slide-content">
+                    <div class="table-container">
+                        <table><tr><th>Aspect</th><th>OSI Model</th><th>TCP/IP Model</th></tr>
+                        <tr><td><strong>Origin</strong></td><td>ISO committee (1984)</td><td>DARPA/DoD research (1970s)</td></tr>
+                        <tr><td><strong>Layers</strong></td><td>7 layers</td><td>4 layers</td></tr>
+                        <tr><td><strong>Approach</strong></td><td>Model first, protocols second</td><td>Protocols first, model derived</td></tr>
+                        <tr><td><strong>Session &amp; Presentation</strong></td><td>Separate layers</td><td>Merged into Application</td></tr>
+                        <tr><td><strong>Implementation</strong></td><td>Rarely implemented strictly</td><td>The actual Internet</td></tr>
+                        <tr><td><strong>Modern Use</strong></td><td>Teaching, discussion</td><td>Real-world networking</td></tr></table>
+                    </div>
+                    <div class="grid-2" style="margin-top:1rem;">
+                        <div class="highlight-box"><p><strong>OSI Advantage:</strong> Clearer separation of concerns, better for teaching.</p></div>
+                        <div class="highlight-box"><p><strong>TCP/IP Advantage:</strong> Reflects actual implementations, simpler.</p></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 18: Quiz TCP/IP -->
+            <section class="slide" data-slide="18">
+                <h2 class="slide-title">Knowledge Check</h2>
+                <p class="slide-subtitle">TCP/IP Model understanding</p>
+                <div class="slide-content">
+                    <div class="quiz-container">
+                        <p class="quiz-question"><strong>Question:</strong> In which order are headers added when sending an HTTP request?</p>
+                        <button class="quiz-option" onclick="checkQuiz(this, false)">A) Ethernet → IP → TCP → HTTP</button>
+                        <button class="quiz-option" onclick="checkQuiz(this, false)">B) HTTP → IP → TCP → Ethernet</button>
+                        <button class="quiz-option" onclick="checkQuiz(this, true)">C) HTTP → TCP → IP → Ethernet</button>
+                        <button class="quiz-option" onclick="checkQuiz(this, false)">D) TCP → HTTP → Ethernet → IP</button>
+                        <div class="quiz-feedback"><p><strong>Correct!</strong> Data flows down the stack. HTTP data is generated at application layer, then encapsulated with TCP header (transport), IP header (internet), and finally Ethernet header/trailer (network access).</p></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 19: Protocol Overhead -->
+            <section class="slide" data-slide="19">
+                <h2 class="slide-title">Protocol Overhead</h2>
+                <p class="slide-subtitle">Calculating the cost of encapsulation</p>
+                <div class="slide-content">
+                    <div class="grid-2">
+                        <div class="interactive-panel">
+                            <h4>Overhead Calculator</h4>
+                            <p style="margin-bottom:1rem;">Application data size:</p>
+                            <input type="range" id="dataSize" min="1" max="1460" value="100" oninput="calculateOverhead()">
+                            <p style="text-align:center;font-family:'JetBrains Mono',monospace;"><span id="dataSizeValue">100</span> bytes</p>
+                            <div class="result-display">
+                                <p>Ethernet Frame: <span id="frameSize">154</span> bytes</p>
+                                <p>Overhead: <span id="overheadPercent">35.1</span>%</p>
+                                <p>Efficiency: <span id="efficiencyPercent">64.9</span>%</p>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <h4>Header Sizes</h4>
+                            <div class="table-container"><table style="font-size:0.9rem;"><tr><th>Layer</th><th>Protocol</th><th>Size</th></tr>
+                            <tr><td>L2</td><td>Ethernet (header+FCS)</td><td>18 bytes</td></tr>
+                            <tr><td>L3</td><td>IPv4 (min)</td><td>20 bytes</td></tr>
+                            <tr><td>L4</td><td>TCP (min)</td><td>20 bytes</td></tr>
+                            <tr><td>L4</td><td>UDP</td><td>8 bytes</td></tr>
+                            <tr><td colspan="2"><strong>Total (TCP)</strong></td><td><strong>54 bytes</strong></td></tr></table></div>
+                            <div class="warning-box" style="margin-top:1rem;"><p>For small payloads, efficiency drops significantly. With 1 byte of data, overhead is 98%!</p></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 20: Socket Introduction -->
+            <section class="slide" data-slide="20">
+                <h2 class="slide-title">From Theory to Code</h2>
+                <p class="slide-subtitle">Introduction to the Socket API</p>
+                <div class="slide-content">
+                    <div class="highlight-box"><p><strong>The Question:</strong> We understand the layers—but how do we actually <em>write programs</em> that communicate over networks?</p></div>
+                    <div class="grid-2" style="margin-top:1.5rem;">
+                        <div>
+                            <h4>The Socket API</h4>
+                            <p>Sockets provide the <strong>programming interface</strong> between your application (Layer 7) and the transport layer (Layer 4).</p>
+                            <div class="definition-box" style="margin-top:1rem;"><p><strong>Socket:</strong> An endpoint for communication. Identified by (IP address, port number). The API allows creating connections, sending data, and receiving data.</p></div>
+                        </div>
+                        <div class="card">
+                            <h4>Historical Note</h4>
+                            <p>The socket API was introduced in <strong>BSD UNIX 4.2</strong> (1983). It became the de facto standard for network programming.</p>
+                            <p style="margin-top:1rem;color:var(--text-muted);">The same API is used in virtually every OS: Linux, Windows (Winsock), macOS.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 21: Socket Types -->
+            <section class="slide" data-slide="21">
+                <h2 class="slide-title">Socket Types</h2>
+                <p class="slide-subtitle">Choosing the right socket for your needs</p>
+                <div class="slide-content">
+                    <div class="grid-2">
+                        <div class="card card-secondary"><h4>SOCK_STREAM (TCP)</h4>
+                            <ul><li>Connection-oriented</li><li>Reliable, ordered byte stream</li><li>Requires <code>connect()</code> before sending</li><li>Use <code>send()</code> / <code>recv()</code></li></ul>
+                            <div class="code-block" data-lang="Python" style="margin-top:1rem;"><pre><span class="keyword">import</span> socket
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.connect((<span class="string">"example.com"</span>, <span class="number">80</span>))</pre></div>
+                        </div>
+                        <div class="card card-accent"><h4>SOCK_DGRAM (UDP)</h4>
+                            <ul><li>Connectionless</li><li>Unreliable, message-oriented</li><li>No connection needed</li><li>Use <code>sendto()</code> / <code>recvfrom()</code></li></ul>
+                            <div class="code-block" data-lang="Python" style="margin-top:1rem;"><pre><span class="keyword">import</span> socket
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock.sendto(data, (<span class="string">"example.com"</span>, <span class="number">53</span>))</pre></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 22: Python TCP Example -->
+            <section class="slide" data-slide="22">
+                <h2 class="slide-title">Python TCP Server Example</h2>
+                <p class="slide-subtitle">From the starterkit: ex_2_01_tcp.py</p>
+                <div class="slide-content">
+                    <div class="code-block" data-lang="Python"><pre><span class="keyword">import</span> socket
+
+<span class="comment"># Create socket: AF_INET = IPv4, SOCK_STREAM = TCP</span>
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, <span class="number">1</span>)
+sock.bind((<span class="string">"0.0.0.0"</span>, <span class="number">9090</span>))  <span class="comment"># Bind to all interfaces</span>
+sock.listen(<span class="number">32</span>)  <span class="comment"># Backlog of 32 pending connections</span>
+
+<span class="keyword">while</span> <span class="builtin">True</span>:
+    conn, addr = sock.accept()  <span class="comment"># Blocks until client connects</span>
+    data = conn.recv(<span class="number">1024</span>)
+    response = <span class="string">b"OK: "</span> + data.upper()
+    conn.sendall(response)
+    conn.close()</pre></div>
+                    <div class="highlight-box"><p><strong>Try it:</strong> <code>python3 seminar/python/exercises/ex_2_01_tcp.py server --port 9090</code></p></div>
+                </div>
+            </section>
+
+            <!-- SLIDE 23: TCP Handshake -->
+            <section class="slide" data-slide="23">
+                <h2 class="slide-title">TCP Three-Way Handshake</h2>
+                <p class="slide-subtitle">Establishing a reliable connection</p>
+                <div class="slide-content">
+                    <div class="diagram-container">
+                        <svg viewBox="0 0 600 220" style="max-width:100%;">
+                            <text x="100" y="25" text-anchor="middle" fill="#64748b" font-size="14" font-weight="bold">Client</text>
+                            <text x="500" y="25" text-anchor="middle" fill="#64748b" font-size="14" font-weight="bold">Server</text>
+                            <line x1="100" y1="40" x2="100" y2="200" stroke="#64748b" stroke-width="3"/>
+                            <line x1="500" y1="40" x2="500" y2="200" stroke="#64748b" stroke-width="3"/>
+                            <line x1="100" y1="60" x2="500" y2="85" stroke="#3b82f6" stroke-width="2" marker-end="url(#arr)"/><text x="300" y="65" text-anchor="middle" fill="#3b82f6" font-size="12" font-weight="bold">SYN (seq=x)</text>
+                            <line x1="500" y1="105" x2="100" y2="130" stroke="#22c55e" stroke-width="2" marker-end="url(#arr)"/><text x="300" y="125" text-anchor="middle" fill="#22c55e" font-size="12" font-weight="bold">SYN-ACK (seq=y, ack=x+1)</text>
+                            <line x1="100" y1="150" x2="500" y2="175" stroke="#f59e0b" stroke-width="2" marker-end="url(#arr)"/><text x="300" y="170" text-anchor="middle" fill="#f59e0b" font-size="12" font-weight="bold">ACK (ack=y+1)</text>
+                            <text x="300" y="200" text-anchor="middle" fill="#64748b" font-size="10">ESTABLISHED - Data exchange can begin</text>
+                            <defs><marker id="arr" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/></marker></defs>
+                        </svg>
+                    </div>
+                    <div class="highlight-box"><p><strong>Why three messages?</strong> Each side must confirm it can both send and receive. SYN establishes client→server. SYN-ACK confirms server received. Final ACK confirms client received.</p></div>
+                </div>
+            </section>
+
+            <!-- SLIDE 24: Debugging -->
+            <section class="slide" data-slide="24">
+                <h2 class="slide-title">Debugging with Layers</h2>
+                <p class="slide-subtitle">Systematic troubleshooting using the OSI model</p>
+                <div class="slide-content">
+                    <p>When a network application fails, work <strong>bottom-up</strong> through the layers:</p>
+                    <div class="table-container" style="margin-top:1rem;">
+                        <table><tr><th>Layer</th><th>Check</th><th>Command</th></tr>
+                        <tr><td><strong>L1 Physical</strong></td><td>Cable connected? Link light?</td><td><code>ip link show</code></td></tr>
+                        <tr><td><strong>L2 Data Link</strong></td><td>Interface up? MAC correct?</td><td><code>ip link show</code>, <code>arp -a</code></td></tr>
+                        <tr><td><strong>L3 Network</strong></td><td>Have IP? Can ping gateway?</td><td><code>ip addr</code>, <code>ping</code>, <code>traceroute</code></td></tr>
+                        <tr><td><strong>L4 Transport</strong></td><td>Port open? Service listening?</td><td><code>ss -tuln</code>, <code>nc -zv host port</code></td></tr>
+                        <tr><td><strong>L7 Application</strong></td><td>Application responds correctly?</td><td><code>curl</code>, application logs</td></tr></table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 25: Common Misconceptions -->
+            <section class="slide" data-slide="25">
+                <h2 class="slide-title">Common Misconceptions</h2>
+                <p class="slide-subtitle">Clearing up frequent confusions</p>
+                <div class="slide-content">
+                    <div class="grid-2">
+                        <div class="insight-box"><p><strong>❌ Misconception:</strong> "Data travels horizontally between peer layers."</p><p><strong>✓ Reality:</strong> Data travels <em>down</em> the stack on sender, across physical medium, then <em>up</em> on receiver.</p></div>
+                        <div class="insight-box"><p><strong>❌ Misconception:</strong> "TCP guarantees delivery."</p><p><strong>✓ Reality:</strong> TCP guarantees delivery <em>or notification of failure</em>. If network unreachable, TCP eventually gives up.</p></div>
+                        <div class="insight-box"><p><strong>❌ Misconception:</strong> "The OSI model is used in real networks."</p><p><strong>✓ Reality:</strong> TCP/IP is what's implemented. OSI is a reference model for discussion.</p></div>
+                        <div class="insight-box"><p><strong>❌ Misconception:</strong> "MAC addresses don't change during routing."</p><p><strong>✓ Reality:</strong> Source/Dest MAC change at each hop. IP addresses remain constant (except NAT).</p></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 26: Exercises -->
+            <section class="slide" data-slide="26">
+                <h2 class="slide-title">Hands-on Exercises</h2>
+                <p class="slide-subtitle">Practice with the starterkit</p>
+                <div class="slide-content">
+                    <div class="grid-2">
+                        <div class="card card-secondary"><h4>Exercise 1: TCP Echo Server</h4>
+                            <div class="code-block" data-lang="Bash" style="margin-top:0.5rem;"><pre><span class="comment"># Terminal 1: Start server</span>
+make tcp-server
+<span class="comment"># Terminal 2: Send message</span>
+make tcp-client MSG=<span class="string">"Hello Network"</span>
+<span class="comment"># Terminal 3: Capture traffic</span>
+make analyze-tcp</pre></div>
+                        </div>
+                        <div class="card card-accent"><h4>Exercise 2: UDP Protocol</h4>
+                            <div class="code-block" data-lang="Bash" style="margin-top:0.5rem;"><pre><span class="comment"># Interactive UDP client</span>
+python3 ex_2_02_udp.py client \
+  --host 127.0.0.1 --port 9091 -i
+<span class="comment"># Try: ping, time, upper:hello</span></pre></div>
+                        </div>
+                    </div>
+                    <div class="highlight-box" style="margin-top:1rem;"><p><strong>Challenge:</strong> Use Wireshark or tshark to observe the TCP 3-way handshake. Identify the SYN, SYN-ACK, and ACK packets.</p></div>
+                </div>
+            </section>
+
+            <!-- SLIDE 27: Key Takeaways -->
+            <section class="slide" data-slide="27">
+                <h2 class="slide-title">Key Takeaways</h2>
+                <p class="slide-subtitle">What you should remember</p>
+                <div class="slide-content">
+                    <div class="grid-2">
+                        <div class="card card-success"><h4>✅ Concepts Understood</h4>
+                            <ul><li>Purpose of layered architecture (complexity reduction, interoperability)</li><li>The 7 OSI layers and their functions</li><li>The 4-layer TCP/IP model</li><li>Encapsulation/decapsulation processes</li><li>Difference between MAC and IP addressing</li><li>TCP vs UDP characteristics</li></ul>
+                        </div>
+                        <div class="card card-secondary"><h4>🔧 Practical Skills</h4>
+                            <ul><li>Identifying which layer a problem occurs at</li><li>Using diagnostic commands (ping, ss, tcpdump)</li><li>Understanding protocol overhead</li><li>Basic socket programming concepts</li><li>Preparation for hands-on socket programming</li></ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 28: Next Week -->
+            <section class="slide" data-slide="28">
+                <h2 class="slide-title">Coming Up Next</h2>
+                <p class="slide-subtitle">Week 3: Socket Programming Deep Dive</p>
+                <div class="slide-content">
+                    <div class="grid-2">
+                        <div class="card"><h4>📚 Next Lecture Topics</h4><ul><li>Socket programming in depth</li><li>Concurrent servers (threading)</li><li>Blocking vs non-blocking I/O</li><li>Application protocol design</li></ul></div>
+                        <div class="card"><h4>🎯 Preparation</h4><ul><li>Run <code>make verify</code> in the starterkit</li><li>Complete Exercises 1 and 2</li><li>Read: Rhodes &amp; Goetzen, Chapters 2-3</li><li>Review Python threading basics</li></ul></div>
+                    </div>
+                    <div class="highlight-box" style="margin-top:1.5rem;"><p><strong>Seminar this week:</strong> You will implement a concurrent TCP server. Ensure your development environment is ready!</p></div>
+                </div>
+            </section>
+
+            <!-- SLIDE 29: References -->
+            <section class="slide" data-slide="29">
+                <h2 class="slide-title">References &amp; Further Reading</h2>
+                <p class="slide-subtitle">Deepen your understanding</p>
+                <div class="slide-content">
+                    <div class="grid-2">
+                        <div class="card"><h4>📖 Required Reading</h4>
+                            <ul><li>Kurose &amp; Ross – <em>Computer Networking: A Top-Down Approach</em>, 7th Ed., Ch 1-2</li><li>Rhodes &amp; Goetzen – <em>Foundations of Python Network Programming</em>, Ch 1-3</li></ul>
+                            <h4 style="margin-top:1rem;">📜 RFCs</h4>
+                            <ul><li>RFC 791: Internet Protocol (IP)</li><li>RFC 793: TCP</li><li>RFC 768: UDP</li></ul>
+                        </div>
+                        <div class="card"><h4>🔗 Online Resources</h4>
+                            <ul><li>Wireshark Documentation</li><li>Python Socket Module docs</li><li>Mininet Walkthrough</li></ul>
+                            <h4 style="margin-top:1rem;">🎬 Video Resources</h4>
+                            <ul><li>Computerphile: "TCP/IP Model" series</li><li>Ben Eater: "Networking Tutorial" playlist</li></ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 30: End -->
+            <section class="slide title-slide" data-slide="30">
+                <h1 class="slide-title">Questions?</h1>
+                <p class="slide-subtitle">We'll continue with hands-on exercises in the seminar</p>
+                <div style="margin-top:3rem;"><p style="color:rgba(255,255,255,0.8);font-size:1.1rem;">Starterkit: <code style="background:rgba(255,255,255,0.15);color:white;">~/WEEK2/</code></p><p style="color:rgba(255,255,255,0.6);font-size:0.95rem;margin-top:1rem;">Run <code style="background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.8);">make help</code> to see available commands</p></div>
+                <div style="margin-top:4rem;padding-top:2rem;border-top:1px solid rgba(255,255,255,0.2);"><p style="color:rgba(255,255,255,0.5);font-size:0.85rem;">Bucharest University of Economic Studies – Faculty CSIE</p><p style="color:rgba(255,255,255,0.4);font-size:0.8rem;">Computer Networks • BSc Economic Informatics • Year 3, Semester 2</p></div>
+            </section>
+        </div>
+        <!-- Navigation Controls -->
+        <div class="nav-controls">
+            <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)" title="Previous (←)">←</button>
+            <button class="nav-btn toc-btn" onclick="toggleTOC()" title="Table of Contents (T)">☰ Contents</button>
+            <button class="nav-btn" onclick="toggleFullscreen()" title="Fullscreen (F)">⛶</button>
+            <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)" title="Next (→)">→</button>
+        </div>
+        <div class="footer-attribution">by Revolvix</div>
+
+        <!-- Table of Contents Modal -->
+        <div class="toc-modal" id="tocModal" onclick="closeTOCOnBackdrop(event)">
+            <div class="toc-content">
+                <h2>Table of Contents</h2>
+                <div class="toc-section"><div class="toc-section-title">Introduction</div>
+                    <div class="toc-item" onclick="goToSlide(1)">1. Title</div>
+                    <div class="toc-item" onclick="goToSlide(2)">2. Learning Objectives</div>
+                    <div class="toc-item" onclick="goToSlide(3)">3. Why This Matters</div>
+                    <div class="toc-item" onclick="goToSlide(4)">4. Protocol Wars</div>
+                </div>
+                <div class="toc-section"><div class="toc-section-title">Layered Architecture</div>
+                    <div class="toc-item" onclick="goToSlide(5)">5. Problem of Complexity</div>
+                    <div class="toc-item" onclick="goToSlide(6)">6. Building Analogy</div>
+                    <div class="toc-item" onclick="goToSlide(7)">7. Layer Concept</div>
+                </div>
+                <div class="toc-section"><div class="toc-section-title">The OSI Model</div>
+                    <div class="toc-item" onclick="goToSlide(8)">8. OSI Introduction</div>
+                    <div class="toc-item" onclick="goToSlide(9)">9. Seven Layers</div>
+                    <div class="toc-item" onclick="goToSlide(10)">10. Layers 1 &amp; 2</div>
+                    <div class="toc-item" onclick="goToSlide(11)">11. Layer 3 – Network</div>
+                    <div class="toc-item" onclick="goToSlide(12)">12. Layer 4 – Transport</div>
+                    <div class="toc-item" onclick="goToSlide(13)">13. Upper Layers</div>
+                    <div class="toc-item" onclick="goToSlide(14)">14. Quiz: OSI</div>
+                    <div class="toc-item" onclick="goToSlide(15)">15. Encapsulation</div>
+                </div>
+                <div class="toc-section"><div class="toc-section-title">TCP/IP Model</div>
+                    <div class="toc-item" onclick="goToSlide(16)">16. TCP/IP Model</div>
+                    <div class="toc-item" onclick="goToSlide(17)">17. OSI vs TCP/IP</div>
+                    <div class="toc-item" onclick="goToSlide(18)">18. Quiz: TCP/IP</div>
+                    <div class="toc-item" onclick="goToSlide(19)">19. Protocol Overhead</div>
+                </div>
+                <div class="toc-section"><div class="toc-section-title">Socket Programming</div>
+                    <div class="toc-item" onclick="goToSlide(20)">20. Theory to Code</div>
+                    <div class="toc-item" onclick="goToSlide(21)">21. Socket Types</div>
+                    <div class="toc-item" onclick="goToSlide(22)">22. TCP Server Example</div>
+                    <div class="toc-item" onclick="goToSlide(23)">23. TCP Handshake</div>
+                </div>
+                <div class="toc-section"><div class="toc-section-title">Practical Application</div>
+                    <div class="toc-item" onclick="goToSlide(24)">24. Debugging with Layers</div>
+                    <div class="toc-item" onclick="goToSlide(25)">25. Common Misconceptions</div>
+                    <div class="toc-item" onclick="goToSlide(26)">26. Exercises</div>
+                </div>
+                <div class="toc-section"><div class="toc-section-title">Wrap-Up</div>
+                    <div class="toc-item" onclick="goToSlide(27)">27. Key Takeaways</div>
+                    <div class="toc-item" onclick="goToSlide(28)">28. Next Week</div>
+                    <div class="toc-item" onclick="goToSlide(29)">29. References</div>
+                    <div class="toc-item" onclick="goToSlide(30)">30. Questions</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        document.getElementById('total').textContent = totalSlides;
+
+        function showSlide(n) {
+            if (n < 1) n = 1;
+            if (n > totalSlides) n = totalSlides;
+            slides.forEach(s => s.classList.remove('active'));
+            slides[n - 1].classList.add('active');
+            currentSlide = n;
+            document.getElementById('current').textContent = n;
+            document.getElementById('progress').style.width = ((n / totalSlides) * 100) + '%';
+            document.getElementById('prevBtn').disabled = (n === 1);
+            document.getElementById('nextBtn').disabled = (n === totalSlides);
+        }
+
+        function changeSlide(delta) { showSlide(currentSlide + delta); }
+        function goToSlide(n) { showSlide(n); closeTOC(); }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            switch(e.key) {
+                case 'ArrowRight': case ' ': e.preventDefault(); changeSlide(1); break;
+                case 'ArrowLeft': changeSlide(-1); break;
+                case 'Home': showSlide(1); break;
+                case 'End': showSlide(totalSlides); break;
+                case 'f': case 'F': toggleFullscreen(); break;
+                case 't': case 'T': toggleTOC(); break;
+                case 'Escape': closeTOC(); break;
+            }
+        });
+
+        document.querySelector('.slides-wrapper').addEventListener('click', (e) => {
+            if (e.target.tagName === 'BUTTON' || e.target.closest('.quiz-option') || e.target.closest('.interactive-panel') || e.target.closest('a')) return;
+            const rect = e.currentTarget.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            if (x > rect.width / 2) changeSlide(1);
+            else changeSlide(-1);
+        });
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+            else document.exitFullscreen();
+        }
+
+        function toggleTOC() { document.getElementById('tocModal').classList.toggle('show'); }
+        function closeTOC() { document.getElementById('tocModal').classList.remove('show'); }
+        function closeTOCOnBackdrop(e) { if (e.target === document.getElementById('tocModal')) closeTOC(); }
+
+        function checkQuiz(btn, isCorrect) {
+            const container = btn.closest('.quiz-container');
+            const options = container.querySelectorAll('.quiz-option');
+            const feedback = container.querySelector('.quiz-feedback');
+            options.forEach(opt => { opt.disabled = true; opt.style.pointerEvents = 'none'; });
+            if (isCorrect) { btn.classList.add('correct'); feedback.classList.add('correct'); }
+            else {
+                btn.classList.add('wrong'); feedback.classList.add('wrong');
+                options.forEach(opt => { if (opt.onclick && opt.onclick.toString().includes('true')) opt.classList.add('correct'); });
+            }
+            feedback.classList.add('show');
+        }
+
+        function calculateOverhead() {
+            const dataSize = parseInt(document.getElementById('dataSize').value);
+            document.getElementById('dataSizeValue').textContent = dataSize;
+            const totalOverhead = 54; // Ethernet(18) + IP(20) + TCP(20) - 4 for calculation
+            const frameSize = dataSize + 54;
+            document.getElementById('frameSize').textContent = frameSize;
+            document.getElementById('overheadPercent').textContent = ((54 / frameSize) * 100).toFixed(1);
+            document.getElementById('efficiencyPercent').textContent = ((dataSize / frameSize) * 100).toFixed(1);
+        }
+
+        showSlide(1);
+        calculateOverhead();
+    </script>
+</body>
+</html>

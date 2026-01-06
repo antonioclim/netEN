@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Faculty CSIE-ASE">
+    <meta name="generator" content="Revolvix">
+    <title>Week 1 – Foundations of Computer Networking | ASE-CSIE</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
+        :root{--primary:#0f172a;--primary-light:#1e293b;--secondary:#0ea5e9;--secondary-dark:#0284c7;--accent:#f59e0b;--accent-warm:#ea580c;--success:#10b981;--success-dark:#059669;--warning:#fbbf24;--danger:#ef4444;--purple:#8b5cf6;--purple-dark:#7c3aed;--bg-light:#f8fafc;--bg-warm:#fffbeb;--bg-cool:#f0f9ff;--text-dark:#1e293b;--text-muted:#64748b;--text-light:#f1f5f9;--card-bg:#fff;--border:#e2e8f0;--shadow-sm:0 1px 2px rgba(0,0,0,0.05);--shadow-md:0 4px 6px -1px rgba(0,0,0,0.1);--shadow-lg:0 10px 15px -3px rgba(0,0,0,0.1);--shadow-xl:0 20px 25px -5px rgba(0,0,0,0.1)}
+        *{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:linear-gradient(135deg,var(--bg-light) 0%,#e0f2fe 50%,var(--bg-warm) 100%);color:var(--text-dark);overflow:hidden;line-height:1.7;-webkit-font-smoothing:antialiased}
+        .presentation{height:100vh;width:100vw;position:relative}
+        .slide{position:absolute;top:0;left:0;width:100%;height:100%;display:none;flex-direction:column;justify-content:center;align-items:center;padding:70px 90px 90px;background:linear-gradient(160deg,#fff 0%,var(--bg-light) 40%,#e0f2fe 100%);animation:slideIn .45s cubic-bezier(.4,0,.2,1);overflow-y:auto}
+        .slide.active{display:flex}
+        @keyframes slideIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+        .slide-content{max-width:1400px;width:100%;text-align:center}
+        h1{font-family:'Source Serif 4',Georgia,serif;font-size:3.4rem;font-weight:700;color:var(--primary);margin-bottom:1.5rem;letter-spacing:-.03em;line-height:1.15}
+        h2{font-family:'Source Serif 4',Georgia,serif;font-size:2.7rem;font-weight:600;color:var(--primary);margin-bottom:1.3rem;letter-spacing:-.02em}
+        h3{font-family:'Inter',sans-serif;font-size:1.7rem;font-weight:600;color:var(--secondary-dark);margin-bottom:1rem}
+        h4{font-family:'Inter',sans-serif;font-size:1.35rem;font-weight:600;color:var(--primary);margin-bottom:.6rem}
+        p,li{font-size:1.45rem;line-height:1.85;color:var(--text-dark)}
+        ul{list-style:none;text-align:left;display:inline-block;max-width:1000px}
+        li{margin:.9rem 0;padding-left:2.2rem;position:relative}
+        li::before{content:'▹';position:absolute;left:0;color:var(--secondary);font-weight:700;font-size:1.2rem}
+        code{font-family:'JetBrains Mono','Consolas',monospace;background:linear-gradient(135deg,#f1f5f9 0%,#e2e8f0 100%);padding:.2em .5em;border-radius:6px;font-size:.88em;color:var(--primary);border:1px solid var(--border)}
+        strong{color:var(--primary);font-weight:600}
+        em{color:var(--secondary-dark);font-style:italic}
+        .highlight-box{background:linear-gradient(135deg,var(--secondary) 0%,var(--secondary-dark) 100%);color:#fff;padding:2rem 2.8rem;border-radius:20px;margin:1.8rem auto;box-shadow:var(--shadow-xl);max-width:900px;position:relative;overflow:hidden}
+        .highlight-box::before{content:'';position:absolute;top:-50%;right:-20%;width:200px;height:200px;background:rgba(255,255,255,.1);border-radius:50%}
+        .highlight-box p{color:#fff;font-size:1.35rem}
+        .highlight-box code{background:rgba(255,255,255,.2);border:none;color:#fff}
+        .definition-box{background:linear-gradient(135deg,#f0fdf4 0%,#dcfce7 100%);border-left:5px solid var(--success);padding:1.8rem 2.2rem;border-radius:0 16px 16px 0;margin:1.5rem auto;text-align:left;max-width:950px;box-shadow:var(--shadow-md)}
+        .definition-box .def-label{font-size:.85rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--success-dark);margin-bottom:.5rem}
+        .definition-box p{font-size:1.3rem;color:#166534}
+        .story-box{background:linear-gradient(135deg,#faf5ff 0%,#f3e8ff 100%);border-left:5px solid var(--purple);padding:1.8rem 2.2rem;border-radius:0 16px 16px 0;margin:1.5rem auto;text-align:left;max-width:950px;box-shadow:var(--shadow-md)}
+        .story-box .story-title{font-size:1.1rem;color:var(--purple-dark);font-weight:700;margin-bottom:.6rem;display:flex;align-items:center;gap:.6rem}
+        .story-box p{font-size:1.25rem;color:#581c87}
+        .warning-box{background:linear-gradient(135deg,#fef3c7 0%,#fde68a 100%);border-left:5px solid var(--accent);padding:1.6rem 2rem;border-radius:0 14px 14px 0;margin:1.5rem auto;text-align:left;max-width:900px}
+        .warning-box .warn-title{font-size:1rem;color:#92400e;font-weight:700;margin-bottom:.4rem}
+        .warning-box p{font-size:1.15rem;color:#78350f}
+        .insight-box{background:linear-gradient(135deg,#fef2f2 0%,#fecaca 100%);border-left:5px solid var(--danger);padding:1.6rem 2rem;border-radius:0 14px 14px 0;margin:1.5rem auto;text-align:left;max-width:900px}
+        .insight-box .insight-title{font-size:1rem;color:#991b1b;font-weight:700;margin-bottom:.4rem}
+        .insight-box p{font-size:1.15rem;color:#7f1d1d}
+        .diagram-container{background:#fff;border-radius:20px;padding:2rem;box-shadow:var(--shadow-lg);margin:1.5rem auto;border:1px solid var(--border);max-width:900px}
+        .diagram-container svg{max-width:100%;height:auto}
+        .code-block{background:linear-gradient(145deg,#0f172a 0%,#1e293b 100%);color:#e2e8f0;padding:1.8rem 2.2rem;border-radius:16px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:1.05rem;line-height:1.7;margin:1.2rem auto;overflow-x:auto;position:relative;max-width:950px;box-shadow:var(--shadow-xl);border:1px solid #334155}
+        .code-block::before{content:attr(data-lang);position:absolute;top:.6rem;right:.8rem;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:#64748b;background:#1e293b;padding:.2rem .6rem;border-radius:4px}
+        .code-block .comment{color:#64748b;font-style:italic}
+        .code-block .keyword{color:#c084fc;font-weight:500}
+        .code-block .string{color:#4ade80}
+        .code-block .number{color:#fb923c}
+        .code-block .function{color:#60a5fa}
+        .code-block .builtin{color:#fbbf24}
+        .nav-container{position:fixed;bottom:35px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:18px;z-index:100;background:rgba(255,255,255,.95);backdrop-filter:blur(10px);padding:14px 28px;border-radius:50px;box-shadow:var(--shadow-xl)}
+        .nav-btn{width:52px;height:52px;border:none;border-radius:50%;cursor:pointer;font-size:1.4rem;transition:all .25s cubic-bezier(.4,0,.2,1);display:flex;align-items:center;justify-content:center;font-weight:600}
+        .nav-btn.prev{background:var(--primary);color:#fff}
+        .nav-btn.next{background:var(--accent);color:#fff}
+        .nav-btn.fullscreen{background:var(--success);color:#fff}
+        .nav-btn.toc{background:var(--purple);color:#fff;font-size:1.1rem}
+        .nav-btn:hover{transform:scale(1.12);box-shadow:var(--shadow-lg)}
+        .nav-btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
+        .progress-bar{position:fixed;top:0;left:0;height:4px;background:linear-gradient(90deg,var(--secondary) 0%,var(--accent) 50%,var(--success) 100%);transition:width .35s cubic-bezier(.4,0,.2,1);z-index:200}
+        .slide-counter{position:fixed;top:22px;right:35px;font-size:1rem;font-weight:700;color:var(--primary);background:rgba(255,255,255,.95);backdrop-filter:blur(8px);padding:10px 18px;border-radius:25px;box-shadow:var(--shadow-md);z-index:100;font-family:'JetBrains Mono',monospace}
+        .logo-corner{position:fixed;top:22px;left:35px;font-size:.85rem;font-weight:600;color:var(--text-muted);z-index:100}
+        .footer-info{position:fixed;bottom:12px;left:35px;font-size:.8rem;color:var(--text-muted);z-index:50}
+        .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:2rem;text-align:left;margin-top:1.5rem}
+        .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:1.5rem}
+        .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:1.3rem;margin-top:1.5rem}
+        .card{background:#fff;padding:1.8rem;border-radius:18px;box-shadow:var(--shadow-md);transition:all .3s cubic-bezier(.4,0,.2,1);border:1px solid var(--border);text-align:left}
+        .card:hover{transform:translateY(-6px);box-shadow:var(--shadow-xl);border-color:var(--secondary)}
+        .card-icon{font-size:2.6rem;margin-bottom:.9rem}
+        .card h4{margin-bottom:.5rem}
+        .card p{font-size:1.1rem;color:var(--text-muted)}
+        .card-accent{border-left:4px solid var(--secondary)}
+        .card-success{border-left:4px solid var(--success)}
+        .card-warning{border-left:4px solid var(--accent)}
+        .card-danger{border-left:4px solid var(--danger)}
+        .table-container{overflow-x:auto;margin:1.5rem auto;max-width:1000px;border-radius:16px;box-shadow:var(--shadow-lg)}
+        table{width:100%;border-collapse:collapse;background:#fff;font-size:1.1rem}
+        th,td{padding:1.1rem 1.4rem;text-align:left;border-bottom:1px solid var(--border)}
+        th{background:linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 100%);color:#fff;font-weight:600;font-size:1rem;text-transform:uppercase;letter-spacing:.05em}
+        th:first-child{border-radius:16px 0 0 0}
+        th:last-child{border-radius:0 16px 0 0}
+        tr:hover{background:var(--bg-cool)}
+        .quiz-container{background:#fff;border-radius:20px;padding:2.2rem;box-shadow:var(--shadow-lg);text-align:left;max-width:900px;margin:1.5rem auto;border:1px solid var(--border)}
+        .quiz-question{font-size:1.4rem;color:var(--primary);margin-bottom:1.5rem;font-weight:600}
+        .quiz-option{display:block;padding:1.1rem 1.5rem;margin:.7rem 0;background:var(--bg-light);border:2px solid var(--border);border-radius:12px;cursor:pointer;font-size:1.15rem;transition:all .25s ease}
+        .quiz-option:hover{border-color:var(--secondary);background:var(--bg-cool);transform:translateX(4px)}
+        .quiz-option.correct{border-color:var(--success);background:#dcfce7}
+        .quiz-option.incorrect{border-color:var(--danger);background:#fee2e2}
+        .quiz-feedback{padding:1.2rem 1.5rem;border-radius:12px;margin-top:1.2rem;display:none;font-size:1.1rem}
+        .quiz-feedback.show{display:block}
+        .quiz-feedback.correct{background:#bbf7d0;color:#14532d}
+        .quiz-feedback.incorrect{background:#fecaca;color:#7f1d1d}
+        .interactive-panel{background:#fff;border:2px solid var(--secondary);border-radius:20px;padding:2rem;margin:1.5rem auto;max-width:900px;box-shadow:var(--shadow-lg)}
+        .slider-row{display:flex;align-items:center;gap:1.5rem;margin:1.1rem 0}
+        .slider-row label{min-width:200px;font-weight:600;font-size:1.05rem}
+        .slider-row input[type="range"]{flex:1;height:8px;-webkit-appearance:none;background:linear-gradient(90deg,var(--border) 0%,var(--secondary) 100%);border-radius:4px}
+        .slider-row input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:var(--secondary);cursor:pointer;box-shadow:var(--shadow-md)}
+        .slider-value{min-width:130px;font-family:'JetBrains Mono',monospace;font-weight:600;font-size:1rem;color:var(--secondary-dark);text-align:right}
+        .result-display{margin-top:1.5rem;padding:1.2rem 1.8rem;background:linear-gradient(135deg,var(--bg-cool) 0%,#dbeafe 100%);border-radius:12px;font-size:1.25rem;font-weight:600;color:var(--secondary-dark);text-align:center}
+        .reveal-btn{background:linear-gradient(135deg,var(--accent) 0%,var(--accent-warm) 100%);color:#fff;border:none;padding:.9rem 1.8rem;border-radius:10px;font-size:1rem;font-weight:600;cursor:pointer;margin-top:1rem;transition:all .25s ease;box-shadow:var(--shadow-md)}
+        .reveal-btn:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+        .reveal-content{display:none;margin-top:1.2rem;padding:1.2rem 1.5rem;background:linear-gradient(135deg,#fef3c7 0%,#fde68a 100%);border-radius:12px;font-size:1.15rem}
+        .reveal-content.show{display:block}
+        .animate-in{animation:fadeUp .6s cubic-bezier(.4,0,.2,1) forwards;opacity:0}
+        @keyframes fadeUp{from{opacity:0;transform:translateY(25px)}to{opacity:1;transform:translateY(0)}}
+        .delay-1{animation-delay:.1s}
+        .delay-2{animation-delay:.2s}
+        .delay-3{animation-delay:.3s}
+        .delay-4{animation-delay:.4s}
+        .delay-5{animation-delay:.5s}
+        .delay-6{animation-delay:.6s}
+        .timeline{position:relative;max-width:900px;margin:2rem auto;padding-left:40px}
+        .timeline::before{content:'';position:absolute;left:12px;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--secondary) 0%,var(--purple) 50%,var(--success) 100%);border-radius:2px}
+        .timeline-item{position:relative;margin-bottom:2rem;text-align:left}
+        .timeline-item::before{content:'';position:absolute;left:-34px;top:8px;width:16px;height:16px;background:#fff;border:4px solid var(--secondary);border-radius:50%;z-index:1}
+        .timeline-year{font-family:'JetBrains Mono',monospace;font-size:.9rem;font-weight:700;color:var(--secondary);margin-bottom:.3rem}
+        .timeline-title{font-size:1.2rem;font-weight:600;color:var(--primary);margin-bottom:.3rem}
+        .timeline-desc{font-size:1rem;color:var(--text-muted)}
+        .protocol-header{display:flex;flex-wrap:wrap;max-width:900px;margin:1.5rem auto;border:2px solid var(--primary);border-radius:12px;overflow:hidden;font-family:'JetBrains Mono',monospace;font-size:.85rem}
+        .header-row{display:flex;width:100%;border-bottom:1px solid var(--border)}
+        .header-row:last-child{border-bottom:none}
+        .header-field{flex:1;padding:.8rem;text-align:center;border-right:1px solid var(--border);background:#fff}
+        .header-field:last-child{border-right:none}
+        .header-field.span-2{flex:2}
+        .header-field.span-4{flex:4}
+        .header-field.span-8{flex:8}
+        .field-name{font-size:.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.2rem}
+        .field-value{font-weight:600;color:var(--primary)}
+        .field-bits{font-size:.65rem;color:var(--secondary)}
+        .toc-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:500;justify-content:center;align-items:center}
+        .toc-modal.show{display:flex}
+        .toc-content{background:#fff;border-radius:24px;padding:2.5rem;max-width:700px;max-height:80vh;overflow-y:auto;box-shadow:var(--shadow-xl);position:relative}
+        .toc-content h3{margin-bottom:1.5rem;text-align:center}
+        .toc-section{margin-bottom:1.2rem}
+        .toc-section-title{font-weight:700;color:var(--secondary);font-size:.85rem;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem}
+        .toc-item{padding:.6rem 1rem;cursor:pointer;border-radius:8px;transition:all .2s;font-size:1rem;color:var(--text-dark)}
+        .toc-item:hover{background:var(--bg-cool);color:var(--secondary)}
+        .toc-close{position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--text-muted)}
+        :fullscreen .slide{padding:90px 120px 110px}
+        :fullscreen h1{font-size:3.8rem}
+        :fullscreen h2{font-size:3.2rem}
+        :fullscreen p,:fullscreen li{font-size:1.6rem}
+        @media(max-width:1200px){.grid-4{grid-template-columns:repeat(2,1fr)}.grid-3{grid-template-columns:repeat(2,1fr)}}
+        @media(max-width:768px){.slide{padding:50px 30px 80px}h1{font-size:2.2rem}h2{font-size:1.8rem}p,li{font-size:1.1rem}.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
+        ::-webkit-scrollbar{width:8px;height:8px}
+        ::-webkit-scrollbar-track{background:var(--bg-light)}
+        ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+        ::-webkit-scrollbar-thumb:hover{background:var(--secondary)}
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="slide-counter" id="slideCounter">1 / 45</div>
+    <div class="logo-corner">ASE-CSIE • Computer Networks</div>
+    <div class="presentation" id="presentation">
+        <!-- SLIDE 1: Title -->
+        <div class="slide active" data-slide="1">
+            <div class="slide-content">
+                <p style="font-size:1rem;color:var(--secondary);font-weight:600;letter-spacing:.15em;text-transform:uppercase;margin-bottom:1rem">Week 1 of 14</p>
+                <h1>🌐 Foundations of Computer Networking</h1>
+                <h3 style="color:var(--text-muted);font-weight:400">Concepts, Components, Classifications and Core Mechanisms</h3>
+                <div style="margin-top:2.5rem;font-size:1.15rem;color:var(--text-muted);line-height:2">
+                    <p><strong>Course:</strong> Computer Networks (Rețele de Calculatoare)</p>
+                    <p><strong>Programme:</strong> BSc Economic Informatics, Year 3, Semester 2</p>
+                    <p><strong>Institution:</strong> Bucharest University of Economic Studies – Faculty CSIE</p>
+                </div>
+                <p style="margin-top:2.5rem;font-size:.95rem;color:var(--text-muted)">Duration: ~90 minutes • Navigation: ← → or buttons • Fullscreen: F • Contents: T</p>
+            </div>
+        </div>
+
+        <!-- SLIDE 2: Historical Hook -->
+        <div class="slide" data-slide="2">
+            <div class="slide-content">
+                <h2>📡 The Birth of the Network Age</h2>
+                <div class="story-box animate-in">
+                    <div class="story-title">🕰️ 29 October 1969 — The First Network Message</div>
+                    <p>At 22:30 hours, Charley Kline, a student at UCLA, attempted to transmit the word <strong>"LOGIN"</strong> to a computer at Stanford Research Institute, 560 kilometres away. The system crashed after just two characters: <strong>"L"</strong> and <strong>"O"</strong>.</p>
+                </div>
+                <p class="animate-in delay-2" style="margin-top:1.5rem;font-size:1.3rem">Thus, <em>"LO"</em> became the first data ever transmitted across a computer network — an accidental harbinger of a revolution that would transform human civilisation.</p>
+                <div class="highlight-box animate-in delay-3">
+                    <p>💡 From two characters crashing a system to <strong>5.4 billion</strong> internet users exchanging <strong>400 exabytes</strong> of data monthly — this is the story we shall explore.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: Why This Matters -->
+        <div class="slide" data-slide="3">
+            <div class="slide-content">
+                <h2>💡 Why Computer Networks Matter to You</h2>
+                <div class="grid-3">
+                    <div class="card card-accent animate-in delay-1">
+                        <div class="card-icon">🔧</div>
+                        <h4>Debugging Distributed Systems</h4>
+                        <p>Diagnose latency spikes, connection failures and packet loss in microservices architectures</p>
+                    </div>
+                    <div class="card card-success animate-in delay-2">
+                        <div class="card-icon">⚡</div>
+                        <h4>Performance Optimisation</h4>
+                        <p>Reduce API response times from 800ms to 50ms by understanding TCP tuning and CDN placement</p>
+                    </div>
+                    <div class="card card-warning animate-in delay-3">
+                        <div class="card-icon">🔒</div>
+                        <h4>Security Engineering</h4>
+                        <p>Comprehend attack vectors: man-in-the-middle, DNS poisoning, SYN floods and TLS vulnerabilities</p>
+                    </div>
+                </div>
+                <p class="animate-in delay-4" style="margin-top:2rem;font-size:1.25rem">Whether you build web applications, cloud infrastructure, IoT systems or gaming platforms, <strong>every line of code you write</strong> eventually becomes network packets.</p>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: Learning Objectives -->
+        <div class="slide" data-slide="4">
+            <div class="slide-content">
+                <h2>📚 Learning Objectives for Today</h2>
+                <p style="font-size:1.15rem;color:var(--text-muted);margin-bottom:1.5rem">By the end of this lecture, you will be able to:</p>
+                <div class="grid-2">
+                    <div class="animate-in delay-1">
+                        <ul>
+                            <li><strong>Define</strong> what constitutes a computer network and articulate its fundamental purpose</li>
+                            <li><strong>Classify</strong> networks by geographical scope (PAN, LAN, MAN, WAN) and topology</li>
+                            <li><strong>Explain</strong> the distinction between circuit switching and packet switching</li>
+                            <li><strong>Describe</strong> the TCP/IP protocol stack and the concept of encapsulation</li>
+                        </ul>
+                    </div>
+                    <div class="animate-in delay-2">
+                        <ul>
+                            <li><strong>Calculate</strong> transmission delay, propagation delay and throughput</li>
+                            <li><strong>Differentiate</strong> between TCP and UDP transport protocols</li>
+                            <li><strong>Utilise</strong> diagnostic tools: <code>ping</code>, <code>ip</code>, <code>ss</code>, <code>netcat</code></li>
+                            <li><strong>Analyse</strong> network traffic captures using <code>tcpdump</code> and <code>tshark</code></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="definition-box animate-in delay-3" style="margin-top:1.5rem">
+                    <div class="def-label">Observable Outcome</div>
+                    <p>You will diagnose a simulated network connectivity problem using command-line tools and explain the root cause.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 5: Course Roadmap -->
+        <div class="slide" data-slide="5">
+            <div class="slide-content">
+                <h2>🗺️ Where This Week Fits: The 14-Week Journey</h2>
+                <div class="timeline animate-in">
+                    <div class="timeline-item" style="opacity:1">
+                        <div class="timeline-year">WEEKS 1-2</div>
+                        <div class="timeline-title">Foundations & Architecture ← You are here</div>
+                        <div class="timeline-desc">Network basics, OSI/TCP-IP models, encapsulation</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">WEEKS 3-4</div>
+                        <div class="timeline-title">Network Programming Introduction</div>
+                        <div class="timeline-desc">Socket programming in Python, client-server paradigm</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">WEEKS 5-7</div>
+                        <div class="timeline-title">Network & Transport Layers</div>
+                        <div class="timeline-desc">IPv4/IPv6, subnetting, VLSM, NAT, routing protocols, TCP/UDP deep dive</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">WEEKS 8-12</div>
+                        <div class="timeline-title">Application Layer Protocols</div>
+                        <div class="timeline-desc">HTTP/REST, DNS, FTP, SSH, SMTP/POP/IMAP, TLS</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">WEEKS 13-14</div>
+                        <div class="timeline-title">IoT, Security & Review</div>
+                        <div class="timeline-desc">Network security, vulnerability scanning, project presentations</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 6: What is a Network -->
+        <div class="slide" data-slide="6">
+            <div class="slide-content">
+                <h2>🔗 What is a Computer Network?</h2>
+                <div class="definition-box animate-in">
+                    <div class="def-label">Formal Definition</div>
+                    <p>A <strong>computer network</strong> is a collection of interconnected computing devices that can exchange data and share resources using a common set of communication protocols over transmission media.</p>
+                </div>
+                <div class="grid-2 animate-in delay-2">
+                    <div class="card">
+                        <h4>Essential Components</h4>
+                        <p><strong>Nodes:</strong> End devices (hosts) and intermediate devices (switches, routers)<br><strong>Links:</strong> Physical (copper, fibre) or wireless transmission media<br><strong>Protocols:</strong> Agreed rules governing communication</p>
+                    </div>
+                    <div class="card">
+                        <h4>Core Functions</h4>
+                        <p><strong>Resource Sharing:</strong> Files, printers, computational power<br><strong>Communication:</strong> Email, messaging, video conferencing<br><strong>Distributed Processing:</strong> Load balancing, redundancy</p>
+                    </div>
+                </div>
+                <p class="animate-in delay-3" style="margin-top:1.5rem;font-size:1.2rem;color:var(--text-muted)">The simplest network: two computers connected by a cable, running compatible software.</p>
+            </div>
+        </div>
+
+        <!-- SLIDE 7: Network Diagram -->
+        <div class="slide" data-slide="7">
+            <div class="slide-content">
+                <h2>🖥️ Anatomy of a Simple Network</h2>
+                <div class="diagram-container animate-in">
+                    <svg viewBox="0 0 900 300" style="max-width:900px">
+                        <rect x="20" y="20" width="260" height="260" rx="15" fill="#f0fdf4" stroke="#86efac" stroke-width="2"/>
+                        <text x="150" y="50" text-anchor="middle" fill="#166534" font-size="12" font-weight="600">LOCAL AREA NETWORK</text>
+                        <rect x="50" y="75" width="85" height="60" rx="10" fill="#0ea5e9"/>
+                        <text x="92" y="105" text-anchor="middle" fill="white" font-size="11" font-weight="600">Workstation</text>
+                        <text x="92" y="122" text-anchor="middle" fill="#bae6fd" font-size="9">192.168.1.10</text>
+                        <rect x="50" y="165" width="85" height="60" rx="10" fill="#0ea5e9"/>
+                        <text x="92" y="195" text-anchor="middle" fill="white" font-size="11" font-weight="600">Laptop</text>
+                        <text x="92" y="212" text-anchor="middle" fill="#bae6fd" font-size="9">192.168.1.11</text>
+                        <rect x="170" y="115" width="90" height="45" rx="8" fill="#10b981"/>
+                        <text x="215" y="142" text-anchor="middle" fill="white" font-size="10" font-weight="600">Switch (L2)</text>
+                        <rect x="320" y="105" width="100" height="65" rx="10" fill="#8b5cf6"/>
+                        <text x="370" y="132" text-anchor="middle" fill="white" font-size="11" font-weight="600">Router (L3)</text>
+                        <text x="370" y="150" text-anchor="middle" fill="#ddd6fe" font-size="9">Gateway: .1</text>
+                        <ellipse cx="530" cy="137" rx="75" ry="45" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+                        <text x="530" y="132" text-anchor="middle" fill="#92400e" font-size="12" font-weight="600">Internet</text>
+                        <text x="530" y="150" text-anchor="middle" fill="#a16207" font-size="9">(WAN)</text>
+                        <rect x="670" y="95" width="95" height="85" rx="10" fill="#ef4444"/>
+                        <text x="717" y="128" text-anchor="middle" fill="white" font-size="11" font-weight="600">Web Server</text>
+                        <text x="717" y="148" text-anchor="middle" fill="#fecaca" font-size="9">93.184.216.34</text>
+                        <text x="717" y="165" text-anchor="middle" fill="#fecaca" font-size="8">(example.com)</text>
+                        <line x1="135" y1="105" x2="170" y2="130" stroke="#334155" stroke-width="3"/>
+                        <line x1="135" y1="195" x2="170" y2="150" stroke="#334155" stroke-width="3"/>
+                        <line x1="260" y1="137" x2="320" y2="137" stroke="#334155" stroke-width="3"/>
+                        <line x1="420" y1="137" x2="455" y2="137" stroke="#334155" stroke-width="3" stroke-dasharray="8,4"/>
+                        <line x1="605" y1="137" x2="670" y2="137" stroke="#334155" stroke-width="3" stroke-dasharray="8,4"/>
+                    </svg>
+                </div>
+                <div class="grid-3 animate-in delay-2" style="max-width:900px;margin:0 auto">
+                    <div style="text-align:center"><div style="color:#0ea5e9;font-weight:700">End Devices</div><div style="font-size:.95rem;color:var(--text-muted)">Generate & consume data</div></div>
+                    <div style="text-align:center"><div style="color:#10b981;font-weight:700">Switch (Layer 2)</div><div style="font-size:.95rem;color:var(--text-muted)">Forwards frames by MAC</div></div>
+                    <div style="text-align:center"><div style="color:#8b5cf6;font-weight:700">Router (Layer 3)</div><div style="font-size:.95rem;color:var(--text-muted)">Routes packets by IP</div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 8: Network Components -->
+        <div class="slide" data-slide="8">
+            <div class="slide-content">
+                <h2>🔩 Fundamental Network Components</h2>
+                <div class="grid-4">
+                    <div class="card animate-in delay-1">
+                        <div class="card-icon">💻</div>
+                        <h4>Hosts (End Systems)</h4>
+                        <p>Devices that originate or terminate network communication: PCs, servers, smartphones, IoT sensors</p>
+                    </div>
+                    <div class="card animate-in delay-2">
+                        <div class="card-icon">🔌</div>
+                        <h4>Network Interface Card</h4>
+                        <p>Hardware adapter with unique MAC address; bridges host to physical medium</p>
+                    </div>
+                    <div class="card animate-in delay-3">
+                        <div class="card-icon">🔀</div>
+                        <h4>Switch</h4>
+                        <p>Layer 2 device; learns MAC addresses; forwards frames only to destination port</p>
+                    </div>
+                    <div class="card animate-in delay-4">
+                        <div class="card-icon">🌐</div>
+                        <h4>Router</h4>
+                        <p>Layer 3 device; routes packets between different IP networks; maintains routing tables</p>
+                    </div>
+                </div>
+                <div class="warning-box animate-in delay-5" style="margin-top:1.5rem">
+                    <div class="warn-title">⚠️ Historical Note: The Hub</div>
+                    <p>Before switches, <strong>hubs</strong> broadcast every frame to all ports, causing <em>collision domains</em> spanning the entire network. Switches eliminated this by creating separate collision domains per port.</p>
+                </div>
+            </div>
+        </div>
+        <!-- SLIDE 9: MAC vs IP -->
+        <div class="slide" data-slide="9">
+            <div class="slide-content">
+                <h2>🏷️ Network Addressing: MAC vs IP</h2>
+                <div class="table-container animate-in">
+                    <table>
+                        <thead><tr><th>Characteristic</th><th>MAC Address</th><th>IP Address</th></tr></thead>
+                        <tbody>
+                            <tr><td><strong>Layer</strong></td><td>Data Link (Layer 2)</td><td>Network (Layer 3)</td></tr>
+                            <tr><td><strong>Format</strong></td><td>48 bits: <code>AA:BB:CC:DD:EE:FF</code></td><td>IPv4: 32 bits <code>192.168.1.10</code></td></tr>
+                            <tr><td><strong>Assignment</strong></td><td>Burned into NIC by manufacturer</td><td>Configured manually or via DHCP</td></tr>
+                            <tr><td><strong>Scope</strong></td><td>Local segment only (not routed)</td><td>Global (routable across networks)</td></tr>
+                            <tr><td><strong>Analogy</strong></td><td>Your fingerprint — permanent identity</td><td>Your postal address — location-based</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="code-block animate-in delay-2" data-lang="bash">
+<span class="comment"># View your MAC and IP addresses on Linux</span>
+$ ip -br link
+lo      UNKNOWN   00:00:00:00:00:00
+eth0    UP        <span class="string">02:42:ac:11:00:02</span>
+
+$ ip -br addr
+lo      UNKNOWN   127.0.0.1/8
+eth0    UP        <span class="string">172.17.0.2/16</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 10: Ports -->
+        <div class="slide" data-slide="10">
+            <div class="slide-content">
+                <h2>🚪 Ports: Addressing Applications</h2>
+                <p style="font-size:1.25rem;margin-bottom:1.5rem">An IP address identifies a <em>host</em>; a <strong>port number</strong> identifies a <em>process</em> on that host.</p>
+                <div class="diagram-container animate-in">
+                    <svg viewBox="0 0 750 200" style="max-width:750px">
+                        <rect x="220" y="25" width="280" height="155" rx="15" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="2"/>
+                        <text x="360" y="48" text-anchor="middle" fill="#334155" font-size="10" font-weight="600">SERVER: 192.168.1.100</text>
+                        <rect x="245" y="62" width="65" height="40" rx="8" fill="#0ea5e9"/><text x="277" y="82" text-anchor="middle" fill="white" font-size="9" font-weight="600">HTTP</text><text x="277" y="95" text-anchor="middle" fill="#bae6fd" font-size="8">:80</text>
+                        <rect x="325" y="62" width="65" height="40" rx="8" fill="#10b981"/><text x="357" y="82" text-anchor="middle" fill="white" font-size="9" font-weight="600">SSH</text><text x="357" y="95" text-anchor="middle" fill="#a7f3d0" font-size="8">:22</text>
+                        <rect x="405" y="62" width="65" height="40" rx="8" fill="#8b5cf6"/><text x="437" y="82" text-anchor="middle" fill="white" font-size="9" font-weight="600">MySQL</text><text x="437" y="95" text-anchor="middle" fill="#ddd6fe" font-size="8">:3306</text>
+                        <rect x="245" y="115" width="65" height="40" rx="8" fill="#f59e0b"/><text x="277" y="135" text-anchor="middle" fill="white" font-size="9" font-weight="600">Custom</text><text x="277" y="148" text-anchor="middle" fill="#fef3c7" font-size="8">:9090</text>
+                        <rect x="40" y="75" width="90" height="45" rx="10" fill="#64748b"/><text x="85" y="98" text-anchor="middle" fill="white" font-size="9" font-weight="600">Client</text><text x="85" y="112" text-anchor="middle" fill="#e2e8f0" font-size="7">:54321 (ephemeral)</text>
+                        <path d="M 130 97 Q 180 70 245 82" stroke="#0ea5e9" stroke-width="2" fill="none"/>
+                        <text x="175" y="62" text-anchor="middle" fill="#0ea5e9" font-size="8">TCP to :80</text>
+                        <text x="600" y="65" text-anchor="start" fill="#334155" font-size="9" font-weight="600">Port Ranges:</text>
+                        <text x="600" y="82" text-anchor="start" fill="#64748b" font-size="8">0-1023: Well-known</text>
+                        <text x="600" y="97" text-anchor="start" fill="#64748b" font-size="8">1024-49151: Registered</text>
+                        <text x="600" y="112" text-anchor="start" fill="#64748b" font-size="8">49152-65535: Ephemeral</text>
+                    </svg>
+                </div>
+                <div class="code-block animate-in delay-2" data-lang="bash">
+<span class="comment"># List all listening TCP and UDP sockets with process info</span>
+$ ss -lntup
+Netid  State   Recv-Q  Send-Q   Local Address:Port   Peer Address:Port  Process
+tcp    LISTEN  0       128      0.0.0.0:<span class="number">22</span>           0.0.0.0:*          users:(("sshd",pid=1234))
+tcp    LISTEN  0       511      0.0.0.0:<span class="number">80</span>           0.0.0.0:*          users:(("nginx",pid=5678))
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 11: Network Classifications -->
+        <div class="slide" data-slide="11">
+            <div class="slide-content">
+                <h2>🗺️ Network Classifications by Geographical Scope</h2>
+                <div class="table-container animate-in">
+                    <table>
+                        <thead><tr><th>Type</th><th>Coverage</th><th>Technologies</th><th>Examples</th></tr></thead>
+                        <tbody>
+                            <tr><td><strong>PAN</strong><br><span style="font-size:.85rem;color:var(--text-muted)">Personal Area Network</span></td><td>~10 metres</td><td>Bluetooth, USB, ZigBee, NFC</td><td>Smartphone to earbuds</td></tr>
+                            <tr><td><strong>LAN</strong><br><span style="font-size:.85rem;color:var(--text-muted)">Local Area Network</span></td><td>~1 kilometre</td><td>Ethernet (802.3), Wi-Fi (802.11)</td><td>Office network, campus</td></tr>
+                            <tr><td><strong>MAN</strong><br><span style="font-size:.85rem;color:var(--text-muted)">Metropolitan Area Network</span></td><td>~50 kilometres</td><td>Metro Ethernet, fibre rings</td><td>City-wide municipal network</td></tr>
+                            <tr><td><strong>WAN</strong><br><span style="font-size:.85rem;color:var(--text-muted)">Wide Area Network</span></td><td>Unlimited</td><td>MPLS, leased lines, satellite</td><td>Corporate interconnects, Internet</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="insight-box animate-in delay-2" style="margin-top:1.5rem">
+                    <div class="insight-title">💡 Your Home Network</div>
+                    <p>Your home Wi-Fi constitutes a <strong>LAN</strong>. Your router connects this LAN to your ISP's <strong>WAN</strong>, which ultimately reaches the global <strong>Internet</strong>.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 12: Topologies -->
+        <div class="slide" data-slide="12">
+            <div class="slide-content">
+                <h2>📐 Physical and Logical Topologies</h2>
+                <div class="grid-3">
+                    <div class="card animate-in delay-1">
+                        <div class="diagram-container" style="padding:1rem;margin:0">
+                            <svg viewBox="0 0 150 110"><circle cx="75" cy="32" r="16" fill="#0ea5e9"/><text x="75" y="37" text-anchor="middle" fill="white" font-size="9" font-weight="600">SW</text><circle cx="30" cy="90" r="11" fill="#64748b"/><circle cx="75" cy="90" r="11" fill="#64748b"/><circle cx="120" cy="90" r="11" fill="#64748b"/><line x1="75" y1="48" x2="30" y2="79" stroke="#334155" stroke-width="2"/><line x1="75" y1="48" x2="75" y2="79" stroke="#334155" stroke-width="2"/><line x1="75" y1="48" x2="120" y2="79" stroke="#334155" stroke-width="2"/></svg>
+                        </div>
+                        <h4>Star Topology</h4>
+                        <p>Central switch; each host has dedicated connection. <strong>Most common</strong> in modern LANs.</p>
+                    </div>
+                    <div class="card animate-in delay-2">
+                        <div class="diagram-container" style="padding:1rem;margin:0">
+                            <svg viewBox="0 0 150 110"><line x1="20" y1="55" x2="130" y2="55" stroke="#f59e0b" stroke-width="4"/><circle cx="40" cy="55" r="11" fill="#64748b"/><circle cx="75" cy="55" r="11" fill="#64748b"/><circle cx="110" cy="55" r="11" fill="#64748b"/><text x="75" y="88" text-anchor="middle" fill="#92400e" font-size="8">Shared medium</text></svg>
+                        </div>
+                        <h4>Bus Topology</h4>
+                        <p>Single shared cable (coaxial). Historical: 10BASE2 Ethernet. Collision-prone.</p>
+                    </div>
+                    <div class="card animate-in delay-3">
+                        <div class="diagram-container" style="padding:1rem;margin:0">
+                            <svg viewBox="0 0 150 110"><circle cx="75" cy="22" r="11" fill="#64748b"/><circle cx="30" cy="58" r="11" fill="#64748b"/><circle cx="120" cy="58" r="11" fill="#64748b"/><circle cx="50" cy="95" r="11" fill="#64748b"/><circle cx="100" cy="95" r="11" fill="#64748b"/><line x1="75" y1="33" x2="30" y2="47" stroke="#334155" stroke-width="2"/><line x1="75" y1="33" x2="120" y2="47" stroke="#334155" stroke-width="2"/><line x1="30" y1="69" x2="50" y2="84" stroke="#334155" stroke-width="2"/><line x1="120" y1="69" x2="100" y2="84" stroke="#334155" stroke-width="2"/><line x1="50" y1="95" x2="100" y2="95" stroke="#334155" stroke-width="2" stroke-dasharray="4,2"/></svg>
+                        </div>
+                        <h4>Mesh / Hybrid</h4>
+                        <p>Multiple paths for redundancy and fault tolerance. Used in WANs and data centres.</p>
+                    </div>
+                </div>
+                <p class="animate-in delay-4" style="margin-top:1.5rem;font-size:1.1rem;color:var(--text-muted)"><strong>Logical topology</strong> (how data flows) may differ from <strong>physical topology</strong> (cable layout).</p>
+            </div>
+        </div>
+
+        <!-- SLIDE 13: Circuit vs Packet Switching -->
+        <div class="slide" data-slide="13">
+            <div class="slide-content">
+                <h2>⚡ How Data Traverses Networks</h2>
+                <p style="font-size:1.3rem;margin-bottom:1.5rem">Two fundamental paradigms exist for moving data across a network:</p>
+                <div class="grid-2">
+                    <div class="card card-danger animate-in delay-1">
+                        <h4>🔴 Circuit Switching</h4>
+                        <p style="font-size:1.15rem">A <strong>dedicated path</strong> is established and reserved for the entire duration of communication. Resources are allocated even during silence.</p>
+                        <p style="margin-top:.8rem;font-size:1rem;color:var(--text-muted)">Example: Traditional telephone (PSTN) calls</p>
+                    </div>
+                    <div class="card card-success animate-in delay-2">
+                        <h4>🟢 Packet Switching</h4>
+                        <p style="font-size:1.15rem">Data is broken into <strong>packets</strong> that travel independently, potentially via different routes. Resources shared statistically.</p>
+                        <p style="margin-top:.8rem;font-size:1rem;color:var(--text-muted)">Example: The Internet, all modern data networks</p>
+                    </div>
+                </div>
+                <div class="story-box animate-in delay-3" style="margin-top:1.5rem">
+                    <div class="story-title">📞 The Telephone Analogy</div>
+                    <p>Circuit switching is like reserving an entire motorway lane for your journey, even when you stop for coffee. Packet switching is like sharing the road with other vehicles, each finding their own route.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 14: Packet Switching Detail -->
+        <div class="slide" data-slide="14">
+            <div class="slide-content">
+                <h2>📦 Packet Switching: The Internet's Foundation</h2>
+                <div class="diagram-container animate-in">
+                    <svg viewBox="0 0 750 200" style="max-width:750px">
+                        <rect x="25" y="75" width="65" height="45" rx="8" fill="#0ea5e9"/><text x="57" y="102" text-anchor="middle" fill="white" font-size="9">Sender</text>
+                        <rect x="660" y="75" width="65" height="45" rx="8" fill="#10b981"/><text x="692" y="102" text-anchor="middle" fill="white" font-size="9">Receiver</text>
+                        <circle cx="180" cy="60" r="18" fill="#8b5cf6"/><text x="180" y="65" text-anchor="middle" fill="white" font-size="8">R1</text>
+                        <circle cx="320" cy="97" r="18" fill="#8b5cf6"/><text x="320" y="102" text-anchor="middle" fill="white" font-size="8">R2</text>
+                        <circle cx="320" cy="45" r="18" fill="#8b5cf6"/><text x="320" y="50" text-anchor="middle" fill="white" font-size="8">R3</text>
+                        <circle cx="460" cy="97" r="18" fill="#8b5cf6"/><text x="460" y="102" text-anchor="middle" fill="white" font-size="8">R4</text>
+                        <circle cx="560" cy="60" r="18" fill="#8b5cf6"/><text x="560" y="65" text-anchor="middle" fill="white" font-size="8">R5</text>
+                        <line x1="90" y1="90" x2="162" y2="67" stroke="#cbd5e1" stroke-width="2"/>
+                        <line x1="198" y1="60" x2="302" y2="50" stroke="#cbd5e1" stroke-width="2"/>
+                        <line x1="198" y1="68" x2="302" y2="90" stroke="#cbd5e1" stroke-width="2"/>
+                        <line x1="338" y1="50" x2="542" y2="55" stroke="#cbd5e1" stroke-width="2"/>
+                        <line x1="338" y1="97" x2="442" y2="97" stroke="#cbd5e1" stroke-width="2"/>
+                        <line x1="478" y1="90" x2="542" y2="67" stroke="#cbd5e1" stroke-width="2"/>
+                        <line x1="578" y1="67" x2="660" y2="90" stroke="#cbd5e1" stroke-width="2"/>
+                        <rect x="220" y="42" width="20" height="13" rx="3" fill="#ef4444"/><text x="230" y="52" text-anchor="middle" fill="white" font-size="6">P1</text>
+                        <rect x="255" y="82" width="20" height="13" rx="3" fill="#f59e0b"/><text x="265" y="92" text-anchor="middle" fill="white" font-size="6">P2</text>
+                        <text x="375" y="165" text-anchor="middle" fill="#64748b" font-size="9">Packets may take different routes and arrive out of order</text>
+                    </svg>
+                </div>
+                <div class="grid-2 animate-in delay-2">
+                    <div><h4 style="color:var(--success)">✓ Advantages</h4><ul style="font-size:1.1rem"><li>Efficient resource utilisation (statistical multiplexing)</li><li>Fault tolerant: packets route around failures</li><li>Supports bursty traffic naturally</li></ul></div>
+                    <div><h4 style="color:var(--danger)">✗ Disadvantages</h4><ul style="font-size:1.1rem"><li>Variable delay (jitter) due to queuing</li><li>Packets may arrive out of order</li><li>Congestion can cause packet loss</li></ul></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 15: Quiz - Switching -->
+        <div class="slide" data-slide="15">
+            <div class="slide-content">
+                <h2>🎯 Knowledge Check: Switching Paradigms</h2>
+                <div class="quiz-container animate-in">
+                    <p class="quiz-question">A video streaming service like Netflix uses packet switching. What mechanism compensates for variable network delay (jitter) to provide smooth playback?</p>
+                    <div class="quiz-option" onclick="checkQuiz(this, false)">A) The server sends packets faster when delay increases</div>
+                    <div class="quiz-option" onclick="checkQuiz(this, true)">B) A client-side buffer accumulates data before playback begins</div>
+                    <div class="quiz-option" onclick="checkQuiz(this, false)">C) Routers prioritise video packets over all other traffic</div>
+                    <div class="quiz-option" onclick="checkQuiz(this, false)">D) TCP guarantees constant inter-packet arrival times</div>
+                    <div class="quiz-feedback correct">✓ Correct! Buffering at the client absorbs jitter. When you see "buffering..." the buffer has emptied due to sustained high latency or packet loss.</div>
+                    <div class="quiz-feedback incorrect">✗ Not quite. Consider what happens on your device before video starts playing.</div>
+                </div>
+            </div>
+        </div>
+        <!-- SLIDE 16: Why Layering -->
+        <div class="slide" data-slide="16">
+            <div class="slide-content">
+                <h2>🧱 Why Protocol Layering?</h2>
+                <p style="font-size:1.25rem;margin-bottom:1.5rem">Network communication involves numerous complex tasks. <strong>Layering</strong> divides this complexity into manageable, independent modules.</p>
+                <div class="grid-2">
+                    <div class="card animate-in delay-1">
+                        <h4>Benefits of Layered Architecture</h4>
+                        <ul style="font-size:1.05rem"><li><strong>Modularity:</strong> Change one layer without affecting others</li><li><strong>Abstraction:</strong> Each layer provides services to the layer above</li><li><strong>Interoperability:</strong> Different vendors implement same standards</li><li><strong>Easier debugging:</strong> Isolate problems to specific layers</li></ul>
+                    </div>
+                    <div class="card animate-in delay-2">
+                        <h4>Real-World Analogy: Postal System</h4>
+                        <ul style="font-size:1.05rem"><li><strong>Application:</strong> You write a letter</li><li><strong>Transport:</strong> Envelope with recipient name</li><li><strong>Network:</strong> Postal address for routing</li><li><strong>Link:</strong> Postman's local delivery route</li><li><strong>Physical:</strong> Truck, train, aeroplane</li></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 17: Protocol Wars -->
+        <div class="slide" data-slide="17">
+            <div class="slide-content">
+                <h2>⚔️ The Protocol Wars: OSI vs TCP/IP</h2>
+                <div class="story-box animate-in">
+                    <div class="story-title">📜 1980s-1990s: A Tale of Two Standards</div>
+                    <p>The telecommunications industry backed the <strong>OSI model</strong> — a comprehensive, seven-layer framework designed by committee. Meanwhile, the academic community rallied behind <strong>TCP/IP</strong>, born from ARPANET with the philosophy: <em>"rough consensus and running code"</em>.</p>
+                </div>
+                <div class="grid-2 animate-in delay-2">
+                    <div class="card card-danger">
+                        <h4>❌ OSI (Open Systems Interconnection)</h4>
+                        <p>7 layers with strict boundaries. Theoretically elegant but implementation proved impractical. By the time products shipped, TCP/IP had already won the market.</p>
+                    </div>
+                    <div class="card card-success">
+                        <h4>✓ TCP/IP (Internet Protocol Suite)</h4>
+                        <p>4 pragmatic layers. Implemented in BSD UNIX (1983), freely distributed. Became the foundation of the Internet we know today.</p>
+                    </div>
+                </div>
+                <p class="animate-in delay-3" style="margin-top:1.5rem;font-size:1.2rem;color:var(--purple)"><strong>Lesson:</strong> Working software and community adoption triumph over bureaucratic perfection.</p>
+            </div>
+        </div>
+
+        <!-- SLIDE 18: TCP/IP Stack -->
+        <div class="slide" data-slide="18">
+            <div class="slide-content">
+                <h2>📚 The TCP/IP Protocol Stack</h2>
+                <div class="diagram-container animate-in">
+                    <svg viewBox="0 0 650 280" style="max-width:650px">
+                        <rect x="90" y="18" width="470" height="48" rx="10" fill="#ef4444"/><text x="325" y="38" text-anchor="middle" fill="white" font-size="12" font-weight="600">Application Layer</text><text x="325" y="54" text-anchor="middle" fill="#fecaca" font-size="9">HTTP, FTP, SMTP, DNS, SSH, DHCP</text>
+                        <rect x="90" y="74" width="470" height="48" rx="10" fill="#f59e0b"/><text x="325" y="94" text-anchor="middle" fill="white" font-size="12" font-weight="600">Transport Layer</text><text x="325" y="110" text-anchor="middle" fill="#fef3c7" font-size="9">TCP (reliable), UDP (fast), SCTP, QUIC</text>
+                        <rect x="90" y="130" width="470" height="48" rx="10" fill="#10b981"/><text x="325" y="150" text-anchor="middle" fill="white" font-size="12" font-weight="600">Network (Internet) Layer</text><text x="325" y="166" text-anchor="middle" fill="#a7f3d0" font-size="9">IP (v4/v6), ICMP, ARP, routing protocols</text>
+                        <rect x="90" y="186" width="470" height="48" rx="10" fill="#0ea5e9"/><text x="325" y="206" text-anchor="middle" fill="white" font-size="12" font-weight="600">Link (Network Access) Layer</text><text x="325" y="222" text-anchor="middle" fill="#bae6fd" font-size="9">Ethernet, Wi-Fi (802.11), PPP, MAC addressing</text>
+                        <rect x="90" y="242" width="470" height="26" rx="8" fill="#64748b"/><text x="325" y="260" text-anchor="middle" fill="white" font-size="9">Physical: cables, radio waves, optical fibre</text>
+                        <text x="45" y="140" text-anchor="middle" fill="#64748b" font-size="8" transform="rotate(-90, 45, 140)">Encapsulation ↓</text>
+                        <text x="605" y="140" text-anchor="middle" fill="#64748b" font-size="8" transform="rotate(90, 605, 140)">Decapsulation ↑</text>
+                    </svg>
+                </div>
+                <div class="definition-box animate-in delay-2">
+                    <div class="def-label">Key Principle</div>
+                    <p>Each layer adds its own <strong>header</strong> (and sometimes trailer) to the data from the layer above. This process is called <strong>encapsulation</strong>. The reverse at the receiver is <strong>decapsulation</strong>.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 19: Encapsulation -->
+        <div class="slide" data-slide="19">
+            <div class="slide-content">
+                <h2>📦 Encapsulation: Wrapping Data Layer by Layer</h2>
+                <div class="diagram-container animate-in">
+                    <svg viewBox="0 0 750 240" style="max-width:750px">
+                        <rect x="320" y="12" width="130" height="28" rx="6" fill="#ef4444"/><text x="385" y="31" text-anchor="middle" fill="white" font-size="9" font-weight="600">HTTP Request</text><text x="240" y="31" fill="#ef4444" font-size="8" font-weight="600">Application →</text>
+                        <rect x="260" y="52" width="58" height="28" rx="6" fill="#f59e0b"/><text x="289" y="71" text-anchor="middle" fill="white" font-size="7">TCP Hdr</text>
+                        <rect x="318" y="52" width="132" height="28" rx="6" fill="#fecaca"/><text x="384" y="71" text-anchor="middle" fill="#7f1d1d" font-size="8">Data</text>
+                        <text x="175" y="71" fill="#f59e0b" font-size="8" font-weight="600">Transport →</text><text x="520" y="71" fill="#64748b" font-size="7">= Segment</text>
+                        <rect x="195" y="92" width="58" height="28" rx="6" fill="#10b981"/><text x="224" y="111" text-anchor="middle" fill="white" font-size="7">IP Hdr</text>
+                        <rect x="253" y="92" width="65" height="28" rx="6" fill="#fde68a"/><text x="285" y="111" text-anchor="middle" fill="#78350f" font-size="7">TCP</text>
+                        <rect x="318" y="92" width="132" height="28" rx="6" fill="#fecaca"/><text x="384" y="111" text-anchor="middle" fill="#7f1d1d" font-size="8">Data</text>
+                        <text x="175" y="111" fill="#10b981" font-size="8" font-weight="600">Network →</text><text x="520" y="111" fill="#64748b" font-size="7">= Packet</text>
+                        <rect x="130" y="132" width="58" height="28" rx="6" fill="#0ea5e9"/><text x="159" y="151" text-anchor="middle" fill="white" font-size="7">Eth Hdr</text>
+                        <rect x="188" y="132" width="65" height="28" rx="6" fill="#bbf7d0"/><text x="220" y="151" text-anchor="middle" fill="#14532d" font-size="7">IP</text>
+                        <rect x="253" y="132" width="65" height="28" rx="6" fill="#fde68a"/><text x="285" y="151" text-anchor="middle" fill="#78350f" font-size="7">TCP</text>
+                        <rect x="318" y="132" width="132" height="28" rx="6" fill="#fecaca"/><text x="384" y="151" text-anchor="middle" fill="#7f1d1d" font-size="8">Data</text>
+                        <rect x="450" y="132" width="42" height="28" rx="6" fill="#0ea5e9"/><text x="471" y="151" text-anchor="middle" fill="white" font-size="6">FCS</text>
+                        <text x="70" y="151" fill="#0ea5e9" font-size="8" font-weight="600">Link →</text><text x="545" y="151" fill="#64748b" font-size="7">= Frame</text>
+                        <rect x="130" y="172" width="362" height="24" rx="6" fill="#64748b"/><text x="311" y="189" text-anchor="middle" fill="white" font-size="8">Bits: 01101001 10110100 01011010 ...</text>
+                        <text x="70" y="189" fill="#64748b" font-size="8" font-weight="600">Physical →</text>
+                    </svg>
+                </div>
+                <div class="warning-box animate-in delay-2">
+                    <div class="warn-title">⚠️ Maximum Transmission Unit (MTU)</div>
+                    <p>Ethernet frames have a maximum payload of <strong>1500 bytes</strong>. Larger IP packets must be <strong>fragmented</strong> — split into multiple frames — which impacts performance.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 20: PDUs -->
+        <div class="slide" data-slide="20">
+            <div class="slide-content">
+                <h2>📋 Protocol Data Units (PDUs)</h2>
+                <p style="font-size:1.2rem;margin-bottom:1.5rem">Each layer has its own terminology for the unit of data it processes:</p>
+                <div class="table-container animate-in">
+                    <table>
+                        <thead><tr><th>Layer</th><th>PDU Name</th><th>Key Header Fields</th></tr></thead>
+                        <tbody>
+                            <tr><td style="background:#fef2f2"><strong>Application</strong></td><td>Message / Data</td><td>Protocol-specific (HTTP headers, etc.)</td></tr>
+                            <tr><td style="background:#fffbeb"><strong>Transport</strong></td><td>Segment (TCP) / Datagram (UDP)</td><td>Source & destination ports, sequence numbers</td></tr>
+                            <tr><td style="background:#ecfdf5"><strong>Network</strong></td><td>Packet / Datagram</td><td>Source & destination IP, TTL, protocol</td></tr>
+                            <tr><td style="background:#eff6ff"><strong>Link</strong></td><td>Frame</td><td>Source & destination MAC, EtherType, FCS</td></tr>
+                            <tr><td style="background:#f1f5f9"><strong>Physical</strong></td><td>Bits / Symbols</td><td>Preamble, start delimiter</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 21: IPv4 Header -->
+        <div class="slide" data-slide="21">
+            <div class="slide-content">
+                <h2>🔍 IPv4 Header Structure (20 bytes minimum)</h2>
+                <div class="protocol-header animate-in">
+                    <div class="header-row">
+                        <div class="header-field"><div class="field-name">Version</div><div class="field-value">4</div><div class="field-bits">4 bits</div></div>
+                        <div class="header-field"><div class="field-name">IHL</div><div class="field-value">5</div><div class="field-bits">4 bits</div></div>
+                        <div class="header-field span-2"><div class="field-name">ToS (DSCP/ECN)</div><div class="field-value">0x00</div><div class="field-bits">8 bits</div></div>
+                        <div class="header-field span-4"><div class="field-name">Total Length</div><div class="field-value">1500</div><div class="field-bits">16 bits</div></div>
+                    </div>
+                    <div class="header-row">
+                        <div class="header-field span-4"><div class="field-name">Identification</div><div class="field-value">0x1a2b</div><div class="field-bits">16 bits</div></div>
+                        <div class="header-field"><div class="field-name">Flags</div><div class="field-value">010</div><div class="field-bits">3 bits</div></div>
+                        <div class="header-field span-4"><div class="field-name">Fragment Offset</div><div class="field-value">0</div><div class="field-bits">13 bits</div></div>
+                    </div>
+                    <div class="header-row">
+                        <div class="header-field span-2"><div class="field-name">TTL</div><div class="field-value">64</div><div class="field-bits">8 bits</div></div>
+                        <div class="header-field span-2"><div class="field-name">Protocol</div><div class="field-value">6 (TCP)</div><div class="field-bits">8 bits</div></div>
+                        <div class="header-field span-4"><div class="field-name">Header Checksum</div><div class="field-value">0x4f3e</div><div class="field-bits">16 bits</div></div>
+                    </div>
+                    <div class="header-row"><div class="header-field span-8"><div class="field-name">Source IP Address</div><div class="field-value">192.168.1.100</div><div class="field-bits">32 bits</div></div></div>
+                    <div class="header-row"><div class="header-field span-8"><div class="field-name">Destination IP Address</div><div class="field-value">93.184.216.34</div><div class="field-bits">32 bits</div></div></div>
+                </div>
+                <p class="animate-in delay-2" style="margin-top:1rem;font-size:1rem;color:var(--text-muted)"><strong>TTL (Time To Live):</strong> Decremented by each router; packet discarded when TTL=0. Prevents infinite routing loops.</p>
+            </div>
+        </div>
+
+        <!-- SLIDE 22: Performance Metrics -->
+        <div class="slide" data-slide="22">
+            <div class="slide-content">
+                <h2>📊 Network Performance Metrics</h2>
+                <div class="grid-4">
+                    <div class="card card-accent animate-in delay-1"><div class="card-icon">📶</div><h4>Bandwidth</h4><p>Maximum theoretical data rate of a link (bits/second)</p></div>
+                    <div class="card card-success animate-in delay-2"><div class="card-icon">🚀</div><h4>Throughput</h4><p>Actual achieved data rate (often less than bandwidth)</p></div>
+                    <div class="card card-warning animate-in delay-3"><div class="card-icon">⏱️</div><h4>Latency</h4><p>Time for data to travel from source to destination</p></div>
+                    <div class="card card-danger animate-in delay-4"><div class="card-icon">📉</div><h4>Packet Loss</h4><p>Percentage of packets that fail to reach destination</p></div>
+                </div>
+                <div class="story-box animate-in delay-5" style="margin-top:1.5rem">
+                    <div class="story-title">🚰 The Water Pipe Analogy</div>
+                    <p><strong>Bandwidth</strong> is the pipe diameter. <strong>Throughput</strong> is actual water flow (limited by pressure and obstacles). <strong>Latency</strong> is how long it takes a drop to travel end-to-end.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 23: Types of Delay -->
+        <div class="slide" data-slide="23">
+            <div class="slide-content">
+                <h2>⏱️ The Four Components of End-to-End Delay</h2>
+                <div class="diagram-container animate-in">
+                    <svg viewBox="0 0 750 160" style="max-width:750px">
+                        <rect x="45" y="60" width="660" height="24" rx="12" fill="#e2e8f0"/>
+                        <rect x="45" y="60" width="95" height="24" rx="12" fill="#ef4444"/>
+                        <rect x="140" y="60" width="160" height="24" fill="#f59e0b"/>
+                        <rect x="300" y="60" width="175" height="24" fill="#10b981"/>
+                        <rect x="475" y="60" width="230" height="24" rx="12" fill="#0ea5e9"/>
+                        <text x="92" y="48" text-anchor="middle" fill="#ef4444" font-size="9" font-weight="600">Processing</text>
+                        <text x="220" y="48" text-anchor="middle" fill="#f59e0b" font-size="9" font-weight="600">Queuing</text>
+                        <text x="387" y="48" text-anchor="middle" fill="#10b981" font-size="9" font-weight="600">Transmission</text>
+                        <text x="590" y="48" text-anchor="middle" fill="#0ea5e9" font-size="9" font-weight="600">Propagation</text>
+                        <text x="92" y="102" text-anchor="middle" fill="#64748b" font-size="8">~μs</text>
+                        <text x="220" y="102" text-anchor="middle" fill="#64748b" font-size="8">Variable</text>
+                        <text x="387" y="102" text-anchor="middle" fill="#64748b" font-size="8">L/R</text>
+                        <text x="590" y="102" text-anchor="middle" fill="#64748b" font-size="8">d/s</text>
+                        <text x="375" y="140" text-anchor="middle" fill="#334155" font-size="10" font-weight="600">d_total = d_proc + d_queue + d_trans + d_prop</text>
+                    </svg>
+                </div>
+                <div class="grid-2 animate-in delay-2">
+                    <div class="card"><h4>🔴 Processing Delay (d<sub>proc</sub>)</h4><p>Time to examine packet header, determine output link. Typically microseconds.</p></div>
+                    <div class="card"><h4>🟠 Queuing Delay (d<sub>queue</sub>)</h4><p>Time waiting in output buffer. Highly variable; can be milliseconds under congestion.</p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 24: Transmission vs Propagation -->
+        <div class="slide" data-slide="24">
+            <div class="slide-content">
+                <h2>🔬 Transmission Delay vs Propagation Delay</h2>
+                <div class="grid-2">
+                    <div class="card card-success animate-in delay-1">
+                        <h4>🟢 Transmission Delay (d<sub>trans</sub>)</h4>
+                        <p style="font-size:1.15rem">Time to <strong>push all bits</strong> of the packet onto the link.</p>
+                        <div style="background:#ecfdf5;padding:1rem;border-radius:10px;margin-top:1rem;font-family:'JetBrains Mono',monospace">d<sub>trans</sub> = L / R</div>
+                        <p style="margin-top:.8rem;font-size:1rem;color:var(--text-muted)"><strong>L</strong> = packet size (bits), <strong>R</strong> = bandwidth (bits/sec)</p>
+                    </div>
+                    <div class="card card-accent animate-in delay-2">
+                        <h4>🔵 Propagation Delay (d<sub>prop</sub>)</h4>
+                        <p style="font-size:1.15rem">Time for a bit to <strong>travel</strong> across the link.</p>
+                        <div style="background:#eff6ff;padding:1rem;border-radius:10px;margin-top:1rem;font-family:'JetBrains Mono',monospace">d<sub>prop</sub> = d / s</div>
+                        <p style="margin-top:.8rem;font-size:1rem;color:var(--text-muted)"><strong>d</strong> = distance (m), <strong>s</strong> = ~2×10⁸ m/s in fibre</p>
+                    </div>
+                </div>
+                <div class="insight-box animate-in delay-3" style="margin-top:1.5rem">
+                    <div class="insight-title">💡 Critical Insight</div>
+                    <p>A 1 Gbps link <strong>transmits</strong> 10× faster than 100 Mbps, but <strong>propagation</strong> delay is unchanged — limited by the speed of light. Intercontinental latency cannot drop below ~50ms.</p>
+                </div>
+            </div>
+        </div>
+        <!-- SLIDE 25: Interactive Calculator -->
+        <div class="slide" data-slide="25">
+            <div class="slide-content">
+                <h2>🧮 Interactive: Transmission Delay Calculator</h2>
+                <div class="interactive-panel animate-in">
+                    <p style="margin-bottom:1rem;font-size:1.1rem">Formula: <strong>d<sub>trans</sub> = L / R</strong></p>
+                    <div class="slider-row"><label>Packet Size (L):</label><input type="range" id="packetSize" min="64" max="65535" value="1500" oninput="calculateDelay()"><span class="slider-value" id="packetSizeValue">1,500 bytes</span></div>
+                    <div class="slider-row"><label>Link Bandwidth (R):</label><input type="range" id="bandwidth" min="1" max="10000" value="100" oninput="calculateDelay()"><span class="slider-value" id="bandwidthValue">100 Mbps</span></div>
+                    <div class="result-display" id="delayResult">Transmission Delay: 0.12 ms (120 μs)</div>
+                </div>
+                <div class="code-block animate-in delay-2" data-lang="python">
+<span class="comment"># Python: Calculate transmission delay</span>
+<span class="keyword">def</span> <span class="function">transmission_delay</span>(size_bytes: <span class="builtin">int</span>, rate_mbps: <span class="builtin">float</span>) -> <span class="builtin">float</span>:
+    <span class="string">"""Return transmission delay in microseconds."""</span>
+    size_bits = size_bytes * <span class="number">8</span>
+    rate_bps = rate_mbps * <span class="number">1_000_000</span>
+    <span class="keyword">return</span> (size_bits / rate_bps) * <span class="number">1_000_000</span>
+
+<span class="builtin">print</span>(<span class="string">f"1500B @ 100Mbps: </span>{transmission_delay(<span class="number">1500</span>, <span class="number">100</span>):.1f}<span class="string"> μs"</span>)  <span class="comment"># 120.0 μs</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 26: RTT -->
+        <div class="slide" data-slide="26">
+            <div class="slide-content">
+                <h2>🔄 RTT (Round-Trip Time)</h2>
+                <div class="diagram-container animate-in">
+                    <svg viewBox="0 0 600 180" style="max-width:600px">
+                        <rect x="45" y="60" width="70" height="45" rx="10" fill="#0ea5e9"/><text x="80" y="83" text-anchor="middle" fill="white" font-size="10" font-weight="600">Client</text><text x="80" y="97" text-anchor="middle" fill="#bae6fd" font-size="7">t=0</text>
+                        <rect x="485" y="60" width="70" height="45" rx="10" fill="#8b5cf6"/><text x="520" y="87" text-anchor="middle" fill="white" font-size="10" font-weight="600">Server</text>
+                        <line x1="115" y1="70" x2="485" y2="70" stroke="#10b981" stroke-width="2"/><polygon points="480,66 490,70 480,74" fill="#10b981"/>
+                        <text x="300" y="62" text-anchor="middle" fill="#10b981" font-size="9" font-weight="600">ICMP Echo Request</text>
+                        <line x1="485" y1="95" x2="115" y2="95" stroke="#f59e0b" stroke-width="2"/><polygon points="120,91 110,95 120,99" fill="#f59e0b"/>
+                        <text x="300" y="112" text-anchor="middle" fill="#f59e0b" font-size="9" font-weight="600">ICMP Echo Reply</text>
+                        <path d="M 80 120 L 80 135 L 520 135 L 520 120" stroke="#334155" stroke-width="2" fill="none"/>
+                        <text x="300" y="155" text-anchor="middle" fill="#334155" font-size="11" font-weight="700">RTT = t_forward + t_processing + t_return</text>
+                    </svg>
+                </div>
+                <div class="grid-3 animate-in delay-2">
+                    <div class="card" style="text-align:center"><h4>localhost</h4><p style="font-size:1.6rem;color:var(--success);font-weight:700">&lt; 0.1 ms</p></div>
+                    <div class="card" style="text-align:center"><h4>Same LAN</h4><p style="font-size:1.6rem;color:var(--secondary);font-weight:700">0.5–2 ms</p></div>
+                    <div class="card" style="text-align:center"><h4>Transatlantic</h4><p style="font-size:1.6rem;color:var(--accent);font-weight:700">70–120 ms</p></div>
+                </div>
+                <div class="code-block animate-in delay-3" data-lang="bash">
+$ ping -c 4 8.8.8.8
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=118 <span class="string">time=14.2 ms</span>
+rtt min/avg/max/mdev = 13.5/<span class="string">14.1</span>/14.8/0.5 ms
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 27: TCP vs UDP -->
+        <div class="slide" data-slide="27">
+            <div class="slide-content">
+                <h2>🔀 Transport Protocols: TCP vs UDP</h2>
+                <div class="table-container animate-in">
+                    <table>
+                        <thead><tr><th>Characteristic</th><th>TCP</th><th>UDP</th></tr></thead>
+                        <tbody>
+                            <tr><td><strong>Connection</strong></td><td>Connection-oriented (3-way handshake)</td><td>Connectionless (fire-and-forget)</td></tr>
+                            <tr><td><strong>Reliability</strong></td><td>Guaranteed (ACKs, retransmission)</td><td>Best-effort, no guarantees</td></tr>
+                            <tr><td><strong>Ordering</strong></td><td>In-order delivery (sequence numbers)</td><td>No ordering guarantee</td></tr>
+                            <tr><td><strong>Flow Control</strong></td><td>Yes (sliding window)</td><td>No</td></tr>
+                            <tr><td><strong>Header Size</strong></td><td>20–60 bytes</td><td>8 bytes</td></tr>
+                            <tr><td><strong>Typical Uses</strong></td><td>HTTP, SSH, SMTP, FTP</td><td>DNS, VoIP, gaming, streaming</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 28: TCP Handshake -->
+        <div class="slide" data-slide="28">
+            <div class="slide-content">
+                <h2>🤝 TCP Three-Way Handshake</h2>
+                <div class="diagram-container animate-in">
+                    <svg viewBox="0 0 550 250" style="max-width:550px">
+                        <rect x="60" y="20" width="65" height="32" rx="8" fill="#0ea5e9"/><text x="92" y="41" text-anchor="middle" fill="white" font-size="10" font-weight="600">Client</text>
+                        <line x1="92" y1="52" x2="92" y2="220" stroke="#0ea5e9" stroke-width="3"/>
+                        <rect x="425" y="20" width="65" height="32" rx="8" fill="#8b5cf6"/><text x="457" y="41" text-anchor="middle" fill="white" font-size="10" font-weight="600">Server</text>
+                        <line x1="457" y1="52" x2="457" y2="220" stroke="#8b5cf6" stroke-width="3"/>
+                        <line x1="92" y1="80" x2="457" y2="100" stroke="#10b981" stroke-width="2"/><polygon points="452,95 462,100 452,105" fill="#10b981"/>
+                        <rect x="210" y="75" width="130" height="22" rx="5" fill="#10b981"/><text x="275" y="90" text-anchor="middle" fill="white" font-size="8" font-weight="600">SYN, seq=x</text>
+                        <text x="50" y="85" fill="#10b981" font-size="8" font-weight="600">1.</text>
+                        <line x1="457" y1="125" x2="92" y2="145" stroke="#f59e0b" stroke-width="2"/><polygon points="97,140 87,145 97,150" fill="#f59e0b"/>
+                        <rect x="190" y="120" width="170" height="22" rx="5" fill="#f59e0b"/><text x="275" y="135" text-anchor="middle" fill="white" font-size="8" font-weight="600">SYN-ACK, seq=y, ack=x+1</text>
+                        <text x="500" y="130" fill="#f59e0b" font-size="8" font-weight="600">2.</text>
+                        <line x1="92" y1="170" x2="457" y2="190" stroke="#ef4444" stroke-width="2"/><polygon points="452,185 462,190 452,195" fill="#ef4444"/>
+                        <rect x="210" y="165" width="130" height="22" rx="5" fill="#ef4444"/><text x="275" y="180" text-anchor="middle" fill="white" font-size="8" font-weight="600">ACK, ack=y+1</text>
+                        <text x="50" y="175" fill="#ef4444" font-size="8" font-weight="600">3.</text>
+                        <rect x="165" y="205" width="220" height="20" rx="5" fill="#ecfdf5" stroke="#10b981" stroke-width="2"/><text x="275" y="219" text-anchor="middle" fill="#166534" font-size="8" font-weight="600">Connection ESTABLISHED</text>
+                    </svg>
+                </div>
+                <div class="warning-box animate-in delay-2">
+                    <div class="warn-title">⚠️ Security Concern: SYN Flood Attack</div>
+                    <p>An attacker sends many SYN packets without completing handshakes, exhausting server resources. Mitigation: SYN cookies, rate limiting, firewall rules.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 29: Python Sockets -->
+        <div class="slide" data-slide="29">
+            <div class="slide-content">
+                <h2>🐍 Python Socket Programming: A Preview</h2>
+                <div class="grid-2">
+                    <div class="code-block animate-in delay-1" data-lang="python" style="margin:0">
+<span class="comment"># TCP Server</span>
+<span class="keyword">import</span> socket
+
+<span class="keyword">with</span> socket.socket(socket.AF_INET, socket.SOCK_STREAM) <span class="keyword">as</span> s:
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, <span class="number">1</span>)
+    s.bind((<span class="string">'127.0.0.1'</span>, <span class="number">9090</span>))
+    s.listen(<span class="number">1</span>)
+    <span class="builtin">print</span>(<span class="string">"Listening on :9090..."</span>)
+    
+    conn, addr = s.accept()
+    <span class="keyword">with</span> conn:
+        <span class="builtin">print</span>(<span class="string">f"Connection from </span>{addr}<span class="string">"</span>)
+        data = conn.recv(<span class="number">1024</span>)
+        conn.sendall(<span class="string">b"ACK: "</span> + data)
+                    </div>
+                    <div class="code-block animate-in delay-2" data-lang="python" style="margin:0">
+<span class="comment"># TCP Client</span>
+<span class="keyword">import</span> socket
+
+<span class="keyword">with</span> socket.socket(socket.AF_INET, socket.SOCK_STREAM) <span class="keyword">as</span> s:
+    s.connect((<span class="string">'127.0.0.1'</span>, <span class="number">9090</span>))
+    s.sendall(<span class="string">b"Hello, server!"</span>)
+    
+    response = s.recv(<span class="number">1024</span>)
+    <span class="builtin">print</span>(<span class="string">f"Received: </span>{response.decode()}<span class="string">"</span>)
+    
+<span class="comment"># Output: Received: ACK: Hello, server!</span>
+                    </div>
+                </div>
+                <p class="animate-in delay-3" style="margin-top:1rem;font-size:1rem;color:var(--text-muted)">📁 Full example: <code>WEEK1/python/exercises/ex_1_02_tcp_server_client.py</code></p>
+            </div>
+        </div>
+
+        <!-- SLIDE 30: Diagnostic Tools Overview -->
+        <div class="slide" data-slide="30">
+            <div class="slide-content">
+                <h2>🔧 Essential Network Diagnostic Tools</h2>
+                <div class="grid-3">
+                    <div class="card animate-in delay-1"><h4><code>ip</code></h4><p>View and configure interfaces, addresses, routes (replaced <code>ifconfig</code>)</p></div>
+                    <div class="card animate-in delay-2"><h4><code>ss</code></h4><p>Socket statistics: listening ports, established connections, processes</p></div>
+                    <div class="card animate-in delay-3"><h4><code>ping</code></h4><p>Test reachability and measure RTT using ICMP echo</p></div>
+                    <div class="card animate-in delay-4"><h4><code>traceroute</code></h4><p>Discover path packets take; identify where delays occur</p></div>
+                    <div class="card animate-in delay-5"><h4><code>netcat (nc)</code></h4><p>Swiss army knife: create TCP/UDP servers, clients, port scanning</p></div>
+                    <div class="card animate-in delay-6"><h4><code>tcpdump / tshark</code></h4><p>Capture and analyse packets at wire level</p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 31: ip command -->
+        <div class="slide" data-slide="31">
+            <div class="slide-content">
+                <h2>🔌 The <code>ip</code> Command</h2>
+                <div class="code-block animate-in" data-lang="bash">
+<span class="comment"># View all interfaces (brief format)</span>
+$ ip -br link
+lo      UNKNOWN   00:00:00:00:00:00
+eth0    UP        02:42:ac:11:00:02
+
+<span class="comment"># View IP addresses</span>
+$ ip -br addr
+lo      UNKNOWN   127.0.0.1/8
+eth0    UP        <span class="string">172.17.0.2/16</span>
+
+<span class="comment"># View routing table</span>
+$ ip route
+default via <span class="string">172.17.0.1</span> dev eth0
+172.17.0.0/16 dev eth0 proto kernel scope link src 172.17.0.2
+
+<span class="comment"># View ARP cache (MAC-to-IP mappings)</span>
+$ ip neigh
+172.17.0.1 dev eth0 lladdr 02:42:9e:5a:1b:3c REACHABLE
+                </div>
+                <div class="insight-box animate-in delay-2" style="margin-top:1rem">
+                    <div class="insight-title">💡 Key Insight</div>
+                    <p>The <strong>default gateway</strong> (172.17.0.1) is the router forwarding packets to external networks.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 32: ss command -->
+        <div class="slide" data-slide="32">
+            <div class="slide-content">
+                <h2>📊 The <code>ss</code> Command</h2>
+                <div class="code-block animate-in" data-lang="bash">
+<span class="comment"># List all listening TCP and UDP sockets with process info</span>
+$ ss -lntup
+Netid State  Recv-Q Send-Q  Local Address:Port   Peer Address:Port  Process
+tcp   LISTEN 0      128     <span class="string">0.0.0.0:22</span>          0.0.0.0:*          users:(("sshd",pid=1234))
+tcp   LISTEN 0      511     <span class="string">0.0.0.0:80</span>          0.0.0.0:*          users:(("nginx",pid=5678))
+
+<span class="comment"># Flags: -l=listening, -n=numeric, -t=TCP, -u=UDP, -p=process</span>
+
+<span class="comment"># Show established connections</span>
+$ ss -tn
+State  Recv-Q Send-Q  Local Address:Port   Peer Address:Port
+ESTAB  0      0       172.17.0.2:22        93.184.216.34:54321
+                </div>
+                <div class="warning-box animate-in delay-2" style="margin-top:1rem">
+                    <div class="warn-title">⚠️ Common Debugging Scenario</div>
+                    <p>"My server isn't responding!" → First check: <code>ss -lntp | grep :PORT</code></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 33: netcat -->
+        <div class="slide" data-slide="33">
+            <div class="slide-content">
+                <h2>🔪 <code>netcat (nc)</code>: The Network Swiss Army Knife</h2>
+                <div class="grid-2">
+                    <div class="code-block animate-in delay-1" data-lang="bash" style="margin:0">
+<span class="comment"># Start a TCP server on port 9090</span>
+$ nc -l -p 9090
+
+<span class="comment"># Connect as TCP client</span>
+$ echo "Hello!" | nc 127.0.0.1 9090
+
+<span class="comment"># UDP mode</span>
+$ nc -u -l -p 9091  <span class="comment"># Server</span>
+$ echo "ping" | nc -u 127.0.0.1 9091
+                    </div>
+                    <div class="code-block animate-in delay-2" data-lang="bash" style="margin:0">
+<span class="comment"># Simple port scan</span>
+$ nc -zv 192.168.1.1 20-25
+Connection to 192.168.1.1 <span class="number">22</span> port [tcp/ssh] <span class="string">succeeded!</span>
+
+<span class="comment"># File transfer</span>
+<span class="comment"># Receiver:</span>
+$ nc -l -p 9090 > file.txt
+<span class="comment"># Sender:</span>
+$ nc 192.168.1.100 9090 < file.txt
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 34: tcpdump -->
+        <div class="slide" data-slide="34">
+            <div class="slide-content">
+                <h2>🔬 <code>tcpdump</code>: Packet Capture</h2>
+                <div class="code-block animate-in" data-lang="bash">
+<span class="comment"># Capture all traffic on any interface, write to file</span>
+$ sudo tcpdump -i any -w capture.pcap
+
+<span class="comment"># Capture only ICMP (ping) traffic</span>
+$ sudo tcpdump -i eth0 icmp
+
+<span class="comment"># Capture TCP traffic to/from port 80</span>
+$ sudo tcpdump -i eth0 'tcp port 80'
+
+<span class="comment"># Read and display a capture file</span>
+$ tcpdump -nn -r capture.pcap
+14:23:01.123456 IP 172.17.0.2.<span class="number">54321</span> > 93.184.216.34.<span class="number">80</span>: Flags [S], seq 12345
+14:23:01.145678 IP 93.184.216.34.80 > 172.17.0.2.54321: Flags [S.], seq 67890, ack 12346
+
+<span class="comment"># Flags: -nn=no DNS/port resolution, -v=verbose, -X=hex+ASCII</span>
+                </div>
+                <div class="definition-box animate-in delay-2" style="margin-top:1rem">
+                    <div class="def-label">TCP Flags in tcpdump</div>
+                    <p><code>[S]</code>=SYN, <code>[S.]</code>=SYN-ACK, <code>[.]</code>=ACK, <code>[P.]</code>=PSH-ACK, <code>[F.]</code>=FIN-ACK, <code>[R.]</code>=RST</p>
+                </div>
+            </div>
+        </div>
+        <!-- SLIDE 35: Quiz - Tools -->
+        <div class="slide" data-slide="35">
+            <div class="slide-content">
+                <h2>🎯 Knowledge Check: Diagnostic Tools</h2>
+                <div class="quiz-container animate-in">
+                    <p class="quiz-question">Your web application reports "Connection refused" on port 8080. Which command verifies if a process is listening on the server?</p>
+                    <div class="quiz-option" onclick="checkQuiz(this, false)">A) <code>ping server.example.com</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this, true)">B) <code>ss -lntp | grep :8080</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this, false)">C) <code>tcpdump -i eth0 port 8080</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this, false)">D) <code>ip route</code></div>
+                    <div class="quiz-feedback correct">✓ Correct! <code>ss -lntp</code> shows listening TCP sockets and their processes.</div>
+                    <div class="quiz-feedback incorrect">✗ <code>ping</code> tests reachability, not ports. <code>tcpdump</code> captures traffic but doesn't show listeners.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 36: Practical Exercise -->
+        <div class="slide" data-slide="36">
+            <div class="slide-content">
+                <h2>👁️ Observing the TCP Handshake</h2>
+                <div class="code-block animate-in" data-lang="bash">
+<span class="comment"># Terminal 1: Start capture</span>
+$ sudo tcpdump -i lo port 9090 -nn
+
+<span class="comment"># Terminal 2: Start server</span>
+$ nc -l -p 9090
+
+<span class="comment"># Terminal 3: Connect client</span>
+$ echo "Hello" | nc 127.0.0.1 9090
+
+<span class="comment"># Output from tcpdump:</span>
+<span class="string">127.0.0.1.54321 > 127.0.0.1.9090: Flags [S], seq 1234567890</span>       <span class="comment"># 1. SYN</span>
+<span class="string">127.0.0.1.9090 > 127.0.0.1.54321: Flags [S.], ack 1234567891</span>      <span class="comment"># 2. SYN-ACK</span>
+<span class="string">127.0.0.1.54321 > 127.0.0.1.9090: Flags [.], ack 1</span>                <span class="comment"># 3. ACK</span>
+<span class="string">127.0.0.1.54321 > 127.0.0.1.9090: Flags [P.], "Hello\n"</span>           <span class="comment"># 4. Data</span>
+<span class="string">127.0.0.1.54321 > 127.0.0.1.9090: Flags [F.]</span>                      <span class="comment"># 5. FIN</span>
+                </div>
+                <div class="highlight-box animate-in delay-2">
+                    <p>💡 Try this exercise yourself! This is how real network engineers debug connection problems.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 37: Troubleshooting Methodology -->
+        <div class="slide" data-slide="37">
+            <div class="slide-content">
+                <h2>🔍 Systematic Troubleshooting Methodology</h2>
+                <div class="grid-2">
+                    <div class="card animate-in delay-1">
+                        <h4>1. Verify Local Configuration</h4>
+                        <div class="code-block" data-lang="bash" style="font-size:.9rem;padding:1rem">
+$ ip -br addr      <span class="comment"># IP assigned?</span>
+$ ip route         <span class="comment"># Default gateway?</span>
+$ ss -lntp         <span class="comment"># Service listening?</span>
+                        </div>
+                    </div>
+                    <div class="card animate-in delay-2">
+                        <h4>2. Test Connectivity Layer by Layer</h4>
+                        <div class="code-block" data-lang="bash" style="font-size:.9rem;padding:1rem">
+$ ping 127.0.0.1      <span class="comment"># Loopback OK?</span>
+$ ping gateway_ip     <span class="comment"># Local network OK?</span>
+$ ping 8.8.8.8        <span class="comment"># Internet OK?</span>
+$ ping example.com    <span class="comment"># DNS OK?</span>
+                        </div>
+                    </div>
+                    <div class="card animate-in delay-3">
+                        <h4>3. Test Application Layer</h4>
+                        <div class="code-block" data-lang="bash" style="font-size:.9rem;padding:1rem">
+$ nc -zv host 80   <span class="comment"># Port open?</span>
+$ curl -v host     <span class="comment"># HTTP working?</span>
+                        </div>
+                    </div>
+                    <div class="card animate-in delay-4">
+                        <h4>4. Capture and Analyse</h4>
+                        <div class="code-block" data-lang="bash" style="font-size:.9rem;padding:1rem">
+$ tcpdump -i eth0 host target
+<span class="comment"># Look for SYN without SYN-ACK</span>
+<span class="comment"># Look for RST (connection refused)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 38: Common Pitfalls -->
+        <div class="slide" data-slide="38">
+            <div class="slide-content">
+                <h2>⚠️ Common Misconceptions and Pitfalls</h2>
+                <div class="grid-2">
+                    <div class="card card-danger animate-in delay-1">
+                        <h4>❌ Misconception</h4>
+                        <p>"Higher bandwidth always means lower latency"</p>
+                        <button class="reveal-btn" onclick="toggleReveal(this)">Show Explanation</button>
+                        <div class="reveal-content"><p>Bandwidth affects <strong>transmission delay</strong> (time to push bits). <strong>Propagation delay</strong> depends on distance and is limited by the speed of light. A 10 Gbps transatlantic link still has ~70ms RTT.</p></div>
+                    </div>
+                    <div class="card card-danger animate-in delay-2">
+                        <h4>❌ Misconception</h4>
+                        <p>"TCP is always better than UDP because it's reliable"</p>
+                        <button class="reveal-btn" onclick="toggleReveal(this)">Show Explanation</button>
+                        <div class="reveal-content"><p>For real-time applications (VoIP, gaming), old data is useless. Retransmitting a lost voice packet that arrives 500ms late is worse than dropping it. UDP + application-level handling is often superior.</p></div>
+                    </div>
+                    <div class="card card-danger animate-in delay-3">
+                        <h4>❌ Misconception</h4>
+                        <p>"A switch and a router are basically the same thing"</p>
+                        <button class="reveal-btn" onclick="toggleReveal(this)">Show Explanation</button>
+                        <div class="reveal-content"><p>Switches operate at Layer 2 (MAC addresses) within a single network. Routers operate at Layer 3 (IP addresses) and connect <em>different</em> networks. Your home "router" is actually a router + switch + access point + NAT gateway.</p></div>
+                    </div>
+                    <div class="card card-danger animate-in delay-4">
+                        <h4>❌ Misconception</h4>
+                        <p>"0.0.0.0 means 'no address' or 'invalid'"</p>
+                        <button class="reveal-btn" onclick="toggleReveal(this)">Show Explanation</button>
+                        <div class="reveal-content"><p>When a server binds to <code>0.0.0.0:80</code>, it means "listen on port 80 on ALL interfaces". This is deliberate, not an error. Compare with <code>127.0.0.1:80</code> which only accepts local connections.</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 39: Low-Level C Reference -->
+        <div class="slide" data-slide="39">
+            <div class="slide-content">
+                <h2>📜 Historical Context: C Socket Programming</h2>
+                <p style="font-size:1.15rem;margin-bottom:1rem">Python's <code>socket</code> module wraps the BSD sockets API, originally written in C for 4.2BSD (1983). Understanding the underlying system calls aids debugging:</p>
+                <div class="code-block animate-in" data-lang="c">
+<span class="comment">/* Minimal TCP server in C (conceptual reference) */</span>
+<span class="keyword">#include</span> <span class="string">&lt;sys/socket.h&gt;</span>
+<span class="keyword">#include</span> <span class="string">&lt;netinet/in.h&gt;</span>
+
+<span class="keyword">int</span> <span class="function">main</span>() {
+    <span class="keyword">int</span> sockfd = <span class="function">socket</span>(AF_INET, SOCK_STREAM, <span class="number">0</span>);  <span class="comment">// Create socket</span>
+    
+    <span class="keyword">struct</span> sockaddr_in addr = {
+        .sin_family = AF_INET,
+        .sin_port = <span class="function">htons</span>(<span class="number">9090</span>),       <span class="comment">// Host-to-network byte order</span>
+        .sin_addr.s_addr = INADDR_ANY
+    };
+    
+    <span class="function">bind</span>(sockfd, (<span class="keyword">struct</span> sockaddr*)&amp;addr, <span class="keyword">sizeof</span>(addr));
+    <span class="function">listen</span>(sockfd, <span class="number">5</span>);               <span class="comment">// Backlog queue size</span>
+    
+    <span class="keyword">int</span> client = <span class="function">accept</span>(sockfd, NULL, NULL);  <span class="comment">// Block until connection</span>
+    <span class="comment">// read() / write() on client fd...</span>
+}
+                </div>
+                <p class="animate-in delay-2" style="margin-top:1rem;font-size:1rem;color:var(--text-muted)">Python abstracts away byte-order conversion (<code>htons</code>) and provides context managers for resource cleanup.</p>
+            </div>
+        </div>
+
+        <!-- SLIDE 40: Mininet Preview -->
+        <div class="slide" data-slide="40">
+            <div class="slide-content">
+                <h2>🔬 Network Simulation with Mininet</h2>
+                <p style="font-size:1.2rem;margin-bottom:1rem">In future seminars, you'll create virtual network topologies using <strong>Mininet</strong>:</p>
+                <div class="code-block animate-in" data-lang="python">
+<span class="comment"># Simple topology: 3 hosts connected to 1 switch</span>
+<span class="keyword">from</span> mininet.topo <span class="keyword">import</span> Topo
+<span class="keyword">from</span> mininet.net <span class="keyword">import</span> Mininet
+
+<span class="keyword">class</span> <span class="function">SimpleTopo</span>(Topo):
+    <span class="keyword">def</span> <span class="function">build</span>(self, n=<span class="number">3</span>):
+        switch = self.addSwitch(<span class="string">'s1'</span>)
+        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="builtin">range</span>(<span class="number">1</span>, n + <span class="number">1</span>):
+            host = self.addHost(<span class="string">f'h</span>{i}<span class="string">'</span>)
+            self.addLink(host, switch, bw=<span class="number">100</span>, delay=<span class="string">'1ms'</span>)
+
+<span class="comment"># Usage: sudo python3 topo_simple.py</span>
+<span class="comment"># Then: h1 ping h2, h1 iperf h2, etc.</span>
+                </div>
+                <div class="highlight-box animate-in delay-2">
+                    <p>💡 Mininet creates real Linux network namespaces — you can run actual commands like <code>ping</code>, <code>tcpdump</code>, and <code>iperf3</code> inside virtual hosts!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 41: Summary -->
+        <div class="slide" data-slide="41">
+            <div class="slide-content">
+                <h2>📋 Key Takeaways from Week 1</h2>
+                <div class="grid-2">
+                    <div class="card animate-in delay-1">
+                        <h4>Conceptual Foundations</h4>
+                        <ul style="font-size:1rem"><li>Networks connect hosts via switches (L2) and routers (L3)</li><li>Packet switching: statistical multiplexing, variable delay</li><li>TCP/IP: 4 layers with encapsulation at each</li><li>Delay = processing + queuing + transmission + propagation</li></ul>
+                    </div>
+                    <div class="card animate-in delay-2">
+                        <h4>Practical Skills</h4>
+                        <ul style="font-size:1rem"><li><code>ip</code>: view interfaces, addresses, routes</li><li><code>ss</code>: check listening sockets and connections</li><li><code>ping</code>: test reachability, measure RTT</li><li><code>nc</code>: create ad-hoc TCP/UDP connections</li><li><code>tcpdump</code>: capture and analyse packets</li></ul>
+                    </div>
+                </div>
+                <div class="highlight-box animate-in delay-3" style="margin-top:1.5rem">
+                    <p>🎯 You can now diagnose basic connectivity issues and understand how data travels from your application to a remote server!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 42: Next Week Preview -->
+        <div class="slide" data-slide="42">
+            <div class="slide-content">
+                <h2>🚀 Preview: Week 2</h2>
+                <h3 style="color:var(--text-muted);font-weight:400">Architectural Models & Introduction to Network Programming</h3>
+                <div class="grid-3 animate-in delay-1">
+                    <div class="card"><div class="card-icon">📚</div><h4>OSI Reference Model</h4><p>The 7-layer model in detail: why it matters for troubleshooting</p></div>
+                    <div class="card"><div class="card-icon">🔌</div><h4>Socket Programming</h4><p>Building your first TCP and UDP clients/servers in Python</p></div>
+                    <div class="card"><div class="card-icon">🔄</div><h4>Concurrent Servers</h4><p>Handling multiple clients with threads and event loops</p></div>
+                </div>
+                <p class="animate-in delay-2" style="margin-top:2rem;font-size:1.2rem">📖 <strong>Recommended Reading:</strong> Kurose & Ross, Chapter 1 (Computer Networks and the Internet)</p>
+            </div>
+        </div>
+
+        <!-- SLIDE 43: References -->
+        <div class="slide" data-slide="43">
+            <div class="slide-content">
+                <h2>📚 References & Further Reading</h2>
+                <div class="grid-2">
+                    <div class="card animate-in delay-1">
+                        <h4>📖 Primary Textbooks</h4>
+                        <p style="font-size:1rem;text-align:left;line-height:1.8">• Kurose, J. & Ross, K. — <em>Computer Networking: A Top-Down Approach</em>, 8th Ed.<br>• Rhodes, B. & Goerzen, J. — <em>Foundations of Python Network Programming</em>, 3rd Ed.<br>• Stevens, W.R. — <em>TCP/IP Illustrated, Volume 1</em></p>
+                    </div>
+                    <div class="card animate-in delay-2">
+                        <h4>🔗 Online Resources</h4>
+                        <p style="font-size:1rem;text-align:left;line-height:1.8">• RFC Editor: <code>rfc-editor.org</code><br>• Python socket documentation: <code>docs.python.org/3/library/socket.html</code><br>• Wireshark User Guide: <code>wireshark.org/docs</code><br>• Linux <code>ip</code> command: <code>man 8 ip</code></p>
+                    </div>
+                </div>
+                <div class="animate-in delay-3" style="margin-top:2rem">
+                    <h4>🛠️ Starterkit Contents</h4>
+                    <p style="font-size:1.1rem"><code>WEEK1/python/exercises/</code> — Python exercises with automated testing<br><code>WEEK1/mininet/topologies/</code> — Mininet topology scripts<br><code>WEEK1/docs/cli_cheatsheet.md</code> — Command reference</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 44: Final Quiz -->
+        <div class="slide" data-slide="44">
+            <div class="slide-content">
+                <h2>🎯 Final Check: RTT</h2>
+                <div class="quiz-container animate-in">
+                    <p class="quiz-question">What does RTT (Round-Trip Time) measure?</p>
+                    <div class="quiz-option" onclick="checkQuiz(this, false)">A) The time for a packet to travel from source to destination</div>
+                    <div class="quiz-option" onclick="checkQuiz(this, true)">B) The total time for a packet to reach the destination and for a response to return</div>
+                    <div class="quiz-option" onclick="checkQuiz(this, false)">C) The maximum bandwidth of the network</div>
+                    <div class="quiz-option" onclick="checkQuiz(this, false)">D) The number of routers traversed</div>
+                    <div class="quiz-feedback correct">✓ Correct! RTT = time_forward + time_processing + time_return. This is what <code>ping</code> measures.</div>
+                    <div class="quiz-feedback incorrect">✗ RTT includes both directions of communication. One-way delay is half the RTT (approximately).</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 45: Closing -->
+        <div class="slide" data-slide="45">
+            <div class="slide-content">
+                <h2>🎓 End of Week 1</h2>
+                <p style="font-size:1.5rem;margin-bottom:2rem;color:var(--text-muted)">Foundations of Computer Networking</p>
+                <div class="highlight-box animate-in">
+                    <p style="font-size:1.4rem">🚀 At seminar and laboratory sessions, you will put these concepts into practice: building TCP/UDP servers, capturing traffic with Wireshark, and analysing real network behaviour!</p>
+                </div>
+                <div style="margin-top:3rem;font-size:1rem;color:var(--text-muted)">
+                    <p>Faculty of Cybernetics, Statistics and Economic Informatics</p>
+                    <p>Bucharest University of Economic Studies</p>
+                    <p style="margin-top:1rem;font-size:.9rem;color:#a0aec0">by Revolvix</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Table of Contents Modal -->
+    <div class="toc-modal" id="tocModal">
+        <div class="toc-content">
+            <button class="toc-close" onclick="closeToc()">×</button>
+            <h3>📑 Table of Contents</h3>
+            <div class="toc-section">
+                <div class="toc-section-title">Introduction</div>
+                <div class="toc-item" onclick="goToSlide(1)">1. Title Slide</div>
+                <div class="toc-item" onclick="goToSlide(2)">2. The Birth of the Network Age</div>
+                <div class="toc-item" onclick="goToSlide(3)">3. Why Networks Matter</div>
+                <div class="toc-item" onclick="goToSlide(4)">4. Learning Objectives</div>
+                <div class="toc-item" onclick="goToSlide(5)">5. Course Roadmap</div>
+            </div>
+            <div class="toc-section">
+                <div class="toc-section-title">Fundamental Concepts</div>
+                <div class="toc-item" onclick="goToSlide(6)">6. What is a Network?</div>
+                <div class="toc-item" onclick="goToSlide(7)">7. Network Anatomy</div>
+                <div class="toc-item" onclick="goToSlide(8)">8. Components</div>
+                <div class="toc-item" onclick="goToSlide(9)">9. MAC vs IP Addressing</div>
+                <div class="toc-item" onclick="goToSlide(10)">10. Ports</div>
+                <div class="toc-item" onclick="goToSlide(11)">11. Classifications</div>
+                <div class="toc-item" onclick="goToSlide(12)">12. Topologies</div>
+            </div>
+            <div class="toc-section">
+                <div class="toc-section-title">Switching & Protocol Stack</div>
+                <div class="toc-item" onclick="goToSlide(13)">13-15. Circuit vs Packet Switching</div>
+                <div class="toc-item" onclick="goToSlide(16)">16-21. TCP/IP Stack & Encapsulation</div>
+            </div>
+            <div class="toc-section">
+                <div class="toc-section-title">Performance & Transport</div>
+                <div class="toc-item" onclick="goToSlide(22)">22-26. Performance Metrics & Delay</div>
+                <div class="toc-item" onclick="goToSlide(27)">27-29. TCP vs UDP, Handshake</div>
+            </div>
+            <div class="toc-section">
+                <div class="toc-section-title">Practical Tools</div>
+                <div class="toc-item" onclick="goToSlide(30)">30-36. Diagnostic Tools</div>
+                <div class="toc-item" onclick="goToSlide(37)">37-38. Troubleshooting</div>
+            </div>
+            <div class="toc-section">
+                <div class="toc-section-title">Wrap-up</div>
+                <div class="toc-item" onclick="goToSlide(41)">41. Key Takeaways</div>
+                <div class="toc-item" onclick="goToSlide(42)">42. Next Week Preview</div>
+                <div class="toc-item" onclick="goToSlide(43)">43. References</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-container">
+        <button class="nav-btn prev" id="prevBtn" onclick="changeSlide(-1)" title="Previous (←)">←</button>
+        <button class="nav-btn toc" onclick="openToc()" title="Contents (T)">☰</button>
+        <button class="nav-btn fullscreen" onclick="toggleFullscreen()" title="Fullscreen (F)">⛶</button>
+        <button class="nav-btn next" id="nextBtn" onclick="changeSlide(1)" title="Next (→)">→</button>
+    </div>
+
+    <div class="footer-info">by Revolvix</div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 45;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            if (n > totalSlides) currentSlide = 1;
+            if (n < 1) currentSlide = totalSlides;
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            if (slides[currentSlide - 1]) {
+                slides[currentSlide - 1].classList.add('active');
+            }
+
+            document.getElementById('slideCounter').textContent = currentSlide + ' / ' + totalSlides;
+            document.getElementById('progressBar').style.width = ((currentSlide / totalSlides) * 100) + '%';
+
+            document.getElementById('prevBtn').disabled = currentSlide === 1;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides;
+        }
+
+        function changeSlide(direction) {
+            currentSlide += direction;
+            showSlide(currentSlide);
+        }
+
+        function goToSlide(n) {
+            currentSlide = n;
+            showSlide(currentSlide);
+            closeToc();
+        }
+
+        function openToc() {
+            document.getElementById('tocModal').classList.add('show');
+        }
+
+        function closeToc() {
+            document.getElementById('tocModal').classList.remove('show');
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); changeSlide(1); }
+            if (e.key === 'ArrowLeft') { e.preventDefault(); changeSlide(-1); }
+            if (e.key === 'f' || e.key === 'F') toggleFullscreen();
+            if (e.key === 't' || e.key === 'T') openToc();
+            if (e.key === 'Escape') closeToc();
+            if (e.key === 'Home') { currentSlide = 1; showSlide(currentSlide); }
+            if (e.key === 'End') { currentSlide = totalSlides; showSlide(currentSlide); }
+        });
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        function checkQuiz(element, isCorrect) {
+            const container = element.closest('.quiz-container');
+            const options = container.querySelectorAll('.quiz-option');
+            const feedbacks = container.querySelectorAll('.quiz-feedback');
+
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                opt.classList.remove('correct', 'incorrect');
+            });
+
+            element.classList.add(isCorrect ? 'correct' : 'incorrect');
+            feedbacks.forEach(fb => fb.classList.remove('show'));
+            feedbacks[isCorrect ? 0 : 1].classList.add('show');
+        }
+
+        function toggleReveal(btn) {
+            const content = btn.nextElementSibling;
+            content.classList.toggle('show');
+            btn.textContent = content.classList.contains('show') ? 'Hide' : 'Show Explanation';
+        }
+
+        function calculateDelay() {
+            const L = parseInt(document.getElementById('packetSize').value);
+            const R = parseInt(document.getElementById('bandwidth').value);
+
+            document.getElementById('packetSizeValue').textContent = L.toLocaleString() + ' bytes';
+            document.getElementById('bandwidthValue').textContent = R + ' Mbps';
+
+            const delayMs = (L * 8) / (R * 1000);
+            const delayUs = delayMs * 1000;
+
+            document.getElementById('delayResult').innerHTML =
+                'Transmission Delay: <strong>' + delayMs.toFixed(3) + ' ms</strong> (' + delayUs.toFixed(1) + ' μs)';
+        }
+
+        // Initialize
+        showSlide(currentSlide);
+        calculateDelay();
+
+        // Close TOC when clicking outside
+        document.getElementById('tocModal').addEventListener('click', function(e) {
+            if (e.target === this) closeToc();
+        });
+    </script>
+</body>
+</html>

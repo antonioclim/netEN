@@ -1,0 +1,495 @@
+# Lecture 9 – Session Layer and Presentation Layer
+# Outline for PowerPoint / reveal.js
+
+================================================================================
+SLIDE 1: Title
+================================================================================
+Title: Lecture 9 – Session Layer (L5) and Presentation Layer (L6)
+Subtitle: Computer Networks | Semester 2 | Year 3
+Footer: ASE Bucharest | CSIE | Economic Informatics
+Image: ASE logo + OSI stack pictogram highlighting L5-L6
+
+================================================================================
+SLIDE 2: Objectives
+================================================================================
+Title: What We Will Learn Today
+
+Bullet points:
+• The role of the session layer in managing dialogue between applications
+• Presentation layer mechanisms for data representation
+• The relationship between connections and sessions
+• Encodings, compression and encryption at presentation level
+• Practical applications: FTP, HTTP sessions, data formatting
+
+================================================================================
+SLIDE 3: Agenda
+================================================================================
+Title: Lecture Path
+
+1. Recap: transport layer (5 min)
+2. Session layer – concepts and mechanisms (20 min)
+3. Presentation layer – data transformation (20 min)
+4. Case study: FTP Protocol (15 min)
+5. Interactive mini-quiz (10 min)
+6. Questions and recap (10 min)
+
+================================================================================
+SLIDE 4: L4 Recap
+================================================================================
+Title: Where We Come From: Transport Layer
+
+Diagram: OSI stack with L4 highlighted
+• TCP: reliable connections, ordering, flow control
+• UDP: fast datagrams, no guarantees
+• Ports: application identification
+
+Question: What is missing to manage a complete file transfer session?
+
+================================================================================
+SLIDE 5: OSI Positioning
+================================================================================
+Title: Upper Layers in the OSI Stack
+
+Visual diagram:
+```
+┌─────────────────────┐
+│  L7 Application     │  ← HTTP, FTP, SMTP
+├─────────────────────┤
+│  L6 Presentation    │  ← Formatting, encoding
+├─────────────────────┤
+│  L5 Session         │  ← Dialogue, synchronisation
+├─────────────────────┤
+│  L4 Transport       │  ← TCP/UDP
+└─────────────────────┘
+```
+
+Note: In practice, often combined in application protocols
+
+================================================================================
+SLIDE 6: L5 – Definition
+================================================================================
+Title: Session Layer – What Is It?
+
+Definition box:
+"The session layer manages and coordinates communication between applications,
+providing mechanisms for establishing, maintaining and terminating
+dialogue sessions."
+
+Main functions:
+• Establishing and terminating sessions
+• Synchronisation and checkpoints
+• Dialogue management (half/full duplex)
+
+================================================================================
+SLIDE 7: Connection vs Session
+================================================================================
+Title: TCP Connection ≠ Application Session
+
+Comparative diagram (2 columns):
+
+TCP CONNECTION:
+• At L4 level
+• 3-way handshake
+• A single data "pipe"
+• Ends at FIN/RST
+
+SESSION:
+• At L5-L7 level
+• Can use multiple connections
+• Maintains context/state
+• Lasts as long as user decides
+
+Example: FTP uses 2 TCP connections within a single session
+
+================================================================================
+SLIDE 8: FTP Session Diagram
+================================================================================
+Title: Example: FTP Session
+
+Temporal diagram:
+```
+Client                    Server
+  │                          │
+  │──── Control Connection ──│ Port 21
+  │     (persists)           │
+  │                          │
+  │── AUTH user/pass ───────>│
+  │<──── 230 OK ─────────────│
+  │                          │
+  │── PASV ─────────────────>│
+  │<──── 227 (port 5000) ────│
+  │                          │
+  │──── Data Connection ─────│ Port 5000
+  │     (temporary)          │
+  │                          │
+  │── RETR file.txt ────────>│
+  │<──── [file data] ────────│
+  │     Data Connection closed
+  │                          │
+  │── QUIT ─────────────────>│
+  │<──── 221 Bye ────────────│
+  │     Session terminated   │
+```
+
+================================================================================
+SLIDE 9: L5 Mechanisms – Synchronisation
+================================================================================
+Title: Synchronisation and Checkpoints
+
+Concept: Checkpoints allow resumption after errors
+
+Diagram:
+```
+Long data transfer
+─────●──────●──────●──────●─────> 
+    CP1    CP2    CP3    CP4
+
+Error at 75%? Resume from CP3!
+```
+
+Real examples:
+• FTP: REST command for transfer resumption
+• HTTP: Range header for partial download
+• Databases: savepoints in transactions
+
+================================================================================
+SLIDE 10: L5 Mechanisms – Dialogue
+================================================================================
+Title: Dialogue Management
+
+Dialogue modes:
+
+1. SIMPLEX
+   A ───────────────────> B
+   (one direction only)
+
+2. HALF-DUPLEX
+   A <─────────────────> B
+   (taking turns, with token)
+
+3. FULL-DUPLEX
+   A <═════════════════> B
+   (simultaneous in both directions)
+
+Example: Walkie-talkie vs telephone
+
+================================================================================
+SLIDE 11: L5 in Practice
+================================================================================
+Title: Where Do We See the Session Layer?
+
+Table:
+
+| Protocol/Technology | L5 Mechanisms |
+|---------------------|---------------|
+| HTTP/1.1 | Keep-Alive, session cookies |
+| WebSocket | Connection upgrade, ping/pong |
+| RPC | Session tokens, call IDs |
+| SSH | Multiplexed channels |
+| TLS | Session resumption |
+
+================================================================================
+SLIDE 12: Transition L5 → L6
+================================================================================
+Title: From Dialogue to Representation
+
+"Now that we know how to manage the conversation,
+how do we ensure we speak the same language?"
+
+Pictogram: Translator between two characters
+
+================================================================================
+SLIDE 13: L6 – Definition
+================================================================================
+Title: Presentation Layer – What Is It?
+
+Definition box:
+"The presentation layer handles the syntax and semantics of exchanged data,
+ensuring that information sent by one application can be understood
+by the receiving application."
+
+Main functions:
+• Data encoding (character encoding)
+• Data compression
+• Data encryption
+
+================================================================================
+SLIDE 14: Character Encoding
+================================================================================
+Title: Why Does Encoding Matter?
+
+Visual example:
+```
+"Networks" in different encodings:
+
+UTF-8:  4e 65 74 77 6f 72 6b 73  (8 bytes)
+Latin-1: 4e 65 74 77 6f 72 6b 73  (8 bytes)
+ASCII:  4e 65 74 77 6f 72 6b 73  (8 bytes)
+```
+
+Common problems:
+• Encoding pitfalls example
+• Diamond characters or question marks
+• Mojibake: garbled text from wrong encoding
+
+Solution: Standardisation on UTF-8 (99% of web)
+
+================================================================================
+SLIDE 15: Byte Order
+================================================================================
+Title: Big Endian vs Little Endian
+
+Diagram:
+
+Number 0x12345678 in memory:
+
+BIG ENDIAN (Network Order):
+Address: 0    1    2    3
+Bytes:   12   34   56   78
+         ↑MSB           ↑LSB
+
+LITTLE ENDIAN (x86):
+Address: 0    1    2    3
+Bytes:   78   56   34   12
+         ↑LSB           ↑MSB
+
+Rule: Network protocols use BIG ENDIAN
+Conversion: htons(), htonl(), ntohs(), ntohl()
+
+================================================================================
+SLIDE 16: Serialisation
+================================================================================
+Title: Data Serialisation
+
+Concept: Transforming structures into byte sequences
+
+Popular formats:
+
+| Format | Type | Advantages | Disadvantages |
+|--------|------|------------|---------------|
+| JSON | Text | Human-readable, flexible | Large volume |
+| XML | Text | Standardised, schema | Verbose |
+| Protocol Buffers | Binary | Compact, fast | Requires schema |
+| MessagePack | Binary | Compact, flexible | Less widespread |
+
+================================================================================
+SLIDE 17: Compression
+================================================================================
+Title: Data Compression
+
+Types:
+• Lossless: gzip, zlib, LZ4
+• Lossy: JPEG, MP3 (for multimedia)
+
+Efficiency diagram:
+```
+Original file: 1000 KB
+After gzip:     250 KB  (75% reduction)
+
+Effective throughput: 4x higher!
+```
+
+When we use it:
+• HTTP: Accept-Encoding: gzip
+• WebSocket: per-message compression
+• File transfer: optional in protocol
+
+================================================================================
+SLIDE 18: Encryption
+================================================================================
+Title: Encryption at Presentation Level
+
+Diagram:
+```
+   Plaintext          Ciphertext
+┌─────────────┐    ┌─────────────┐
+│ Hello World │ => │ @#$%^&*()!@ │
+└─────────────┘    └─────────────┘
+      │                  │
+      ↓                  ↓
+   Readable          Unreadable
+   by anyone         without key
+```
+
+Implementations:
+• TLS/SSL: most common for HTTPS
+• SSH: for secure terminal access
+• End-to-end: Signal, WhatsApp
+
+================================================================================
+SLIDE 19: L6 Pipeline
+================================================================================
+Title: Presentation Layer Pipeline
+
+Flow diagram:
+```
+Application Data
+      │
+      ▼
+┌──────────────┐
+│ Serialisation│  struct → bytes
+└──────────────┘
+      │
+      ▼
+┌──────────────┐
+│ Compression  │  volume reduction
+└──────────────┘
+      │
+      ▼
+┌──────────────┐
+│  Encryption  │  securing
+└──────────────┘
+      │
+      ▼
+  To L5/L4
+```
+
+At reception: reverse order
+
+================================================================================
+SLIDE 20: Case Study – FTP
+================================================================================
+Title: FTP: L5 + L6 Combination
+
+Session Layer in FTP:
+• Authenticated session (USER/PASS)
+• Current directory maintained
+• Transfer mode (ASCII/BINARY)
+• Resumption with REST
+
+Presentation Layer in FTP:
+• ASCII mode: line endings conversion
+• BINARY mode: exact transfer
+• Filename encoding (UTF-8)
+
+================================================================================
+SLIDE 21: Demo – Custom Protocol
+================================================================================
+Title: Demo: Custom Binary Protocol
+
+Header structure (16 bytes):
+```
+┌────────────┬────────────┬────────────┬────────────┐
+│ Magic (4B) │ Length(4B) │ CRC-32(4B) │ Flags (4B) │
+│  "FTPC"    │ Big Endian │ Integrity  │ Options    │
+└────────────┴────────────┴────────────┴────────────┘
+```
+
+Live: We will see how it looks in Wireshark
+
+================================================================================
+SLIDE 22: Wireshark Capture
+================================================================================
+Title: Traffic Analysis – What We See
+
+Wireshark screenshot with:
+• TCP packet list
+• Custom protocol header highlighted
+• Interpreted bytes
+
+Highlight:
+- Magic bytes: 46 54 50 43 = "FTPC"
+- Length: 00 00 00 20 = 32 bytes payload
+- CRC-32: calculated checksum
+
+================================================================================
+SLIDE 23: Mini-Quiz
+================================================================================
+Title: Quick Check
+
+Question 1:
+Which OSI layer handles dialogue management?
+A) Transport  B) Session  C) Presentation  D) Application
+
+Question 2:
+What does "Network Byte Order" mean?
+A) Little Endian  B) Big Endian  C) Depends on CPU
+
+Question 3:
+What mechanism allows resumption of an interrupted transfer?
+A) Compression  B) Checkpoint  C) Encryption
+
+================================================================================
+SLIDE 24: Quiz – Answers
+================================================================================
+Title: Answers
+
+1. B) Session – L5 manages dialogue
+
+2. B) Big Endian – MSB first, standard for networks
+
+3. B) Checkpoint – synchronisation points for recovery
+
+================================================================================
+SLIDE 25: Recap
+================================================================================
+Title: What We Learned
+
+Session Layer (L5):
+• Manages dialogue between applications
+• Maintains session state
+• Provides synchronisation and recovery
+
+Presentation Layer (L6):
+• Ensures correct data representation
+• Encoding, compression, encryption
+• Transformation pipeline
+
+================================================================================
+SLIDE 26: Why It Matters
+================================================================================
+Title: How It Helps Us in Practice
+
+For a programmer:
+• Protocol debugging – understanding stratification
+• API design – choosing the correct format
+• Security – understanding encryption
+• Optimisation – compression and transfer efficiency
+
+================================================================================
+SLIDE 27: Next Week
+================================================================================
+Title: Preview: Lecture 10
+
+Next topic:
+"Application Layer: HTTP, REST, SOAP"
+
+Preparation:
+• Install Postman or Insomnia
+• Review the request/response concept
+• Optional: read RFC 2616 (HTTP/1.1)
+
+================================================================================
+SLIDE 28: Resources
+================================================================================
+Title: Bibliography and Resources
+
+Mandatory:
+• Kurose & Ross, Ch. 2, 9 (session/presentation concepts)
+• Lab documentation: lab.html from starterkit
+
+Optional:
+• RFC 959 – FTP Protocol Specification
+• Stevens, TCP/IP Illustrated Vol. 1
+
+================================================================================
+SLIDE 29: Questions
+================================================================================
+Title: Questions?
+
+Image: Questions pictogram
+
+Contact:
+• Email: [teaching staff email]
+• Forum: [educational platform link]
+• Office hours: [consultation schedule]
+
+================================================================================
+SLIDE 30: Final
+================================================================================
+Title: Thank You!
+
+Subtitle: Lecture 9 – Session Layer and Presentation Layer
+
+Footer: © 2025 Computer Networks | ASE Bucharest | Revolvix&Hypotheticalandrei
+

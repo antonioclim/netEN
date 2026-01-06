@@ -1,0 +1,23 @@
+═══════════════════════════════════════════════════════════════
+  STARTERKIT S9 VALIDATION – 2026-01-05 19:36:59
+═══════════════════════════════════════════════════════════════
+
+▶ Test 1: L6 Exercise (endianness)
+   [PASS] L6 Exercise OK
+
+▶ Test 2: Common utilities (net_utils.py)
+   [PASS] net_utils.py OK
+
+▶ Test 3: Import ex_9_02_pseudo_ftp.py
+   [PASS] Import OK
+
+▶ Test 4: File transfer
+   [FAIL] hello.txt was NOT downloaded
+
+▶ Test 5: Generated artefacts
+   [PASS] demo.log present
+   [PASS] demo.pcap present
+
+═══════════════════════════════════════════════════════════════
+  VALIDATION COMPLETE
+═══════════════════════════════════════════════════════════════

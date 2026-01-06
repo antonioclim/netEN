@@ -1,4 +1,0 @@
-Hello from ASE Week 8 HTTP Server!
-This is a test file served via TCP sockets.
-Computer Networks - Week 8
-

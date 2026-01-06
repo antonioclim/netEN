@@ -1,0 +1,88 @@
+Week 8 — Seminar Slides Outline
+Computer Networks (Lab: HTTP server and reverse proxy)
+
+1. Goals for the laboratory session
+   - Run and observe a minimal HTTP server
+   - Inspect HTTP request and response headers
+   - Run and observe a reverse proxy with two backends
+   - Confirm round-robin alternation
+   - Capture and interpret a TCP handshake
+   - Capture and interpret proxy traffic patterns
+
+2. Prerequisites and tooling
+   - Ubuntu 24.04 environment
+   - curl for HTTP client requests
+   - tcpdump or tshark for packet capture
+   - make targets for reproducible steps
+
+3. Repository structure to know
+   - python/demos/:
+     - demo_http_server.py
+     - demo_reverse_proxy.py
+   - python/exercises/: templates for lab work
+   - www/: static content served by the servers
+   - scripts/: automation utilities
+   - artifacts/: logs and captures produced by demos
+
+4. Warm-up: verify environment
+   - make setup
+   - make verify
+
+5. Demo 1: HTTP server on port 8080
+   - make demo-http
+   - Observe:
+     - 200 OK for /
+     - 404 for a missing path
+     - Server, Content-Type and identification headers
+   - Exercises:
+     - request a text file (hello.txt)
+     - try different paths and observe status codes
+
+6. Demo 2: reverse proxy on port 8888 with two backends
+   - Automatic:
+     - make demo-proxy
+   - Manual (four terminals):
+     - make backend-a
+     - make backend-b
+     - make proxy-server
+     - curl http://localhost:8888/
+   - Observe:
+     - alternation of backends
+     - identification headers
+     - proxy log messages about backend selection
+     - backend logs showing client metadata (X-Forwarded-For)
+
+7. Captures and analysis
+   - Capture the TCP three-way handshake:
+     - make capture-handshake
+   - Capture proxy traffic:
+     - make capture-proxy
+   - Analyse a capture:
+     - make analyse
+   - Discuss:
+     - which flows exist in the proxy scenario and why there are two TCP connections
+
+8. Exercises (implementation tasks)
+   - ex01_http_server.py:
+     - parse request line and headers robustly
+     - serve files securely from www/
+     - add or refine logging
+   - ex02_reverse_proxy.py:
+     - implement round-robin selection
+     - forward requests and responses correctly
+     - add X-Forwarded-For to backend requests
+   - Stretch tasks:
+     - add basic health checking
+     - add caching behaviour or rate limiting
+
+9. Validation
+   - make smoke-test
+   - make test-ex1
+   - make test-ex2
+   - make test-all
+
+10. Cleanup
+    - make kill-servers
+    - make clean
+    - make reset
+

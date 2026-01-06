@@ -1,0 +1,85 @@
+Week 8 — Course Slides Outline
+Computer Networks (Transport Layer and HTTP)
+
+1. Title and context
+   - Course: Computer Networks
+   - Week 8 theme: Transport layer concepts applied to HTTP servers and reverse proxies
+
+2. Learning outcomes
+   - Explain port-based multiplexing and demultiplexing
+   - Contrast TCP and UDP service models
+   - Describe the TCP connection lifecycle (handshake, data transfer and teardown)
+   - Interpret a TCP three-way handshake in a packet capture
+   - Describe TLS at a conceptual level (handshake, certificates and session keys)
+   - Explain HTTP request and response structure
+   - Explain what a reverse proxy does and why it is used
+   - Describe round-robin load balancing and the role of identifying headers
+
+3. Transport layer recap
+   - Responsibilities of the transport layer
+   - Endpoints and ports
+   - Multiplexing and demultiplexing
+   - Sockets as the programming interface
+
+4. TCP fundamentals
+   - Connection-oriented service model
+   - Reliability: sequence numbers, acknowledgements, retransmissions
+   - Flow control: sliding window, receiver advertised window
+   - Congestion control: slow start and congestion avoidance (high level)
+   - TCP states and the connection lifecycle
+
+5. UDP fundamentals
+   - Connectionless service model
+   - Best-effort delivery and application responsibility
+   - Typical use cases (DNS, streaming, telemetry)
+
+6. TLS overview
+   - Why TLS exists (confidentiality, integrity and authentication)
+   - Conceptual handshake: certificates and key establishment
+   - TLS above TCP and below HTTP (HTTPS)
+
+7. HTTP over TCP
+   - HTTP/1.1 request line and response line
+   - Headers and message body
+   - Status codes: 200, 301, 302, 400, 404, 500
+   - Connection behaviour in HTTP/1.1 (keep-alive vs close)
+   - Content-Length and why it matters for parsing
+
+8. Implementing a minimal HTTP server (case study)
+   - Accepting connections on a TCP socket
+   - Reading from a stream and detecting request boundaries
+   - Parsing:
+     - Request line (method, path, version)
+     - Headers as key-value pairs
+     - Body handling when Content-Length is present
+   - Creating a correct HTTP/1.1 response
+   - Serving static files from a document root
+   - Concurrency model: single-threaded vs thread per connection
+   - Observability: logging and response identification headers
+
+9. Reverse proxy and load balancing
+   - Reverse proxy definition and architecture
+   - Forward proxy vs reverse proxy (contrast)
+   - Backends, upstream connections and fan-out
+   - Round-robin scheduling and why it is simple but useful
+   - Client metadata propagation with X-Forwarded-For
+   - Response identification:
+     - X-Backend and X-Served-By headers
+     - X-Request-ID for correlation
+
+10. Packet capture and analysis
+    - Capturing TCP handshake packets
+    - Capturing HTTP request and response traffic
+    - Typical filters:
+      - tcp.port == 8080
+      - tcp.port == 8888
+      - ip.addr == 127.0.0.1
+    - Interpreting:
+      - SYN, SYN/ACK, ACK
+      - HTTP request and response headers
+
+11. Summary and discussion prompts
+    - What assumptions does an HTTP/1.1 parser rely on?
+    - How do proxies change the network observability story?
+    - What does round-robin ignore (latency, load, health)?
+

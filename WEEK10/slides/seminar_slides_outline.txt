@@ -1,0 +1,247 @@
+# Seminar 10: DNS, SSH, FTP in Docker – Slide Outline
+# For import into PowerPoint or reveal.js
+# Format: --- = slide break, ## = title, ### = subtitle, - = bullet
+
+---
+## Seminar 10
+### DNS, SSH, FTP – Services in Docker Containers
+- Computer Networks
+- Business Informatics, Year 3, Semester 2
+- ASE Bucharest, 2025-2026
+
+---
+## Practical Objectives
+### By the end of the seminar you will be able to:
+- Explain Docker internal DNS mechanism
+- Implement minimal DNS server in Python
+- Configure and use SSH Paramiko
+- Demonstrate SSH port forwarding
+- Automate FTP transfer pyftpdlib
+- Orchestrate services Docker Compose
+
+---
+## Why Does It Matter?
+### Infrastructure Fundamentals
+- **DNS**: Service discovery in Kubernetes/Docker
+- **SSH**: Secure access + traffic tunnelling
+- **FTP**: Bulk transfer in enterprise environments
+
+### Practical Skills
+- CI/CD automation
+- Infrastructure scripting
+- Connectivity debugging
+
+---
+## Lab Architecture
+### 6 Docker containers on private network
+```
+┌─────────────────────────────────────┐
+│      labnet Network (172.20.0.0/24) │
+│                                     │
+│  dns-server  ssh-server  ftp-server │
+│   :5353       :22→2222    :2121     │
+│                                     │
+│    web       ssh-client    debug    │
+│   :8000                   (tools)   │
+└─────────────────────────────────────┘
+```
+
+---
+## Quick Start
+### Start infrastructure
+```bash
+cd docker/
+docker compose up -d --build
+
+# Verify
+docker compose ps
+```
+
+### Enter debug container
+```bash
+docker compose exec debug sh
+```
+
+---
+## DNS – Domain Name System
+### Conceptual Recap
+- Translates names → IP addresses
+- Hierarchical system (root → TLD → domain)
+- Record types: A, AAAA, CNAME, MX, NS, TXT
+
+### In Docker
+- Automatic internal DNS (127.0.0.11)
+- Resolves service names on same network
+- Limitation: cannot define custom zones
+
+---
+## DNS Demo
+### Docker implicit DNS
+```bash
+# From debug container
+dig web +short
+# → 172.20.0.10
+```
+
+### Custom DNS
+```bash
+dig @dns-server -p 5353 myservice.lab.local +short
+# → 10.10.10.10
+```
+
+---
+## SSH – Secure Shell
+### Functions
+- Secure remote connection
+- Remote command execution
+- File transfer (SFTP, SCP)
+- Traffic tunnelling (port forwarding)
+
+### Basic Commands
+```bash
+ssh user@host
+ssh -p 2222 user@host
+ssh user@host "command"
+```
+
+---
+## SSH Port Forwarding
+### Local Forward (-L)
+```bash
+# localhost:9000 → remote:8080
+ssh -L 9000:localhost:8080 user@server
+```
+Access remote service as if it were local
+
+### Remote Forward (-R)
+```bash
+# server:9000 → localhost:3000
+ssh -R 9000:localhost:3000 user@server
+```
+Expose local service on remote
+
+### Dynamic (-D)
+```bash
+ssh -D 1080 user@server
+```
+SOCKS5 proxy
+
+---
+## Paramiko – SSH in Python
+### Basic Connection
+```python
+import paramiko
+
+client = paramiko.SSHClient()
+client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+client.connect("host", 22, "user", "pass")
+
+stdin, stdout, stderr = client.exec_command("ls")
+print(stdout.read().decode())
+
+client.close()
+```
+
+---
+## FTP – File Transfer Protocol
+### Characteristics
+- Two connections: control (21) + data (20/PASV)
+- Active mode: server connects to client
+- Passive mode: client connects to server
+
+### pyftpdlib (Python)
+```python
+from pyftpdlib.servers import FTPServer
+from pyftpdlib.handlers import FTPHandler
+from pyftpdlib.authorizers import DummyAuthorizer
+
+auth = DummyAuthorizer()
+auth.add_user("user", "pass", "/path", perm="elr")
+
+handler = FTPHandler
+handler.authorizer = auth
+
+server = FTPServer(("0.0.0.0", 21), handler)
+server.serve_forever()
+```
+
+---
+## FTP Demo
+### CLI connection
+```bash
+ftp localhost 2121
+# user: labftp
+# pass: labftp
+```
+
+### With curl
+```bash
+curl ftp://labftp:labftp@localhost:2121/
+```
+
+### Programmatic (Python)
+```python
+from ftplib import FTP
+ftp = FTP()
+ftp.connect('localhost', 2121)
+ftp.login('labftp', 'labftp')
+print(ftp.nlst())
+ftp.quit()
+```
+
+---
+## Practical Exercises
+### Exercise 1: DNS
+Test Docker implicit vs custom DNS
+
+### Exercise 2: SSH Automation
+SSH connection and SFTP transfer Paramiko
+
+### Exercise 3: Port Forwarding
+SSH tunnel to access unexposed service
+
+### Exercise 4: FTP Transfer
+Programmatic file upload/download
+
+---
+## Troubleshooting
+### Connection refused
+- Check service is running: `docker compose ps`
+- Check logs: `docker compose logs <service>`
+
+### Name not resolved
+- Check network: `docker network inspect`
+- Verify DNS server is responsive
+
+### Permission denied (SSH)
+- Check user/password
+- Verify SSH service is active
+
+---
+## Summary
+- Docker provides automatic internal DNS
+- Custom DNS servers extend capabilities
+- SSH enables secure access and tunnelling
+- Paramiko automates SSH operations
+- FTP remains relevant for bulk transfers
+- pyftpdlib offers easy FTP server
+
+---
+## Deliverable
+### Script `lab10_automation.py`
+1. Check service availability
+2. Execute DNS query
+3. SSH connection and command
+4. FTP file transfer
+5. JSON output report
+
+---
+## Questions?
+
+---
+## Next Steps
+- Complete individual exercises
+- Deliver automation script
+- Prepare for Week 11
+
+*Computer Networks | ASE Bucharest | 2025-2026*

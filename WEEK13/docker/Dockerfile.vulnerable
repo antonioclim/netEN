@@ -1,0 +1,23 @@
+FROM ubuntu:20.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y \
+    vsftpd \
+    netcat-openbsd \
+    && rm -rf /var/lib/apt/lists/*
+
+# Educational note:
+# This container is intentionally configured for a security lab.
+# It includes an additional TCP port (6200) that simulates an exposed
+# "backdoor" service in a SAFE way (no command execution).
+#
+# Real CVE-2011-2523 exploitation is NOT implemented here.
+
+COPY vsftpd.conf /etc/vsftpd.conf
+COPY entrypoint_vsftpd.sh /entrypoint_vsftpd.sh
+RUN chmod +x /entrypoint_vsftpd.sh
+
+EXPOSE 21 6200
+
+ENTRYPOINT ["/entrypoint_vsftpd.sh"]

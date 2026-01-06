@@ -1,0 +1,26 @@
+LECTURE 13 — IoT and Security in Computer Networks
+Slide outline (suggested)
+
+1. Title
+2. Agenda
+3. Learning outcomes
+4. What is IoT (scope and constraints)
+5. Typical IoT architectures
+6. Protocol landscape (MQTT focus)
+7. MQTT concepts (broker, topics, QoS)
+8. MQTT message patterns (publish, subscribe, retained)
+9. IoT threat surfaces
+10. Common misconfigurations
+11. Anonymous MQTT brokers
+12. Insecure web interfaces and default credentials
+13. Segmentation failure and lateral movement
+14. Transport security (TLS) in practice
+15. Observability: what changes with TLS
+16. Defence-in-depth controls
+17. Logging and monitoring for IoT
+18. Lab mapping: Docker services and tools
+19. Port exposure and recon interpretation
+20. Safe backdoor port demonstration (conceptual)
+21. Mininet segmentation demo (conceptual)
+22. Summary
+23. Q&A

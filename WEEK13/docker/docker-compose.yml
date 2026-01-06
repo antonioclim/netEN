@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: week13_mosquitto
+    restart: unless-stopped
+    ports:
+      - "${MQTT_PLAIN_PORT:-1883}:1883"
+      - "${MQTT_TLS_PORT:-8883}:8883"
+    volumes:
+      - ../configs/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - ../configs/certs:/mosquitto/certs:ro
+      - ../artifacts:/artifacts
+    networks:
+      week13net:
+        ipv4_address: 10.0.13.100
+
+  dvwa:
+    image: vulnerables/web-dvwa
+    container_name: week13_dvwa
+    restart: unless-stopped
+    ports:
+      - "${DVWA_HOST_PORT:-8080}:80"
+    networks:
+      week13net:
+        ipv4_address: 10.0.13.11
+
+  vsftpd:
+    build:
+      context: .
+      dockerfile: Dockerfile.vulnerable
+    container_name: week13_vsftpd
+    restart: unless-stopped
+    ports:
+      - "${VSFTPD_HOST_PORT:-2121}:21"
+      - "${VSFTPD_BACKDOOR_HOST_PORT:-6200}:6200"
+    volumes:
+      - ../artifacts:/artifacts
+    networks:
+      week13net:
+        ipv4_address: 10.0.13.12
+
+networks:
+  week13net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.0.13.0/24
+          gateway: 10.0.13.1

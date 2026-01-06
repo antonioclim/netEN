@@ -1,0 +1,4 @@
+# Python dependencies for Week 13 (IoT and Security)
+# Install via: make setup
+paho-mqtt>=1.6.1,<2
+scapy>=2.5.0

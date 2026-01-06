@@ -1,0 +1,17 @@
+SEMINAR 13 — IoT Lab: MQTT, Reconnaissance and Defensive Observability
+Slide outline (suggested)
+
+1. Title
+2. Practical objectives
+3. Lab components (Docker services and Python tools)
+4. Environment verification (make setup, make verify)
+5. Start lab services (make docker-up)
+6. MQTT plaintext demo (publish and subscribe)
+7. Capture traffic (tcpdump and Wireshark)
+8. MQTT TLS demo (CA file, encryption effect)
+9. Port scan demo (make scan)
+10. Defensive interpretation of exposed ports
+11. Safe backdoor port check (make exploit-ftp)
+12. Optional Mininet segmentation demo
+13. Artefacts to submit (JSON and optional PCAP)
+14. Clean-up (make docker-down, make clean)

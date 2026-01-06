@@ -1,0 +1,20 @@
+# =============================================================================
+# Dockerfile.lb – Custom load balancer image for Week 11
+# =============================================================================
+# This image is used in docker/custom_lb_compose.
+# Keep the base image minimal and pin major versions when reasonable.
+# =============================================================================
+FROM python:3.11-alpine
+
+WORKDIR /app
+
+# Copiem scriptul
+COPY simple_lb.py .
+
+# Expunem portul
+EXPOSE 8080
+
+# Run the load balancer
+CMD ["python3", "simple_lb.py"]
+
+# Revolvix&Hypotheticalandrei
